@@ -9,8 +9,8 @@ class ConfigurationBaseDeDonnees {
         'nomHote' => '162.38.222.142',
         'nomBaseDeDonnees' => 'iut',
         'port' => '5673',
-        'login' => 'a_completer',
-        'motDePasse' => 'a_completer'
+        'login' => 'gilletp',
+        'motDePasse' => 'applied'
     );
 
     static public function getLogin() : string {
