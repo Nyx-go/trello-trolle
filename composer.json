@@ -3,5 +3,11 @@
     "psr-4": {
       "App\\Trellotrolle\\": "src"
     }
+  },
+  "require": {
+    "symfony/http-foundation": "^6.4",
+    "symfony/routing": "^6.4",
+    "symfony/http-kernel": "^6.4",
+    "symfony/config": "^6.4"
   }
 }
