@@ -1,13 +1,8 @@
 <?php
 
 use App\Trellotrolle\Controleur\ControleurGenerique;
-use App\Trellotrolle\Lib\Psr4AutoloaderClass;
 
-require_once __DIR__ . '/../src/Lib/Psr4AutoloaderClass.php';
-
-$chargeurDeClasse = new Psr4AutoloaderClass(false);
-$chargeurDeClasse->register();
-$chargeurDeClasse->addNamespace('App\Trellotrolle', __DIR__ . '/../src');
+require_once __DIR__ . '/../vendor/autoload.php';
 
 $action = $_REQUEST['action'] ?? 'accueil';
 
