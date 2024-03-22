@@ -31,7 +31,7 @@ class ControleurColonne extends ControleurGenerique
         /**
          * @var Colonne $colonne
          */
-        $colonne = $colonneRepository->recupererParClePrimaire($idColonne);
+        $colonne = $colonneRepository->recupererParClePrimaire(array("idColonne"=>$idColonne));
         if(!$colonne) {
             MessageFlash::ajouter("danger", "Colonne inexistante");
             ControleurColonne::redirection("base", "accueil");
@@ -70,7 +70,7 @@ class ControleurColonne extends ControleurGenerique
         /**
          * @var Tableau $tableau
          */
-        $tableau = $repository->recupererParClePrimaire($_REQUEST["idTableau"]);
+        $tableau = $repository->recupererParClePrimaire(array("idTableau"=>$_REQUEST["idTableau"]));
         if(!$tableau) {
             MessageFlash::ajouter("warning", "Tableau inexistant");
             ControleurColonne::redirection("base", "accueil");
@@ -98,7 +98,7 @@ class ControleurColonne extends ControleurGenerique
         /**
          * @var Tableau $tableau
          */
-        $tableau = $repository->recupererParClePrimaire($_REQUEST["idTableau"]);
+        $tableau = $repository->recupererParClePrimaire(array("idTableau"=>$_REQUEST["idTableau"]));
         if(!$tableau) {
             MessageFlash::ajouter("danger", "Tableau inexistant");
             ControleurColonne::redirection("base", "accueil");
@@ -142,7 +142,7 @@ class ControleurColonne extends ControleurGenerique
         /**
          * @var Colonne $colonne
          */
-        $colonne = $colonneRepository->recupererParClePrimaire($_REQUEST["idColonne"]);
+        $colonne = $colonneRepository->recupererParClePrimaire(array("idColonne"=>$_REQUEST["idColonne"]));
         if(!$colonne) {
             MessageFlash::ajouter("danger", "Colonne inexistante");
             ControleurColonne::redirection("base", "accueil");
@@ -172,7 +172,7 @@ class ControleurColonne extends ControleurGenerique
         /**
          * @var Colonne $colonne
          */
-        $colonne = $colonneRepository->recupererParClePrimaire($_REQUEST["idColonne"]);
+        $colonne = $colonneRepository->recupererParClePrimaire(array("idColonne"=> $_REQUEST["idColonne"]));
         if(!$colonne) {
             MessageFlash::ajouter("danger", "Colonne inexistante");
             ControleurColonne::redirection("base", "accueil");

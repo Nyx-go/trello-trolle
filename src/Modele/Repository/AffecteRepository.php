@@ -12,11 +12,10 @@ class AffecteRepository extends AbstractRepository{
         return "Affecte";
     }
 
-    //TODO : Mettre les clés primaires une fois que la signature est changée
 
-    protected function getNomCle(): string
+    protected function getNomCle(): array
     {
-        return "";
+        return array("idCarte", "login");
     }
 
     protected function getNomsColonnes(): array

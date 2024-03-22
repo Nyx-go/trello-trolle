@@ -14,9 +14,9 @@ class UtilisateurRepository extends AbstractRepository
         return "utilisateurs";
     }
 
-    protected function getNomCle(): string
+    protected function getNomCle(): array
     {
-        return "login";
+        return array("login");
     }
 
     protected function getNomsColonnes(): array

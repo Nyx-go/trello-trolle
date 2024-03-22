@@ -31,7 +31,7 @@ class ControleurCarte extends ControleurGenerique
         /**
          * @var Carte $carte
          */
-        $carte = $carteRepository->recupererParClePrimaire($idCarte);
+        $carte = $carteRepository->recupererParClePrimaire(array("idCarte"=> $idCarte));
         if(!$carte) {
             MessageFlash::ajouter("danger", "Carte inexistante");
             ControleurCarte::redirection("base", "accueil");
@@ -69,7 +69,7 @@ class ControleurCarte extends ControleurGenerique
         /**
          * @var Colonne $colonne
          */
-        $colonne = $colonneRepository->recupererParClePrimaire($_REQUEST["idColonne"]);
+        $colonne = $colonneRepository->recupererParClePrimaire(array( "idColonne"=> $_REQUEST["idColonne"]));
         if(!$colonne) {
             MessageFlash::ajouter("warning", "Colonne inexistante");
             ControleurCarte::redirection("base", "accueil");
@@ -88,6 +88,7 @@ class ControleurCarte extends ControleurGenerique
         ]);
     }
 
+    //TODO : changer l'appelle de recupérer par clé primaire
     public static function creerCarte(): void {
         if(!ConnexionUtilisateur::estConnecte()) {
             ControleurCarte::redirection("utilisateur", "afficherFormulaireConnexion");
@@ -100,7 +101,7 @@ class ControleurCarte extends ControleurGenerique
         /**
          * @var Colonne $colonne
          */
-        $colonne = $colonneRepository->recupererParClePrimaire($_REQUEST["idColonne"]);
+        $colonne = $colonneRepository->recupererParClePrimaire(array("idColonne"=> $_REQUEST["idColonne"]));
         if(!$colonne) {
             MessageFlash::ajouter("warning", "Colonne inexistante");
             ControleurCarte::redirection("base", "accueil");
@@ -121,7 +122,7 @@ class ControleurCarte extends ControleurGenerique
                 /**
                  * @var Utilisateur $utilisateur
                  */
-                $utilisateur = $utilisateurRepository->recupererParClePrimaire($affectation);
+                $utilisateur = $utilisateurRepository->recupererParClePrimaire(array(""=> $affectation));
                 if(!$utilisateur) {
                     MessageFlash::ajouter("danger", "Un des membres affecté à la tâche n'existe pas");
                     ControleurCarte::redirection("carte", "afficherFormulaireCreationCarte", ["idColonne" => $_REQUEST["idColonne"]]);
@@ -158,7 +159,7 @@ class ControleurCarte extends ControleurGenerique
         /**
          * @var Carte $carte
          */
-        $carte = $carteRepository->recupererParClePrimaire($_REQUEST["idCarte"]);
+        $carte = $carteRepository->recupererParClePrimaire(array("idCarte" =>$_REQUEST["idCarte"]));
         if(!$carte) {
             MessageFlash::ajouter("warning", "Carte inexistante");
             ControleurCarte::redirection("base", "accueil");
@@ -178,6 +179,8 @@ class ControleurCarte extends ControleurGenerique
         ]);
     }
 
+    //TODO : changer l'appelle à récupérer par clé primaire
+
     public static function mettreAJourCarte(): void {
         if(!ConnexionUtilisateur::estConnecte()) {
             ControleurCarte::redirection("utilisateur", "afficherFormulaireConnexion");
@@ -194,13 +197,13 @@ class ControleurCarte extends ControleurGenerique
         /**
          * @var Carte $carte
          */
-        $carte = $carteRepository->recupererParClePrimaire($_REQUEST["idCarte"]);
+        $carte = $carteRepository->recupererParClePrimaire(array("idCarte"=>$_REQUEST["idCarte"]));
 
         $colonnesRepository = new ColonneRepository();
         /**
          * @var Colonne $colonne
          */
-        $colonne = $colonnesRepository->recupererParClePrimaire($_REQUEST["idColonne"]);
+        $colonne = $colonnesRepository->recupererParClePrimaire( array("idColonne"=> $_REQUEST["idColonne"]));
         if(!$carte) {
             MessageFlash::ajouter("warning", "Carte inexistante");
             ControleurCarte::redirection("base", "accueil");
@@ -236,7 +239,7 @@ class ControleurCarte extends ControleurGenerique
                 /**
                  * @var Utilisateur $utilisateur
                  */
-                $utilisateur = $utilisateurRepository->recupererParClePrimaire($affectation);
+                $utilisateur = $utilisateurRepository->recupererParClePrimaire(array(""=>$affectation));
                 if(!$utilisateur) {
                     MessageFlash::ajouter("danger", "Un des membres affecté à la tâche n'existe pas");
                     ControleurCarte::redirection("carte", "afficherFormulaireMiseAJourCarte", ["idCarte" => $_REQUEST["idCarte"]]);

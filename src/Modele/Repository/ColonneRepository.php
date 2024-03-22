@@ -14,9 +14,9 @@ class ColonneRepository extends AbstractRepository
         return "colonnes";
     }
 
-    protected function getNomCle(): string
+    protected function getNomCle(): array
     {
-        return "idcolonne";
+        return array("idcolonne");
     }
 
     protected function getNomsColonnes(): array

@@ -12,10 +12,9 @@ class ParticipeRepository extends AbstractRepository{
         return "ParticipeRepository";
     }
 
-    protected function getNomCle(): string
+    protected function getNomCle(): array
     {
-        // TODO: Implement getNomCle() method.
-        return "";
+        return array("idTableau", "login");
     }
 
     protected function getNomsColonnes(): array

@@ -14,9 +14,9 @@ class CarteRepository extends AbstractRepository
         return "app_db";
     }
 
-    protected function getNomCle(): string
+    protected function getNomCle(): array
     {
-        return "idcarte";
+        return array("idcarte");
     }
 
     protected function getNomsColonnes(): array

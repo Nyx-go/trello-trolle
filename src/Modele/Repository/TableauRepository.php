@@ -14,9 +14,9 @@ class TableauRepository extends AbstractRepository
         return "Tableaux";
     }
 
-    protected function getNomCle(): string
+    protected function getNomCle(): array
     {
-        return "idtableau";
+        return array("idtableau");
     }
 
     protected function getNomsColonnes(): array
