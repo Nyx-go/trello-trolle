@@ -7,52 +7,52 @@ DROP TABLE Tableaux;
 DROP TABLE Utilisateurs;
 
 CREATE TABLE Utilisateurs(
-    login VARCHAR(100) NOT NULL,
-    nom VARCHAR(100) NOT NULL,
-    prenom VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL,
-    mdpHache VARCHAR(100) NOT NULL,
+    login VARCHAR(30),
+    nom VARCHAR(30),
+    prenom VARCHAR(30),
+    email VARCHAR(255),
+    mdpHache VARCHAR(255),
     PRIMARY KEY (login)
 );
 
 CREATE TABLE Tableaux(
-    idTableau INT NOT NULL,
-    login VARCHAR(100) NOT NULL,
+    idTableau INT ,
+    login VARCHAR(30),
     codeTableau VARCHAR(255),
-    titreTableau VARCHAR (100),
+    titreTableau VARCHAR (50),
     PRIMARY KEY (idTableau),
     FOREIGN KEY (login) REFERENCES Utilisateurs
 );
 
 CREATE TABLE Participe(
-    idTableau INT NOT NULL,
-    login VARCHAR(100),
+    idTableau INT,
+    login VARCHAR(30),
     PRIMARY KEY (idTableau, login),
     FOREIGN KEY (idTableau) REFERENCES Tableaux,
     FOREIGN KEY (login) REFERENCES Utilisateurs
 );
 
 CREATE TABLE Colonnes(
-    idColonne INT NOT NULL,
-    titreColonne VARCHAR(100) NOT NULL,
-    idTableau INT NOT NULL,
+    idColonne INT,
+    titreColonne VARCHAR(50),
+    idTableau INT,
     PRIMARY KEY (idColonne),
     FOREIGN KEY (idTableau) REFERENCES Tableaux
 );
 
 CREATE TABLE Cartes(
-    idCarte INT NOT NULL,
-    titreCarte VARCHAR(100),
+    idCarte INT,
+    titreCarte VARCHAR(50),
     descriptifCarte TEXT,
-    couleurCarte VARCHAR(10),
-    idColonne INT NOT NULL,
+    couleurCarte VARCHAR(7),
+    idColonne INT,
     PRIMARY KEY (idCarte),
     FOREIGN KEY (idColonne) REFERENCES Colonnes
 );
 
 CREATE TABLE Affecte(
-    idCarte INT NOT NULL,
-    login VARCHAR(100) NOT NULL,
+    idCarte INT,
+    login VARCHAR(30),
     PRIMARY KEY (idCarte, login),
     FOREIGN KEY (idCarte) REFERENCES Cartes,
     FOREIGN KEY (login) REFERENCES Utilisateurs
