@@ -5,28 +5,20 @@ namespace App\Trellotrolle\Modele\DataObject;
 class Colonne extends AbstractDataObject
 {
     public function __construct(
-        private Tableau $tableau,
-        private int $idColonne,
+        private int    $idTableau,
+        private int    $idColonne,
         private string $titreColonne
     )
-    {}
+    {
+    }
 
-    public static function construireDepuisTableau(array $objetFormatTableau) : Colonne {
+    public static function construireDepuisTableau(array $objetFormatTableau): Colonne
+    {
         return new Colonne(
-            Tableau::construireDepuisTableau($objetFormatTableau),
+            $objetFormatTableau["idtableau"],
             $objetFormatTableau["idcolonne"],
             $objetFormatTableau["titrecolonne"],
         );
-    }
-
-    public function getTableau(): Tableau
-    {
-        return $this->tableau;
-    }
-
-    public function setTableau(Tableau $tableau): void
-    {
-        $this->tableau = $tableau;
     }
 
     public function getIdColonne(): ?int
@@ -44,6 +36,8 @@ class Colonne extends AbstractDataObject
         return $this->titreColonne;
     }
 
+    //TODO: Une fois la mise à jour du titre de la colonne passé en API, il ne pourra être nul
+    //parait même bizarre qu'il accepte d'être null
     public function setTitreColonne(?string $titreColonne): void
     {
         $this->titreColonne = $titreColonne;
@@ -51,12 +45,10 @@ class Colonne extends AbstractDataObject
 
     public function formatTableau(): array
     {
-        return array_merge(
-            $this->tableau->formatTableau(),
-            array(
-                "idcolonneTag" => $this->idColonne,
-                "titrecolonneTag" => $this->titreColonne,
-            ),
+        return array(
+            "idtableau" => $this->idTableau,
+            "idcolonneTag" => $this->idColonne,
+            "titrecolonneTag" => $this->titreColonne,
         );
     }
 }

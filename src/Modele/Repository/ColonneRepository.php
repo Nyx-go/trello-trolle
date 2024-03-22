@@ -11,7 +11,7 @@ class ColonneRepository extends AbstractRepository
 
     protected function getNomTable(): string
     {
-        return "app_db";
+        return "colonnes";
     }
 
     protected function getNomCle(): string
@@ -21,11 +21,7 @@ class ColonneRepository extends AbstractRepository
 
     protected function getNomsColonnes(): array
     {
-        return [
-            "login", "nom", "prenom", "email", "mdphache",
-            "mdp", "idtableau", "codetableau", "titretableau",
-            "participants", "idcolonne", "titrecolonne"
-        ];
+        return ["idtableau", "idcolonne", "titrecolonne"];
     }
 
     protected function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
@@ -34,15 +30,16 @@ class ColonneRepository extends AbstractRepository
     }
 
     public function recupererColonnesTableau(int $idTableau): array {
-        return $this->recupererPlusieursParOrdonne("idtableau", $idTableau, ["idcolonne"]);
+        return $this->recupererPlusieursParOrdonne("idtableau", $idTableau, "idcolonne");
     }
 
     public function getNextIdColonne() : int {
         return $this->getNextId("idcolonne");
     }
 
+    //TODO: modifier et vérifier la requête
     public function getNombreColonnesTotalTableau(int $idTableau) : int {
-        $query = "SELECT COUNT(DISTINCT idcolonne) FROM app_db WHERE idtableau=:idTableau";
+        $query = "SELECT COUNT(idcolonne) FROM colonnes WHERE idtableau=:idTableau";
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($query);
         $pdoStatement->execute(["idTableau" => $idTableau]);
         $obj = $pdoStatement->fetch();
@@ -52,6 +49,7 @@ class ColonneRepository extends AbstractRepository
     /**
      * @throws Exception
      */
+    //TODO: Comprendre pourquoi il jette une exception et ne fait rien
     public function ajouter(AbstractDataObject $object): bool
     {
         throw new Exception("Impossible d'ajouter seulement une colonne...");

@@ -11,7 +11,7 @@ class UtilisateurRepository extends AbstractRepository
 
     protected function getNomTable(): string
     {
-        return "app_db";
+        return "utilisateurs";
     }
 
     protected function getNomCle(): string
@@ -21,7 +21,7 @@ class UtilisateurRepository extends AbstractRepository
 
     protected function getNomsColonnes(): array
     {
-        return ["login", "nom", "prenom", "email", "mdphache", "mdp"];
+        return ["login", "nom", "prenom", "email", "mdphache"];
     }
 
     protected function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
@@ -32,6 +32,7 @@ class UtilisateurRepository extends AbstractRepository
     /**
      * @throws Exception
      */
+    //TODO NE DEVRAIT PAS JETER D'EXCEPTION ALORS QUE SON PARENT A UNE FONCTION: LISKOV
     public function ajouter(AbstractDataObject $object): bool
     {
         throw new Exception("Impossible d'ajouter seulement un utilisateur...");

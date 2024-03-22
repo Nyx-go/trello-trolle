@@ -9,8 +9,7 @@ class Utilisateur extends AbstractDataObject
         private string $nom,
         private string $prenom,
         private string $email,
-        private string $mdpHache,
-        private string $mdp,
+        private string $mdpHache
     )
     {}
 
@@ -20,11 +19,11 @@ class Utilisateur extends AbstractDataObject
             $objetFormatTableau["nom"],
             $objetFormatTableau["prenom"],
             $objetFormatTableau["email"],
-            $objetFormatTableau["mdphache"],
-            $objetFormatTableau["mdp"],
+            $objetFormatTableau["mdphache"]
         );
     }
 
+    //TODO: on ne devrait normalement plus construire d'utilisateurs depuis du json, à vérifier puis supprimer ou modifier en ajustement
     public static function construireUtilisateursDepuisJson(?string $jsonList) : array {
         $users = [];
         if($jsonList != null) {
@@ -77,17 +76,6 @@ class Utilisateur extends AbstractDataObject
         $this->mdpHache = $mdpHache;
     }
 
-    public function getMdp(): string
-    {
-        return $this->mdp;
-    }
-
-
-    public function setMdp(string $mdp): void
-    {
-        $this->mdp = $mdp;
-    }
-
     public function getEmail(): string
     {
         return $this->email;
@@ -104,8 +92,7 @@ class Utilisateur extends AbstractDataObject
             "nom" => $this->nom,
             "prenom" => $this->prenom,
             "email" => $this->email,
-            "mdphache" => $this->mdpHache,
-            "mdp" => $this->mdp
+            "mdphache" => $this->mdpHache
         ];
     }
 
@@ -124,8 +111,7 @@ class Utilisateur extends AbstractDataObject
             "nomTag" => $this->nom,
             "prenomTag" => $this->prenom,
             "emailTag" => $this->email,
-            "mdphacheTag" => $this->mdpHache,
-            "mdpTag" => $this->mdp,
+            "mdphacheTag" => $this->mdpHache
         );
     }
 }
