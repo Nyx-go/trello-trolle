@@ -22,10 +22,7 @@ class CarteRepository extends AbstractRepository
     protected function getNomsColonnes(): array
     {
         return [
-            "login", "nom", "prenom", "email", "mdphache",
-            "mdp", "idtableau", "codetableau", "titretableau",
-            "participants", "idcolonne", "titrecolonne",
-            "idcarte", "titrecarte", "descriptifcarte", "couleurcarte", "affectationscarte"
+            "idColonne","idcarte", "titrecarte", "descriptifcarte", "couleurcarte",
         ];
     }
 

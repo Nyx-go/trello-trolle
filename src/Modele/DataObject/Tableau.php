@@ -5,32 +5,30 @@ namespace App\Trellotrolle\Modele\DataObject;
 class Tableau extends AbstractDataObject
 {
     public function __construct(
-        private Utilisateur $utilisateur,
+        private string $login,
         private int $idTableau,
         private string $codeTableau,
         private string $titreTableau,
-        private array $participants,
     )
     {}
 
     public static function construireDepuisTableau(array $objetFormatTableau) : Tableau {
         return new Tableau(
-            Utilisateur::construireDepuisTableau($objetFormatTableau),
+            $objetFormatTableau["login"],
             $objetFormatTableau["idtableau"],
             $objetFormatTableau["codetableau"],
             $objetFormatTableau["titretableau"],
-            Utilisateur::construireUtilisateursDepuisJson($objetFormatTableau["participants"])
         );
     }
 
-    public function getUtilisateur(): Utilisateur
+    public function getIdUtilisateur(): string
     {
-        return $this->utilisateur;
+        return $this->login;
     }
 
-    public function setUtilisateur(Utilisateur $utilisateur): void
+    public function setIdUtilisateur(string $idUtilisateur): void
     {
-        $this->utilisateur = $utilisateur;
+        $this->login = $idUtilisateur;
     }
 
     public function getIdTableau(): ?int
@@ -63,16 +61,8 @@ class Tableau extends AbstractDataObject
         $this->codeTableau = $codeTableau;
     }
 
-    public function getParticipants(): ?array
-    {
-        return $this->participants;
-    }
 
-    public function setParticipants(?array $participants): void
-    {
-        $this->participants = $participants;
-    }
-
+    //TODO : transférer les 2 fonctions dans UtilisateurRepository
     public function estProprietaire(string $login): bool {
         return $this->utilisateur->getLogin() === $login;
     }
@@ -92,14 +82,11 @@ class Tableau extends AbstractDataObject
 
     public function formatTableau(): array
     {
-        return array_merge(
-            $this->utilisateur->formatTableau(),
-            array(
-                "idtableauTag" => $this->idTableau,
-                "codetableauTag" => $this->codeTableau,
-                "titretableauTag" => $this->titreTableau,
-                "participantsTag" => Utilisateur::formatJsonListeUtilisateurs($this->participants)
-            ),
+        return array(
+            "idtableauTag" => $this->idTableau,
+            "codetableauTag" => $this->codeTableau,
+            "titretableauTag" => $this->titreTableau,
+            "loginTag"=>$this->login
         );
     }
 }
