@@ -11,7 +11,7 @@ class TableauRepository extends AbstractRepository
 {
     protected function getNomTable(): string
     {
-        return "app_db";
+        return "Tableaux";
     }
 
     protected function getNomCle(): string
@@ -21,7 +21,7 @@ class TableauRepository extends AbstractRepository
 
     protected function getNomsColonnes(): array
     {
-        return ["login", "nom", "prenom", "email", "mdphache", "mdp", "idtableau", "codetableau", "titretableau", "participants"];
+        return ["login", "idtableau", "codetableau", "titretableau"];
     }
 
     protected function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
