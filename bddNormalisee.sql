@@ -16,8 +16,8 @@ CREATE TABLE Utilisateurs(
 );
 
 CREATE TABLE Tableaux(
-    idTableau INT ,
-    login VARCHAR(30),
+    idTableau INT,
+    login VARCHAR(30) NOT NULL,
     codeTableau VARCHAR(255),
     titreTableau VARCHAR (50),
     PRIMARY KEY (idTableau),
@@ -35,7 +35,7 @@ CREATE TABLE Participe(
 CREATE TABLE Colonnes(
     idColonne INT,
     titreColonne VARCHAR(50),
-    idTableau INT,
+    idTableau INT NOT NULL,
     PRIMARY KEY (idColonne),
     FOREIGN KEY (idTableau) REFERENCES Tableaux
 );
@@ -45,7 +45,7 @@ CREATE TABLE Cartes(
     titreCarte VARCHAR(50),
     descriptifCarte TEXT,
     couleurCarte VARCHAR(7),
-    idColonne INT,
+    idColonne INT NOT NULL,
     PRIMARY KEY (idCarte),
     FOREIGN KEY (idColonne) REFERENCES Colonnes
 );
