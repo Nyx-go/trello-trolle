@@ -1,8 +1,16 @@
 <?php /** @noinspection PhpUnnecessaryCurlyVarSyntaxInspection */
 
-/** @var string $pagetitle */
-
 use App\Trellotrolle\Lib\ConnexionUtilisateur;
+use App\Trellotrolle\Lib\Conteneur;
+use Symfony\Component\HttpFoundation\UrlHelper;
+use Symfony\Component\Routing\Generator\UrlGenerator;
+
+/** @var string $pagetitle */
+/** @var UrlGenerator $generateurUrl */
+$generateurUrl = Conteneur::recupererService("generateurUrl");
+/** @var UrlHelper $assistantUrl */
+$assistantUrl = Conteneur::recupererService("assistantUrl");
+
 
 ?>
 <!DOCTYPE html>
@@ -11,8 +19,8 @@ use App\Trellotrolle\Lib\ConnexionUtilisateur;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= $pagetitle ?></title>
-    <link rel="stylesheet" href="../ressources/css/navstyle.css">
-    <link rel="stylesheet" href="../ressources/css/trellostyle.css">
+    <link rel="stylesheet" href="<?=$assistantUrl->getAbsoluteUrl('../ressources/css/navstyle.css')?>">
+    <link rel="stylesheet" href="<?=$assistantUrl->getAbsoluteUrl('../ressources/css/trellostyle.css')?>">
 
 </head>
 <body>

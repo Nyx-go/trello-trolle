@@ -23,7 +23,7 @@ class ControleurUtilisateur extends ControleurGenerique
         parent::afficherErreur($messageErreur, "utilisateur");
     }
 
-    #[Route(path: '/details', name:'afficherDetail', methods:["GET"])]
+    #[Route(path: '/utilisateur', name:'afficherDetail', methods:["GET"])]
     public static function afficherDetail(): void
     {
         if(!ConnexionUtilisateur::estConnecte()) {
@@ -169,7 +169,7 @@ class ControleurUtilisateur extends ControleurGenerique
         }
     }
 
-    #[Route(path: '/mettreAJour', name:'afficherFormulaireMiseAJour', methods:["GET"])]
+    #[Route(path: '/miseAJour', name:'afficherFormulaireMiseAJour', methods:["GET"])]
     public static function afficherFormulaireMiseAJour(): void
     {
         if(!ConnexionUtilisateur::estConnecte()) {
@@ -185,7 +185,7 @@ class ControleurUtilisateur extends ControleurGenerique
         ]);
     }
 
-    #[Route(path: '/mettreAJour', name:'mettreAJour', methods:["POST"])]
+    #[Route(path: '/miseAJour', name:'mettreAJour', methods:["POST"])]
     public static function mettreAJour(): void
     {
         if(!ConnexionUtilisateur::estConnecte()) {
@@ -258,7 +258,7 @@ class ControleurUtilisateur extends ControleurGenerique
         }
     }
 
-    #[Route(path: '/supprimer', name:'supprimer', methods:["GET"])]
+    #[Route(path: '/suppressionCompte', name:'supprimer', methods:["GET"])]
     public static function supprimer(): void
     {
         if(!ConnexionUtilisateur::estConnecte()) {

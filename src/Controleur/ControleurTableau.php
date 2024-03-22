@@ -12,6 +12,7 @@ use App\Trellotrolle\Modele\Repository\CarteRepository;
 use App\Trellotrolle\Modele\Repository\ColonneRepository;
 use App\Trellotrolle\Modele\Repository\TableauRepository;
 use App\Trellotrolle\Modele\Repository\UtilisateurRepository;
+use Symfony\Component\Routing\Attribute\Route;
 
 class ControleurTableau extends ControleurGenerique
 {
@@ -20,6 +21,7 @@ class ControleurTableau extends ControleurGenerique
         parent::afficherErreur($messageErreur, "tableau");
     }
 
+    #[Route(path: '/tableau', name:'afficherTableau', methods:["GET"])]
     public static function afficherTableau() : void {
         if(!ControleurTableau::issetAndNotNull(["codeTableau"])) {
             MessageFlash::ajouter("warning", "Code de tableau manquant");
@@ -75,6 +77,7 @@ class ControleurTableau extends ControleurGenerique
         ]);
     }
 
+    #[Route(path: '/tableau', name:'afficherTableau', methods:["GET"])]
     public static function afficherFormulaireMiseAJourTableau(): void {
         if(!ConnexionUtilisateur::estConnecte()) {
             ControleurTableau::redirection("utilisateur", "afficherFormulaireConnexion");
