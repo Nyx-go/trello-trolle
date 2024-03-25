@@ -1,4 +1,3 @@
-
 DROP TABLE Affecte;
 DROP TABLE Cartes;
 DROP TABLE Colonnes;
@@ -35,7 +34,6 @@ CREATE TABLE Colonnes(
     idColonne SERIAL PRIMARY KEY,
     titreColonne VARCHAR(50),
     idTableau INT NOT NULL,
-    PRIMARY KEY (idColonne),
     FOREIGN KEY (idTableau) REFERENCES Tableaux
 );
 
@@ -45,7 +43,6 @@ CREATE TABLE Cartes(
     descriptifCarte TEXT,
     couleurCarte VARCHAR(7),
     idColonne INT NOT NULL,
-    PRIMARY KEY (idCarte),
     FOREIGN KEY (idColonne) REFERENCES Colonnes
 );
 
