@@ -11,7 +11,7 @@ class ColonneRepository extends AbstractRepository
 
     protected function getNomTable(): string
     {
-        return "colonnes";
+        return "Colonnes";
     }
 
     protected function getNomCle(): array

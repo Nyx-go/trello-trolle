@@ -9,7 +9,7 @@ class ParticipeRepository extends AbstractRepository{
 
     protected function getNomTable(): string
     {
-        return "ParticipeRepository";
+        return "Participe";
     }
 
     protected function getNomCle(): array

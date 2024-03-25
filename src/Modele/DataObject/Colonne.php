@@ -43,6 +43,25 @@ class Colonne extends AbstractDataObject
         $this->titreColonne = $titreColonne;
     }
 
+    /**
+     * @return int
+     */
+    public function getIdTableau(): int
+    {
+        return $this->idTableau;
+    }
+
+    /**
+     * @param int $idTableau
+     */
+    public function setIdTableau(int $idTableau): void
+    {
+        $this->idTableau = $idTableau;
+    }
+
+
+
+
     public function formatTableau(): array
     {
         return array(

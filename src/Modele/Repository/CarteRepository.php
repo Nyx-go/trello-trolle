@@ -11,7 +11,7 @@ class CarteRepository extends AbstractRepository
 
     protected function getNomTable(): string
     {
-        return "app_db";
+        return "Cartes";
     }
 
     protected function getNomCle(): array
@@ -58,7 +58,7 @@ class CarteRepository extends AbstractRepository
     }
 
     public function getNombreCartesTotalUtilisateur(string $login) : int {
-        $query = "SELECT COUNT(*) FROM app_db WHERE login=:login";
+        $query = "SELECT COUNT(*) FROM Cartes WHERE login=:login";
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($query);
         $pdoStatement->execute(["login" => $login]);
         $obj = $pdoStatement->fetch();
@@ -67,5 +67,15 @@ class CarteRepository extends AbstractRepository
 
     public function getNextIdCarte() : int {
         return $this->getNextId("idcarte");
+    }
+
+    public function getTableauByIdCarte($idCarte){
+        $sql = "SELECT idTableau FROM cartes c JOIN colonnes co ON c.idCarte = co.idCarte WHERE c.idCarte =:idcarte;";
+        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+        $pdoStatement->execute(["idCarte" => $idCarte]);
+        $obj = $pdoStatement->fetch();
+        return $obj[0];
+
+
     }
 }

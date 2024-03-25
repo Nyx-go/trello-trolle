@@ -27,7 +27,7 @@ class ControleurUtilisateur extends ControleurGenerique
         if(!ConnexionUtilisateur::estConnecte()) {
             ControleurTableau::redirection("utilisateur", "afficherFormulaireConnexion");
         }
-        $utilisateur = (new UtilisateurRepository())->recupererParClePrimaire(ConnexionUtilisateur::getLoginUtilisateurConnecte());
+        $utilisateur = (new UtilisateurRepository())->recupererParClePrimaire(array("login"=>ConnexionUtilisateur::getLoginUtilisateurConnecte()));
         ControleurUtilisateur::afficherVue('vueGenerale.php', [
             "utilisateur" => $utilisateur,
             "pagetitle" => "Détail de l'utilisateur {$utilisateur->getLogin()}",
@@ -64,7 +64,7 @@ class ControleurUtilisateur extends ControleurGenerique
 
             $utilisateurRepository = new UtilisateurRepository();
 
-            $checkUtilisateur = $utilisateurRepository->recupererParClePrimaire($_REQUEST["login"]);
+            $checkUtilisateur = $utilisateurRepository->recupererParClePrimaire(array("login"=>$_REQUEST["login"]));
             if($checkUtilisateur) {
                 MessageFlash::ajouter("warning", "Le login est déjà pris.");
                 ControleurUtilisateur::redirection("utilisateur", "afficherFormulaireCreation");
@@ -172,7 +172,7 @@ class ControleurUtilisateur extends ControleurGenerique
         }
         $login = ConnexionUtilisateur::getLoginUtilisateurConnecte();
         $repository = new UtilisateurRepository();
-        $utilisateur = $repository->recupererParClePrimaire($login);
+        $utilisateur = $repository->recupererParClePrimaire(array("login"=>$login));
         ControleurUtilisateur::afficherVue('vueGenerale.php', [
             "pagetitle" => "Mise à jour du profil",
             "cheminVueBody" => "utilisateur/formulaireMiseAJour.php",
@@ -192,7 +192,7 @@ class ControleurUtilisateur extends ControleurGenerique
             /**
              * @var Utilisateur $utilisateur
              */
-            $utilisateur = $repository->recupererParClePrimaire($login);
+            $utilisateur = $repository->recupererParClePrimaire(array("login"=>$login));
 
             if(!$utilisateur) {
                 MessageFlash::ajouter("danger", "L'utilisateur n'existe pas");
@@ -311,7 +311,7 @@ class ControleurUtilisateur extends ControleurGenerique
         }
         $utilisateurRepository = new UtilisateurRepository();
         /** @var Utilisateur $utilisateur */
-        $utilisateur = $utilisateurRepository->recupererParClePrimaire($_REQUEST["login"]);
+        $utilisateur = $utilisateurRepository->recupererParClePrimaire(array("login"=>$_REQUEST["login"]));
 
         if ($utilisateur == null) {
             MessageFlash::ajouter("warning", "Login inconnu.");
