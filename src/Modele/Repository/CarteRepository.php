@@ -44,10 +44,10 @@ class CarteRepository extends AbstractRepository
      */
     public function recupererCartesUtilisateur(string $login): array
     {
-        $sql = "SELECT {$this->formatNomsColonnes()} from app_db WHERE affectationscarte @> :json";
+        $sql = "SELECT * from Cartes c left Join affecte a on c.idCarte=a.idCarte WHERE login =:login ";
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
         $values = array(
-            "json" => json_encode(["utilisateurs" => [["login" => $login]]])
+            "login" => $login
         );
         $pdoStatement->execute($values);
         $objets = [];
@@ -58,7 +58,7 @@ class CarteRepository extends AbstractRepository
     }
 
     public function getNombreCartesTotalUtilisateur(string $login) : int {
-        $query = "SELECT COUNT(*) FROM Cartes WHERE login=:login";
+        $query = "SELECT COUNT(*) FROM Cartes c JOIN affecte a ON a.idCarte = c.idCarte WHERE login=:login";
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($query);
         $pdoStatement->execute(["login" => $login]);
         $obj = $pdoStatement->fetch();

@@ -97,29 +97,29 @@ class TableauRepository extends AbstractRepository
         return $obj[0];
     }
 
-//    public function estParticipant($idTableau, $login) : bool{
-//        $sql = "SELECT login FROM participe WHERE idtableau =:idTableau";
-//        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
-//        $pdoStatement->execute(["idTableau" => $idTableau]);
-//        $obj = $pdoStatement->fetch();
-//        foreach ($obj as $item) {
-//            if ($item === $login) return true;
-//        }
-//        return false;
-//    }
-//
-//    public function estProprietaire($idTableau, $login) : bool{
-//        $sql = "SELECT login FROM tableaux WHERE idtableau =:idTableau";
-//        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
-//        $pdoStatement->execute(["idTableau" => $idTableau]);
-//        $obj = $pdoStatement->fetch();
-//        foreach ($obj as $item) {
-//            if ($item === $login) return true;
-//        }
-//        return false;
-//    }
-//
-//    public function estProprietaireOuParticipant($idTableau, $login){
-//        return $this->estParticipant($idTableau, $login) || $this->estProprietaire($idTableau, $login);
-//    }
+    public function estParticipant($idTableau, $login) : bool{
+        $sql = "SELECT login FROM participe WHERE idtableau =:idTableau";
+        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+        $pdoStatement->execute(["idTableau" => $idTableau]);
+        $obj = $pdoStatement->fetch();
+        foreach ($obj as $item) {
+            if ($item === $login) return true;
+        }
+        return false;
+    }
+
+    public function estProprietaire($idTableau, $login) : bool{
+        $sql = "SELECT login FROM tableaux WHERE idtableau =:idTableau";
+        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+        $pdoStatement->execute(["idTableau" => $idTableau]);
+        $obj = $pdoStatement->fetch();
+        foreach ($obj as $item) {
+            if ($item === $login) return true;
+        }
+        return false;
+    }
+
+    public function estParticipantOuProprietaire($idTableau, $login){
+        return $this->estParticipant($idTableau, $login) || $this->estProprietaire($idTableau, $login);
+    }
 }

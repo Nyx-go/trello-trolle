@@ -50,10 +50,10 @@ class ColonneRepository extends AbstractRepository
      * @throws Exception
      */
     //TODO: Comprendre pourquoi il jette une exception et ne fait rien
-    public function ajouter(AbstractDataObject $object): bool
-    {
-        throw new Exception("Impossible d'ajouter seulement une colonne...");
-    }
+//    public function ajouter(AbstractDataObject $object): bool
+//    {
+//        throw new Exception("Impossible d'ajouter seulement une colonne...");
+//    }
 
 
 }
