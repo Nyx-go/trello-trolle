@@ -55,5 +55,17 @@ class ColonneRepository extends AbstractRepository
 //        throw new Exception("Impossible d'ajouter seulement une colonne...");
 //    }
 
+    public function supprimer(array $valeurClePrimaire): bool
+    {
+        //suppression des cartes de la colonne
+        $carteRepository = new CarteRepository();
+        $cartes = $carteRepository->recupererCartesColonne($valeurClePrimaire['idcolonne']);
+        foreach ($cartes as $carte) {
+            $carteRepository->supprimer($carte->getNomCle());
+        }
+
+        return AbstractRepository::supprimer($valeurClePrimaire);
+    }
+
 
 }

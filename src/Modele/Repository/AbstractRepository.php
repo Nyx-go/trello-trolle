@@ -3,6 +3,7 @@
 namespace App\Trellotrolle\Modele\Repository;
 
 use App\Trellotrolle\Modele\DataObject\AbstractDataObject;
+use PDO;
 use PDOException;
 
 abstract class AbstractRepository
@@ -165,10 +166,41 @@ abstract class AbstractRepository
 
     }
 
-    public function ajouter(AbstractDataObject $object): bool
+    /** Ancienne fonction d'ajout (potentiellement à remettre en cas de problème */
+//    public function ajouter(AbstractDataObject $object): bool
+//    {
+//        $nomTable = $this->getNomTable();
+//        $nomsColonnes = $this->getNomsColonnes();
+//
+//        $insertString = '(' . join(', ', $nomsColonnes) . ')';
+//
+//        $partiesValues = array_map(function ($nomcolonne) {
+//            return ":{$nomcolonne}Tag";
+//        }, $nomsColonnes);
+//        $valueString = '(' . join(', ', $partiesValues) . ')';
+//
+//        $sql = "INSERT INTO $nomTable $insertString VALUES $valueString";
+//        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+//
+//        $objetFormatTableau = $object->formatTableau();
+//
+//        try {
+//            $pdoStatement->execute($objetFormatTableau);
+//            return true;
+//        } catch (PDOException $exception) {
+//            if ($pdoStatement->errorCode() === "23000") {
+//                return false;
+//            } else {
+//                throw $exception;
+//            }
+//        }
+//    }
+
+    public function ajouter(AbstractDataObject $object)
     {
         $nomTable = $this->getNomTable();
         $nomsColonnes = $this->getNomsColonnes();
+        $nomCle = $this->getNomCle()[0];
 
         $insertString = '(' . join(', ', $nomsColonnes) . ')';
 
@@ -177,14 +209,15 @@ abstract class AbstractRepository
         }, $nomsColonnes);
         $valueString = '(' . join(', ', $partiesValues) . ')';
 
-        $sql = "INSERT INTO $nomTable $insertString VALUES $valueString";
+        $sql = "INSERT INTO $nomTable $insertString VALUES $valueString RETURNING $nomCle";
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
 
         $objetFormatTableau = $object->formatTableau();
 
         try {
             $pdoStatement->execute($objetFormatTableau);
-            return true;
+            $result = $pdoStatement->fetch(PDO::FETCH_ASSOC);
+            return $result[$nomCle];
         } catch (PDOException $exception) {
             if ($pdoStatement->errorCode() === "23000") {
                 return false;

@@ -75,7 +75,17 @@ class CarteRepository extends AbstractRepository
         $pdoStatement->execute(["idCarte" => $idCarte]);
         $obj = $pdoStatement->fetch();
         return $obj[0];
+    }
 
+    public function supprimer(array $valeurClePrimaire): bool
+    {
+        //suppression des affectations de la carte
+        $affecteRepository = new AffecteRepository();
+        $affectations = $affecteRepository->recupererParIdCarte($valeurClePrimaire['idcarte']);
+        foreach ($affectations as $affectation) {
+            $affecteRepository->supprimer($affectation->getNomCle());
+        }
 
+        return AbstractRepository::supprimer($valeurClePrimaire);
     }
 }

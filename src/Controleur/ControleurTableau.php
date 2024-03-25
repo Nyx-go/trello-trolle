@@ -6,10 +6,13 @@ use App\Trellotrolle\Lib\ConnexionUtilisateur;
 use App\Trellotrolle\Lib\MessageFlash;
 use App\Trellotrolle\Modele\DataObject\Carte;
 use App\Trellotrolle\Modele\DataObject\Colonne;
+use App\Trellotrolle\Modele\DataObject\Participe;
 use App\Trellotrolle\Modele\DataObject\Tableau;
 use App\Trellotrolle\Modele\DataObject\Utilisateur;
+use App\Trellotrolle\Modele\Repository\AffecteRepository;
 use App\Trellotrolle\Modele\Repository\CarteRepository;
 use App\Trellotrolle\Modele\Repository\ColonneRepository;
+use App\Trellotrolle\Modele\Repository\ParticipeRepository;
 use App\Trellotrolle\Modele\Repository\TableauRepository;
 use App\Trellotrolle\Modele\Repository\UtilisateurRepository;
 use Symfony\Component\Routing\Attribute\Route;
@@ -54,7 +57,9 @@ class ControleurTableau extends ControleurGenerique
              */
             $cartes = $carteRepository->recupererCartesColonne($colonne->getIdColonne());
             foreach ($cartes as $carte) {
-                foreach ($carte->getAffectationsCarte() as $utilisateur) {
+                $affectations = (new AffecteRepository())->recupererParIdCarte($carte->getIdCarte());
+                foreach ($affectations as $affectation) {
+                    $utilisateur = (new UtilisateurRepository())->recupererParClePrimaire($affectation->getLogin());
                     if(!isset($participants[$utilisateur->getLogin()])) {
                         $participants[$utilisateur->getLogin()] = ["infos" => $utilisateur, "colonnes" => []];
                     }
@@ -67,9 +72,20 @@ class ControleurTableau extends ControleurGenerique
             $data[] = $cartes;
         }
 
+        if(ConnexionUtilisateur::estConnecte()) {
+            $estProprietaire = $tableauRepository->estProprietaire($tableau->getIdTableau(), ConnexionUtilisateur::getLoginUtilisateurConnecte());
+            $estParticipantOuProprietaire = $tableauRepository->estParticipantOuProprietaire($tableau->getIdTableau(), ConnexionUtilisateur::getLoginUtilisateurConnecte());
+        }
+        else {
+            $estProprietaire =false;
+            $estParticipantOuProprietaire = false;
+        }
+
         ControleurTableau::afficherVue('vueGenerale.php', [
             "pagetitle" => "{$tableau->getTitreTableau()}",
             "cheminVueBody" => "tableau/tableau.php",
+            "estProprietaire"=> $estProprietaire,
+            "estParticipantOuProprietaire" => $estParticipantOuProprietaire,
             "tableau" => $tableau,
             "colonnes" => $colonnes,
             "participants" => $participants,
@@ -123,89 +139,40 @@ class ControleurTableau extends ControleurGenerique
         if(!ConnexionUtilisateur::estConnecte()) {
             ControleurTableau::redirection("utilisateur", "afficherFormulaireConnexion");
         }
-        $utilisateurRepository = new UtilisateurRepository();
 
-        /**
-         * @var Utilisateur $utilisateur
-         */
-        $utilisateur = $utilisateurRepository->recupererParClePrimaire(array("login"=>ConnexionUtilisateur::getLoginUtilisateurConnecte()));
         if(!ControleurCarte::issetAndNotNull(["nomTableau"])) {
             MessageFlash::ajouter("danger", "Nom de tableau manquant");
             ControleurTableau::redirection("tableau", "afficherFormulaireCreationTableau");
         }
-        $tableauRepository = new TableauRepository();
-        $idTableau = $tableauRepository->getNextIdTableau();
-        $codeTableau = hash("sha256", $utilisateur->getLogin().$idTableau);
-
-        $colonneRepository = new ColonneRepository();
-        $idColonne1 = $colonneRepository->getNextIdColonne();
-        $nomColonne1 = "TODO";
-
-        $nomColonne2 = "DOING";
-        $idColonne2 = $idColonne1 + 1;
-
-        $nomColonne3 = "DONE";
-        $idColonne3 = $idColonne1 + 2;
-
-        $carteInitiale = "Exemple";
-        $descriptifInitial = "Exemple de carte";
-
-        $carteRepository = new CarteRepository();
-
-        $idCarte1 = $carteRepository->getNextIdCarte();
-        $idCarte2 = $idCarte1 + 1;
-        $idCarte3 = $idCarte1 + 2;
 
         $tableau = new Tableau(
-            $utilisateur,
+            ConnexionUtilisateur::getLoginUtilisateurConnecte(),
+            null,
+            null,
+            $_REQUEST["nomTableau"]
+        );
+
+        $idTableau = (new TableauRepository())->ajouter($tableau);
+        $codeTableau = hash("sha256", $utilisateur->getLogin().$idTableau); // Je ne sais pas d'où sort le "Unreachable statement", probablement un bug d'affichage
+        $tableau->setCodeTableau($codeTableau);
+        $tableau->setIdTableau($idTableau);
+        (new TableauRepository())->mettreAJour($tableau);
+
+        $colonne = new Colonne(
             $idTableau,
-            $codeTableau,
-            $_REQUEST["nomTableau"],
-            []
+            null,
+            "Colonne 1"
         );
+        $idColonne = (new ColonneRepository())->ajouter($colonne);
 
-        $carte1 = new Carte(
-            new Colonne(
-                $tableau,
-                $idColonne1,
-                $nomColonne1
-            ),
-            $idCarte1,
-            $carteInitiale,
-            $descriptifInitial,
-            "#FFFFFF",
-            []
+        $carte = new Carte(
+            $idColonne,
+            null,
+            "Carte 1",
+            "Exemple de carte",
+            "#FFFFFF"
         );
-
-        $carte2 = new Carte(
-            new Colonne(
-                $tableau,
-                $idColonne2,
-                $nomColonne2
-            ),
-            $idCarte2,
-            $carteInitiale,
-            $descriptifInitial,
-            "#FFFFFF",
-            []
-        );
-
-        $carte3 = new Carte(
-            new Colonne(
-                $tableau,
-                $idColonne3,
-                $nomColonne3
-            ),
-            $idCarte3,
-            $carteInitiale,
-            $descriptifInitial,
-            "#FFFFFF",
-            []
-        );
-
-        $carteRepository->ajouter($carte1);
-        $carteRepository->ajouter($carte2);
-        $carteRepository->ajouter($carte3);
+        (new CarteRepository())->ajouter($carte);
 
         ControleurTableau::redirection("tableau", "afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
@@ -329,10 +296,11 @@ class ControleurTableau extends ControleurGenerique
             ControleurTableau::redirection("tableau", "afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
         }
 
-        $participants = $tableau->getParticipants();
-        $participants[] = $utilisateur;
-        $tableau->setParticipants($participants);
-        $tableauRepository->mettreAJour($tableau);
+        $participe = new Participe(
+            $_REQUEST["idTableau"],
+            $utilisateur->getLogin()
+        );
+        (new ParticipeRepository())->ajouter($participe);
 
         ControleurTableau::redirection("tableau", "afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
@@ -381,16 +349,17 @@ class ControleurTableau extends ControleurGenerique
             ControleurTableau::redirection("tableau", "afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
         }
 
-        $participants = array_filter($tableau->getParticipants(), function ($u) use ($utilisateur) {return $u->getLogin() !== $utilisateur->getLogin();});
-        $tableau->setParticipants($participants);
-        $tableauRepository->mettreAJour($tableau);
+        (new ParticipeRepository())->supprimer(array($tableau->getIdTableau(), $utilisateur->getLogin()));
 
         $cartesRepository = new CarteRepository();
         $cartes = $cartesRepository->recupererCartesTableau($tableau->getIdTableau());
         foreach ($cartes as $carte) {
-            $affectations = array_filter($carte->getAffectationsCarte(), function ($u) use ($utilisateur) {return $u->getLogin() != $utilisateur->getLogin();});
-            $carte->setAffectationsCarte($affectations);
-            $cartesRepository->mettreAJour($carte);
+            $affectations = (new AffecteRepository())->recupererParIdCarte($carte->getIdCarte());
+            foreach ($affectations as $affectation) {
+                if ($affectation->getLogin() == $utilisateur->getLogin()) {
+                    (new AffecteRepository())->supprimer(array($carte->getIdCarte(), $utilisateur->getLogin()));
+                }
+            }
         }
         ControleurTableau::redirection("tableau", "afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
@@ -400,13 +369,18 @@ class ControleurTableau extends ControleurGenerique
         if(!ConnexionUtilisateur::estConnecte()) {
             ControleurTableau::redirection("utilisateur", "afficherFormulaireConnexion");
         }
-        $repository = new TableauRepository();
+        $tableauRepository = new TableauRepository();
         $login = ConnexionUtilisateur::getLoginUtilisateurConnecte();
-        $tableaux = $repository->recupererTableauxOuUtilisateurEstMembre($login);
+        $tableaux = $tableauRepository->recupererTableauxOuUtilisateurEstMembre($login);
+        $estProprietaire = [];
+        foreach ($tableaux as $tableau){
+            $estProprietaire[$tableau->getIdTableau()] = $tableauRepository->estProprietaire($tableau->getIdTableau(), $login);
+        }
         ControleurTableau::afficherVue('vueGenerale.php', [
             "pagetitle" => "Liste des tableaux de $login",
             "cheminVueBody" => "tableau/listeTableauxUtilisateur.php",
-            "tableaux" => $tableaux
+            "tableaux" => $tableaux,
+            "estProprietaire"=>$estProprietaire
         ]);
     }
 

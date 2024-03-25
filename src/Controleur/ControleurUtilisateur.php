@@ -10,8 +10,10 @@ use App\Trellotrolle\Modele\DataObject\Colonne;
 use App\Trellotrolle\Modele\DataObject\Tableau;
 use App\Trellotrolle\Modele\DataObject\Utilisateur;
 use App\Trellotrolle\Modele\HTTP\Cookie;
+use App\Trellotrolle\Modele\Repository\AffecteRepository;
 use App\Trellotrolle\Modele\Repository\CarteRepository;
 use App\Trellotrolle\Modele\Repository\ColonneRepository;
+use App\Trellotrolle\Modele\Repository\ParticipeRepository;
 use App\Trellotrolle\Modele\Repository\TableauRepository;
 use App\Trellotrolle\Modele\Repository\UtilisateurRepository;
 use Symfony\Component\Routing\Attribute\Route;
@@ -74,88 +76,14 @@ class ControleurUtilisateur extends ControleurGenerique
                 ControleurUtilisateur::redirection("utilisateur", "afficherFormulaireCreation");
             }
 
-            $tableauRepository = new TableauRepository();
-            $colonneRepository = new ColonneRepository();
-            $carteRepository = new CarteRepository();
-
             $mdpHache = MotDePasse::hacher($_REQUEST["mdp"]);
-            $idTableau = $tableauRepository->getNextIdTableau();
-            $codeTableau = hash("sha256", $_REQUEST["login"].$idTableau);
-            $tableauInitial = "Mon tableau";
 
-            $idColonne1 = $colonneRepository->getNextIdColonne();
-            $colonne1 = "TODO";
+            $utilisateurRepository = new UtilisateurRepository();
 
-            $colonne2 = "DOING";
-            $idColonne2 = $idColonne1 + 1;
+            $utilisateur = new Utilisateur($_REQUEST["login"],$_REQUEST["nom"],$_REQUEST["prenom"],$_REQUEST["email"],$mdpHache);
+            $succesSauvegarde = $utilisateurRepository->ajouter($utilisateur);
 
-            $colonne3 = "DONE";
-            $idColonne3 = $idColonne1 + 2;
-
-            $carteInitiale = "Exemple";
-            $descriptifInitial = "Exemple de carte";
-            $idCarte1 = $carteRepository->getNextIdCarte();
-            $idCarte2 = $idCarte1 + 1;
-            $idCarte3 = $idCarte1 + 2;
-
-            $tableau = new Tableau(
-                new Utilisateur(
-                    $_REQUEST["login"],
-                    $_REQUEST["nom"],
-                    $_REQUEST["prenom"],
-                    $_REQUEST["email"],
-                    $mdpHache,
-                    $_REQUEST["mdp"],
-                ),
-                $idTableau,
-                $codeTableau,
-                $tableauInitial,
-                [],
-            );
-
-            $carte1 = new Carte(
-                new Colonne(
-                    $tableau,
-                    $idColonne1,
-                    $colonne1,
-                ),
-                $idCarte1,
-                $carteInitiale,
-                $descriptifInitial,
-                "#FFFFFF",
-                []
-            );
-
-            $carte2 = new Carte(
-                new Colonne(
-                    $tableau,
-                    $idColonne2,
-                    $colonne2,
-                ),
-                $idCarte2,
-                $carteInitiale,
-                $descriptifInitial,
-                "#FFFFFF",
-                []
-            );
-
-            $carte3 = new Carte(
-                new Colonne(
-                    $tableau,
-                    $idColonne3,
-                    $colonne3,
-                ),
-                $idCarte3,
-                $carteInitiale,
-                $descriptifInitial,
-                "#FFFFFF",
-                []
-            );
-
-            $succesSauvegarde = $carteRepository->ajouter($carte1) && $carteRepository->ajouter($carte2) && $carteRepository->ajouter($carte3);
             if ($succesSauvegarde) {
-                Cookie::enregistrer("login", $_REQUEST["login"]);
-                Cookie::enregistrer("mdp", $_REQUEST["mdp"]);
                 MessageFlash::ajouter("success", "L'utilisateur a bien été créé !");
                 ControleurUtilisateur::redirection("utilisateur", "afficherFormulaireConnexion");
             }
@@ -224,31 +152,8 @@ class ControleurUtilisateur extends ControleurGenerique
             $utilisateur->setPrenom($_REQUEST["prenom"]);
             $utilisateur->setEmail($_REQUEST["email"]);
             $utilisateur->setMdpHache(MotDePasse::hacher($_REQUEST["mdp"]));
-            $utilisateur->setMdp($_REQUEST["mdp"]);
 
             $repository->mettreAJour($utilisateur);
-
-            $carteRepository = new CarteRepository();
-            $cartes = $carteRepository->recupererCartesUtilisateur($login);
-            foreach ($cartes as $carte) {
-                $participants = $carte->getAffectationsCarte();
-                $participants = array_filter($participants, function ($u) use ($login) {return $u->getLogin() !== $login;});
-                $participants[] = $utilisateur;
-                $carte->setAffectationsCarte($participants);
-                $carteRepository->mettreAJour($carte);
-            }
-
-            $tableauRepository = new TableauRepository();
-            $tableaux = $tableauRepository->recupererTableauxParticipeUtilisateur($login);
-            foreach ($tableaux as $tableau) {
-                $participants = $tableau->getParticipants();
-                $participants = array_filter($participants, function ($u) use ($login) {return $u->getLogin() !== $login;});
-                $participants[] = $utilisateur;
-                $tableau->setParticipants($participants);
-                $tableauRepository->mettreAJour($tableau);
-            }
-
-            Cookie::enregistrer("mdp", $_REQUEST["mdp"]);
 
             MessageFlash::ajouter("success", "L'utilisateur a bien été modifié !");
             ControleurUtilisateur::redirection("tableau", "afficherListeMesTableaux");
@@ -270,27 +175,8 @@ class ControleurUtilisateur extends ControleurGenerique
         }
         $login = $_REQUEST["login"];
 
-        $carteRepository = new CarteRepository();
-        $cartes = $carteRepository->recupererCartesUtilisateur($login);
-        foreach ($cartes as $carte) {
-            $participants = $carte->getAffectationsCarte();
-            $participants = array_filter($participants, function ($u) use ($login) {return $u->getLogin() !== $login;});
-            $carte->setAffectationsCarte($participants);
-            $carteRepository->mettreAJour($carte);
-        }
-
-        $tableauRepository = new TableauRepository();
-        $tableaux = $tableauRepository->recupererTableauxParticipeUtilisateur($login);
-        foreach ($tableaux as $tableau) {
-            $participants = $tableau->getParticipants();
-            $participants = array_filter($participants, function ($u) use ($login) {return $u->getLogin() !== $login;});
-            $tableau->setParticipants($participants);
-            $tableauRepository->mettreAJour($tableau);
-        }
         $repository = new UtilisateurRepository();
         $repository->supprimer($login);
-        Cookie::supprimer("login");
-        Cookie::supprimer("mdp");
         ConnexionUtilisateur::deconnecter();
         MessageFlash::ajouter("success", "Votre compte a bien été supprimé !");
         ControleurUtilisateur::redirection("utilisateur", "afficherFormulaireConnexion");
@@ -333,8 +219,6 @@ class ControleurUtilisateur extends ControleurGenerique
         }
 
         ConnexionUtilisateur::connecter($utilisateur->getLogin());
-        Cookie::enregistrer("login", $_REQUEST["login"]);
-        Cookie::enregistrer("mdp", $_REQUEST["mdp"]);
         MessageFlash::ajouter("success", "Connexion effectuée.");
         ControleurUtilisateur::redirection("tableau", "afficherListeMesTableaux");
     }

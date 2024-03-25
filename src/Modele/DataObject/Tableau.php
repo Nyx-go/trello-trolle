@@ -6,8 +6,8 @@ class Tableau extends AbstractDataObject
 {
     public function __construct(
         private string $login,
-        private int $idTableau,
-        private string $codeTableau,
+        private ?int $idTableau,
+        private ?string $codeTableau,
         private string $titreTableau,
     )
     {}

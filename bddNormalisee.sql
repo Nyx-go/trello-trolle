@@ -16,11 +16,10 @@ CREATE TABLE Utilisateurs(
 );
 
 CREATE TABLE Tableaux(
-    idTableau INT,
+    idTableau SERIAL PRIMARY KEY,
     login VARCHAR(30) NOT NULL,
     codeTableau VARCHAR(255),
     titreTableau VARCHAR (50),
-    PRIMARY KEY (idTableau),
     FOREIGN KEY (login) REFERENCES Utilisateurs
 );
 
@@ -33,7 +32,7 @@ CREATE TABLE Participe(
 );
 
 CREATE TABLE Colonnes(
-    idColonne INT,
+    idColonne SERIAL PRIMARY KEY,
     titreColonne VARCHAR(50),
     idTableau INT NOT NULL,
     PRIMARY KEY (idColonne),
@@ -41,7 +40,7 @@ CREATE TABLE Colonnes(
 );
 
 CREATE TABLE Cartes(
-    idCarte INT,
+    idCarte SERIAL PRIMARY KEY,
     titreCarte VARCHAR(50),
     descriptifCarte TEXT,
     couleurCarte VARCHAR(7),

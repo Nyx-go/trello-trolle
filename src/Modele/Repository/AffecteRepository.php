@@ -27,4 +27,14 @@ class AffecteRepository extends AbstractRepository{
     {
         return new Affecte($objetFormatTableau["idCarte"], $objetFormatTableau["login"]);
     }
+
+    public function recupererParIdCarte(int $idCarte): array
+    {
+        return $this->recupererPlusieursPar("idCarte", $idCarte);
+    }
+
+    public function recupererParLogin(string $login): array
+    {
+        return $this->recupererPlusieursPar("login", $login);
+    }
 }

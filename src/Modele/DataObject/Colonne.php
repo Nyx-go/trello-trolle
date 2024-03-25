@@ -6,7 +6,7 @@ class Colonne extends AbstractDataObject
 {
     public function __construct(
         private int    $idTableau,
-        private int    $idColonne,
+        private ?int    $idColonne,
         private string $titreColonne
     )
     {

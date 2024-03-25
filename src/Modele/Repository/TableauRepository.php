@@ -122,4 +122,28 @@ class TableauRepository extends AbstractRepository
     public function estParticipantOuProprietaire($idTableau, $login){
         return $this->estParticipant($idTableau, $login) || $this->estProprietaire($idTableau, $login);
     }
+
+    public function supprimer(array $valeurClePrimaire): bool
+    {
+        // c ok ca ou je fait de la d ???????????????????????????????
+        //genre on a le droit de creer des repository dans d'autre répository ou pas ?
+        //et logiquement il faut faire la mm pour utilisateur, carte et colonne
+        //j'ai fait la mm pour les autres du coup
+
+        //suppression des colonnes du tableau
+        $colonneRepository = new ColonneRepository();
+        $colonnes = $colonneRepository->recupererColonnesTableau($valeurClePrimaire['idtableau']);
+        foreach ($colonnes as $colonne) {
+            $colonneRepository->supprimer($colonne->getNomCle());
+        }
+
+        //suppression des participations du tableau
+        $participeRepository = new ParticipeRepository();
+        $participations = $participeRepository->recupererParLogin($valeurClePrimaire['login']);
+        foreach ($participations as $participation) {
+            $participeRepository->supprimer($participation->getNomCle());
+        }
+
+        return AbstractRepository::supprimer($valeurClePrimaire);
+    }
 }

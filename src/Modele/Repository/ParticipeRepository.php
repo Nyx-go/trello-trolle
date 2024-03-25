@@ -27,4 +27,14 @@ class ParticipeRepository extends AbstractRepository{
         return new Participe($objetFormatTableau["idTableau"], $objetFormatTableau["login"]);
     }
 
+    public function recupererParLogin(string $login): array
+    {
+        return $this->recupererPlusieursPar("login", $login);
+    }
+
+    public function recupererParIdTableau(int $idTableau): array
+    {
+        return $this->recupererPlusieursPar("idTableau", $idTableau);
+    }
+
 }
