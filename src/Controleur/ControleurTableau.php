@@ -77,7 +77,7 @@ class ControleurTableau extends ControleurGenerique
         ]);
     }
 
-    #[Route(path: '/tableau', name:'afficherTableau', methods:["GET"])]
+    #[Route(path: '/tableau/mise-a-jour', name:'afficherFormulaireMiseAJourTableau', methods:["GET"])]
     public static function afficherFormulaireMiseAJourTableau(): void {
         if(!ConnexionUtilisateur::estConnecte()) {
             ControleurTableau::redirection("utilisateur", "afficherFormulaireConnexion");
@@ -107,6 +107,7 @@ class ControleurTableau extends ControleurGenerique
         ]);
     }
 
+    #[Route(path: '/tableau/nouveau', name:'afficherFormulaireCreationTableau', methods:["GET"])]
     public static function afficherFormulaireCreationTableau(): void {
         if(!ConnexionUtilisateur::estConnecte()) {
             ControleurTableau::redirection("utilisateur", "afficherFormulaireConnexion");
@@ -117,6 +118,7 @@ class ControleurTableau extends ControleurGenerique
         ]);
     }
 
+    #[Route(path: '/tableau/nouveau', name:'creerTableau', methods:["POST"])]
     public static function creerTableau(): void {
         if(!ConnexionUtilisateur::estConnecte()) {
             ControleurTableau::redirection("utilisateur", "afficherFormulaireConnexion");
@@ -208,6 +210,7 @@ class ControleurTableau extends ControleurGenerique
         ControleurTableau::redirection("tableau", "afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
 
+    #[Route(path: '/tableau/mise-a-jour', name:'mettreAJourTableau', methods:["POST"])]
     public static function mettreAJourTableau(): void {
         if(!ConnexionUtilisateur::estConnecte()) {
             ControleurTableau::redirection("utilisateur", "afficherFormulaireConnexion");
@@ -240,6 +243,7 @@ class ControleurTableau extends ControleurGenerique
         ControleurTableau::redirection("tableau", "afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
 
+    #[Route(path: '/tableau/membres/ajout', name:'afficherFormulaireAjoutMembre', methods:["GET"])]
     public static function afficherFormulaireAjoutMembre(): void {
         if(!ConnexionUtilisateur::estConnecte()) {
             ControleurTableau::redirection("utilisateur", "afficherFormulaireConnexion");
@@ -283,6 +287,7 @@ class ControleurTableau extends ControleurGenerique
         ]);
     }
 
+    #[Route(path: '/tableau/membres/ajout', name:'ajouterMembre', methods:["POST"])]
     public static function ajouterMembre(): void {
         if(!ConnexionUtilisateur::estConnecte()) {
             ControleurTableau::redirection("utilisateur", "afficherFormulaireConnexion");
@@ -332,6 +337,7 @@ class ControleurTableau extends ControleurGenerique
         ControleurTableau::redirection("tableau", "afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
 
+    #[Route(path: '/tableau/membres/suppression', name:'supprimerMembre', methods:["GET"])]
     public static function supprimerMembre(): void {
         if(!ConnexionUtilisateur::estConnecte()) {
             ControleurTableau::redirection("utilisateur", "afficherFormulaireConnexion");
@@ -389,6 +395,7 @@ class ControleurTableau extends ControleurGenerique
         ControleurTableau::redirection("tableau", "afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
 
+    #[Route(path: '/tableaux', name:'afficherListeMesTableaux', methods:["GET"])]
     public static function afficherListeMesTableaux() : void {
         if(!ConnexionUtilisateur::estConnecte()) {
             ControleurTableau::redirection("utilisateur", "afficherFormulaireConnexion");
@@ -403,6 +410,7 @@ class ControleurTableau extends ControleurGenerique
         ]);
     }
 
+    #[Route(path: '/tableau/quitter', name:'quitterTableau', methods:["GET"])]
     public static function quitterTableau(): void {
         if(!ConnexionUtilisateur::estConnecte()) {
             ControleurTableau::redirection("utilisateur", "afficherFormulaireConnexion");
@@ -453,6 +461,7 @@ class ControleurTableau extends ControleurGenerique
         ControleurTableau::redirection("tableau", "afficherListeMesTableaux");
     }
 
+    #[Route(path: '/tableau/suppression', name:'supprimerTableau', methods:["GET"])]
     public static function supprimerTableau(): void {
         if(!ConnexionUtilisateur::estConnecte()) {
             ControleurTableau::redirection("utilisateur", "afficherFormulaireConnexion");

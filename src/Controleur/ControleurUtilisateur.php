@@ -169,7 +169,7 @@ class ControleurUtilisateur extends ControleurGenerique
         }
     }
 
-    #[Route(path: '/miseAJour', name:'afficherFormulaireMiseAJour', methods:["GET"])]
+    #[Route(path: '/utilisateur/modification', name:'afficherFormulaireMiseAJour', methods:["GET"])]
     public static function afficherFormulaireMiseAJour(): void
     {
         if(!ConnexionUtilisateur::estConnecte()) {
@@ -185,7 +185,7 @@ class ControleurUtilisateur extends ControleurGenerique
         ]);
     }
 
-    #[Route(path: '/miseAJour', name:'mettreAJour', methods:["POST"])]
+    #[Route(path: '/utilisateur/modification', name:'mettreAJour', methods:["POST"])]
     public static function mettreAJour(): void
     {
         if(!ConnexionUtilisateur::estConnecte()) {
@@ -258,7 +258,7 @@ class ControleurUtilisateur extends ControleurGenerique
         }
     }
 
-    #[Route(path: '/suppressionCompte', name:'supprimer', methods:["GET"])]
+    #[Route(path: '/suppression-compte', name:'supprimer', methods:["GET"])]
     public static function supprimer(): void
     {
         if(!ConnexionUtilisateur::estConnecte()) {
@@ -351,7 +351,7 @@ class ControleurUtilisateur extends ControleurGenerique
         ControleurUtilisateur::redirection("base", "accueil");
     }
 
-    #[Route(path: '/recuperation', name:'afficherFormulaireRecuperationCompte', methods:["GET"])]
+    #[Route(path: '/recuperation-compte', name:'afficherFormulaireRecuperationCompte', methods:["GET"])]
     public static function afficherFormulaireRecuperationCompte(): void {
         if(ConnexionUtilisateur::estConnecte()) {
             ControleurTableau::redirection("utilisateur", "afficherListeMesTableaux");
@@ -362,7 +362,7 @@ class ControleurUtilisateur extends ControleurGenerique
         ]);
     }
 
-    #[Route(path: '/recuperation', name:'recupererCompte', methods:["POST"])]
+    #[Route(path: '/recuperation-compte', name:'recupererCompte', methods:["POST"])]
     public static function recupererCompte(): void {
         if(ConnexionUtilisateur::estConnecte()) {
             ControleurTableau::redirection("utilisateur", "afficherListeMesTableaux");
