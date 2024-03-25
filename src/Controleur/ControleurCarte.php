@@ -87,6 +87,7 @@ class ControleurCarte extends ControleurGenerique
             "colonnes" => $colonnes
         ]);
     }
+    //TODO : changer l'appelle de recupérer par clé primaire
 
     //TODO : changer l'appelle de recupérer par clé primaire
     #[Route(path: '/carte/nouvelle', name:'creerCarte', methods:["POST"])]
@@ -183,6 +184,7 @@ class ControleurCarte extends ControleurGenerique
 
     #[Route(path: '/carte/mise-a-jour', name:'mettreAJourCarte', methods:["POST"])]
     //TODO : changer l'appelle à récupérer par clé primaire
+
 
     public static function mettreAJourCarte(): void {
         if(!ConnexionUtilisateur::estConnecte()) {
