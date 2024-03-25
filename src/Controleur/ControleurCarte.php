@@ -11,6 +11,7 @@ use App\Trellotrolle\Modele\Repository\CarteRepository;
 use App\Trellotrolle\Modele\Repository\ColonneRepository;
 use App\Trellotrolle\Modele\Repository\TableauRepository;
 use App\Trellotrolle\Modele\Repository\UtilisateurRepository;
+use Symfony\Component\Routing\Attribute\Route;
 
 class ControleurCarte extends ControleurGenerique
 {
@@ -19,6 +20,7 @@ class ControleurCarte extends ControleurGenerique
         parent::afficherErreur($messageErreur, "carte");
     }
 
+    #[Route(path: '/carte/suppression', name:'supprimerCarte', methods:["GET"])]
     public static function supprimerCarte(): void {
         if(!ConnexionUtilisateur::estConnecte()) {
             ControleurCarte::redirection("utilisateur", "afficherFormulaireConnexion");
@@ -53,6 +55,7 @@ class ControleurCarte extends ControleurGenerique
         }
     }
 
+    #[Route(path: '/carte/nouvelle', name:'afficherFormulaireCreationCarte', methods:["GET"])]
     public static function afficherFormulaireCreationCarte(): void {
         if(!ConnexionUtilisateur::estConnecte()) {
             ControleurCarte::redirection("utilisateur", "afficherFormulaireConnexion");
@@ -86,6 +89,7 @@ class ControleurCarte extends ControleurGenerique
     }
 
     //TODO : changer l'appelle de recupérer par clé primaire
+    #[Route(path: '/carte/nouvelle', name:'creerCarte', methods:["POST"])]
     public static function creerCarte(): void {
         if(!ConnexionUtilisateur::estConnecte()) {
             ControleurCarte::redirection("utilisateur", "afficherFormulaireConnexion");
@@ -142,6 +146,7 @@ class ControleurCarte extends ControleurGenerique
         ControleurCarte::redirection("tableau", "afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
 
+    #[Route(path: '/carte/mise-a-jour', name:'afficherFormulaireMiseAJourCarte', methods:["GET"])]
     public static function afficherFormulaireMiseAJourCarte(): void {
         if(!ConnexionUtilisateur::estConnecte()) {
             ControleurCarte::redirection("utilisateur", "afficherFormulaireConnexion");
@@ -176,6 +181,7 @@ class ControleurCarte extends ControleurGenerique
         ]);
     }
 
+    #[Route(path: '/carte/mise-a-jour', name:'mettreAJourCarte', methods:["POST"])]
     //TODO : changer l'appelle à récupérer par clé primaire
 
     public static function mettreAJourCarte(): void {

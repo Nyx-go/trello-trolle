@@ -14,6 +14,7 @@ use App\Trellotrolle\Modele\Repository\CarteRepository;
 use App\Trellotrolle\Modele\Repository\ColonneRepository;
 use App\Trellotrolle\Modele\Repository\TableauRepository;
 use App\Trellotrolle\Modele\Repository\UtilisateurRepository;
+use Symfony\Component\Routing\Attribute\Route;
 
 class ControleurUtilisateur extends ControleurGenerique
 {
@@ -22,6 +23,7 @@ class ControleurUtilisateur extends ControleurGenerique
         parent::afficherErreur($messageErreur, "utilisateur");
     }
 
+    #[Route(path: '/utilisateur', name:'afficherDetail', methods:["GET"])]
     public static function afficherDetail(): void
     {
         if(!ConnexionUtilisateur::estConnecte()) {
@@ -35,6 +37,7 @@ class ControleurUtilisateur extends ControleurGenerique
         ]);
     }
 
+    #[Route(path: '/inscription', name:'afficherFormulaireCreation', methods:["GET"])]
     public static function afficherFormulaireCreation(): void
     {
         if(ConnexionUtilisateur::estConnecte()) {
@@ -46,6 +49,7 @@ class ControleurUtilisateur extends ControleurGenerique
         ]);
     }
 
+    #[Route(path: '/inscription', name:'creerDepuisFormulaire', methods:["POST"])]
     public static function creerDepuisFormulaire(): void
     {
         if(ConnexionUtilisateur::estConnecte()) {
@@ -165,6 +169,7 @@ class ControleurUtilisateur extends ControleurGenerique
         }
     }
 
+    #[Route(path: '/utilisateur/modification', name:'afficherFormulaireMiseAJour', methods:["GET"])]
     public static function afficherFormulaireMiseAJour(): void
     {
         if(!ConnexionUtilisateur::estConnecte()) {
@@ -180,6 +185,7 @@ class ControleurUtilisateur extends ControleurGenerique
         ]);
     }
 
+    #[Route(path: '/utilisateur/modification', name:'mettreAJour', methods:["POST"])]
     public static function mettreAJour(): void
     {
         if(!ConnexionUtilisateur::estConnecte()) {
@@ -252,6 +258,7 @@ class ControleurUtilisateur extends ControleurGenerique
         }
     }
 
+    #[Route(path: '/suppression-compte', name:'supprimer', methods:["GET"])]
     public static function supprimer(): void
     {
         if(!ConnexionUtilisateur::estConnecte()) {
@@ -289,6 +296,7 @@ class ControleurUtilisateur extends ControleurGenerique
         ControleurUtilisateur::redirection("utilisateur", "afficherFormulaireConnexion");
     }
 
+    #[Route(path: '/connexion', name:'afficherFormulaireConnexion', methods:["GET"])]
     public static function afficherFormulaireConnexion(): void
     {
         if(ConnexionUtilisateur::estConnecte()) {
@@ -300,6 +308,7 @@ class ControleurUtilisateur extends ControleurGenerique
         ]);
     }
 
+    #[Route(path: '/connexion', name:'connecter', methods:["POST"])]
     public static function connecter(): void
     {
         if(ConnexionUtilisateur::estConnecte()) {
@@ -330,6 +339,7 @@ class ControleurUtilisateur extends ControleurGenerique
         ControleurUtilisateur::redirection("tableau", "afficherListeMesTableaux");
     }
 
+    #[Route(path: '/deconnexion', name:'deconnecter', methods:["GET"])]
     public static function deconnecter(): void
     {
         if (!ConnexionUtilisateur::estConnecte()) {
@@ -341,6 +351,7 @@ class ControleurUtilisateur extends ControleurGenerique
         ControleurUtilisateur::redirection("base", "accueil");
     }
 
+    #[Route(path: '/recuperation-compte', name:'afficherFormulaireRecuperationCompte', methods:["GET"])]
     public static function afficherFormulaireRecuperationCompte(): void {
         if(ConnexionUtilisateur::estConnecte()) {
             ControleurTableau::redirection("utilisateur", "afficherListeMesTableaux");
@@ -351,6 +362,7 @@ class ControleurUtilisateur extends ControleurGenerique
         ]);
     }
 
+    #[Route(path: '/recuperation-compte', name:'recupererCompte', methods:["POST"])]
     public static function recupererCompte(): void {
         if(ConnexionUtilisateur::estConnecte()) {
             ControleurTableau::redirection("utilisateur", "afficherListeMesTableaux");
