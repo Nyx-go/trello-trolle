@@ -10,6 +10,7 @@ use App\Trellotrolle\Modele\DataObject\Utilisateur;
 use App\Trellotrolle\Modele\Repository\CarteRepository;
 use App\Trellotrolle\Modele\Repository\ColonneRepository;
 use App\Trellotrolle\Modele\Repository\UtilisateurRepository;
+use Symfony\Component\Routing\Attribute\Route;
 
 class ControleurCarte extends ControleurGenerique
 {
@@ -18,6 +19,7 @@ class ControleurCarte extends ControleurGenerique
         parent::afficherErreur($messageErreur, "carte");
     }
 
+    #[Route(path: '/carte/suppression', name:'supprimerCarte', methods:["GET"])]
     public static function supprimerCarte(): void {
         if(!ConnexionUtilisateur::estConnecte()) {
             ControleurCarte::redirection("utilisateur", "afficherFormulaireConnexion");
@@ -57,6 +59,7 @@ class ControleurCarte extends ControleurGenerique
         }
     }
 
+    #[Route(path: '/carte/nouvelle', name:'afficherFormulaireCreationCarte', methods:["GET"])]
     public static function afficherFormulaireCreationCarte(): void {
         if(!ConnexionUtilisateur::estConnecte()) {
             ControleurCarte::redirection("utilisateur", "afficherFormulaireConnexion");
@@ -88,6 +91,7 @@ class ControleurCarte extends ControleurGenerique
         ]);
     }
 
+    #[Route(path: '/carte/nouvelle', name:'creerCarte', methods:["POST"])]
     public static function creerCarte(): void {
         if(!ConnexionUtilisateur::estConnecte()) {
             ControleurCarte::redirection("utilisateur", "afficherFormulaireConnexion");
@@ -146,6 +150,7 @@ class ControleurCarte extends ControleurGenerique
         ControleurCarte::redirection("tableau", "afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
 
+    #[Route(path: '/carte/mise-a-jour', name:'afficherFormulaireMiseAJourCarte', methods:["GET"])]
     public static function afficherFormulaireMiseAJourCarte(): void {
         if(!ConnexionUtilisateur::estConnecte()) {
             ControleurCarte::redirection("utilisateur", "afficherFormulaireConnexion");
@@ -178,6 +183,7 @@ class ControleurCarte extends ControleurGenerique
         ]);
     }
 
+    #[Route(path: '/carte/mise-a-jour', name:'mettreAJourCarte', methods:["POST"])]
     public static function mettreAJourCarte(): void {
         if(!ConnexionUtilisateur::estConnecte()) {
             ControleurCarte::redirection("utilisateur", "afficherFormulaireConnexion");
