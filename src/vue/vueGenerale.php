@@ -28,19 +28,19 @@ $assistantUrl = Conteneur::recupererService("assistantUrl");
     <nav>
         <ul>
             <li>
-                <a href="controleurFrontal.php?action=accueil&controleur=base">Accueil</a>
+                <a href="<?=$generateurUrl->generate('default')?>">Accueil</a>
             </li>
             <?php
             if (!ConnexionUtilisateur::estConnecte()) {
                 ?>
                 <li>
-                    <a href="controleurFrontal.php?action=afficherFormulaireConnexion&controleur=utilisateur">
-                       Connexion <img alt="login" src="../ressources/img/enter.png" >
+                    <a href="<?=$generateurUrl->generate('afficherFormulaireConnexion')?>">
+                       Connexion <img alt="login" src="<?=$assistantUrl->getAbsoluteUrl('../ressources/img/enter.png')?>" >
                     </a>
                 </li>
                 <li>
-                    <a href="controleurFrontal.php?action=afficherFormulaireCreation&controleur=utilisateur">
-                        Inscription <img alt="S'inscrire" title="S'inscrire" src="../ressources/img/add-user.png" >
+                    <a href="<?=$generateurUrl->generate('afficherFormulaireCreation')?>">
+                        Inscription <img alt="S'inscrire" title="S'inscrire" src="<?=$assistantUrl->getAbsoluteUrl('../ressources/img/add-user.png')?>" >
                     </a>
                 </li>
                 <?php
@@ -49,16 +49,16 @@ $assistantUrl = Conteneur::recupererService("assistantUrl");
                 $loginURL = rawurlencode(ConnexionUtilisateur::getLoginUtilisateurConnecte());
                 ?>
                 <li>
-                    <a href="controleurFrontal.php?action=afficherListeMesTableaux&controleur=tableau">Mes tableaux</a>
+                    <a href="<?=$generateurUrl->generate('afficherListeMesTableaux')?>">Mes tableaux</a>
                 </li>
                 <li>
-                    <a href="controleurFrontal.php?action=afficherDetail&controleur=utilisateur&login=<?= rawurlencode($loginURL) ?>">
-                       Mon compte (<span><?= $loginURL ?></span>) <img alt="logout" src="../ressources/img/user.png">
+                    <a href="<?=$generateurUrl->generate('afficherDetail')?>">
+                       Mon compte (<span><?= $loginURL ?></span>) <img alt="logout" src="<?=$assistantUrl->getAbsoluteUrl('../ressources/img/user.png')?>">
                     </a>
                 </li>
                 <li>
-                    <a href="controleurFrontal.php?action=deconnecter&controleur=utilisateur">
-                       Déconnexion <img alt="logout" src="../ressources/img/logout.png">
+                    <a href="<?=$generateurUrl->generate('deconnecter')?>">
+                       Déconnexion <img alt="logout" src="<?=$assistantUrl->getAbsoluteUrl('../ressources/img/logout.png')?>">
                     </a>
                 </li>
             <?php } ?>
