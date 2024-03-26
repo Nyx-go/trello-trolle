@@ -61,25 +61,6 @@ class Tableau extends AbstractDataObject
         $this->codeTableau = $codeTableau;
     }
 
-
-    //TODO : transférer les 2 fonctions dans UtilisateurRepository
-    public function estProprietaire(string $login): bool {
-        return $this->utilisateur->getLogin() === $login;
-    }
-
-    public function estParticipant(string $login) : bool{
-        foreach ($this->participants as $participant) {
-            if($participant->getLogin() === $login) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public function estParticipantOuProprietaire(string $login) : bool{
-        return $this->estProprietaire($login) || $this->estParticipant($login);
-    }
-
     public function formatTableau(): array
     {
         return array(

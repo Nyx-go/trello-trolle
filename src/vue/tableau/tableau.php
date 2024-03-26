@@ -136,7 +136,7 @@ use App\Trellotrolle\Modele\DataObject\Tableau;
                 </div>
                 <?php }?>
                 <?php
-                    if(ConnexionUtilisateur::estConnecte() && $tableau->estParticipantOuProprietaire(ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
+                    if(ConnexionUtilisateur::estConnecte() && $estParticipantOuProprietaire) {
                 ?>
                     <a class="ajout-tableau" href="controleurFrontal.php?action=afficherFormulaireCreationColonne&controleur=colonne&idTableau=<?=$tableau->getIdTableau()?>">
                         <div class="colonne">
