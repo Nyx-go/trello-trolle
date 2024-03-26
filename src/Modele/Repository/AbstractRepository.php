@@ -112,7 +112,7 @@ abstract class AbstractRepository
         $values = [];
         $sql = "SELECT {$this->formatNomsColonnes()} from $nomTable WHERE ";
         foreach ($clePrimaires as $cle){
-            $sql.= "$cle =: $cle"."Tag";
+            $sql.= "$cle = :$cle"."Tag";
             $values[$cle.'Tag']= $valeurClePrimaire[$cle];
         }
 
