@@ -1,0 +1,25 @@
+{% extends "base.html.twig" %}
+
+{% block page_title %}Profil de{# TODO: A modifier potentiellement par le login #}{% endblock %}
+
+{% block page_content %}
+    <p>
+        {# TODO: changer les valeurs dans les bons endroits #}
+    <form>
+        <h3>Détail du compte {{ loginHTML }}</h3>
+        <p>
+            <label for="">Nom</label>
+            <input type="text" disabled value="TODO">
+            <label for="">Prénom</label>
+            <input type="text" disabled value="TODO">
+        </p>
+        {# TODO: if vérification que le login est celui de l'utilisateur connecté #}
+        {#
+        <div class="btn btn_maj"><a href="controleurFrontal.php?action=afficherFormulaireMiseAJour&controleur=utilisateur">Mettre
+        à jour le compte</a></div>
+        <div class="btn btn_suppr"><a href="controleurFrontal.php?action=supprimer&controleur=utilisateur&login={$loginURL}">Supprimer le compte</a></div>
+        #}
+        {# fin if #}
+    </form>
+    </p>
+{% endblock %}
