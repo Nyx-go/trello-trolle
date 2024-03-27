@@ -1,0 +1,19 @@
+{% extends "base.html.twig" %}
+
+{% block page_title %}Trello-Trollé{% endblock %}
+
+{% block page_content %}
+    <div><p>Bienvenue sur <strong>Trello-Trollé</strong>!</p></div>
+    <div>
+        {% if idUtilisateurConnecte %}
+            <span><a href="controleurFrontal.php?action=afficherListeMesTableaux&controleur=tableau">Consulter mes tableaux</a></span>
+        {% else %}
+            <p>
+                Pour créer des tableaux, commencez par vous
+                <a href="controleurFrontal.php?action=afficherFormulaireConnexion&controleur=utilisateur">connecter</a>
+                ou par <a href="controleurFrontal.php?action=afficherFormulaireCreation&controleur=utilisateur">créer un
+                    compte</a>!
+            </p>
+        {% endif %}
+    </div>
+{% endblock %}
