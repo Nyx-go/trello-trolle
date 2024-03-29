@@ -5,7 +5,7 @@
 {% block page_content %}
     <div><p>Bienvenue sur <strong>Trello-Trollé</strong>!</p></div>
     <div>
-        {% if idUtilisateurConnecte %}
+        {% if estConnecte %}
             <span><a href="{{ route("afficherListeMesTableaux")}}">Consulter mes tableaux</a></span>
         {% else %}
             <p>
