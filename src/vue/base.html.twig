@@ -46,7 +46,7 @@
     <div>
         {% for type , messagesType in messagesFlash.lireTousMessages() %}
             {% for message in messagesType %}
-                <span class="alert alert-{{ type }}">{{ message }}</span>
+                <div class="alert alert-{{ type }}">{{ message }}</div>
             {% endfor %}
         {% endfor %}
     </div>
