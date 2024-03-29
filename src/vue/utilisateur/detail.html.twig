@@ -15,7 +15,7 @@
             <input type="text" disabled value="TODO">
         </p>
         {# TODO: if vérification que le login est celui de l'utilisateur connecté #}
-    {% if login == loginUser %}
+    {% if utilisateur.getLogin() == loginUser %}
         <div class="btn btn_maj"><a href="{{ route("afficherFormulaireMiseAJour") }}">Mettre
         à jour le compte</a></div>
         <div class="btn btn_suppr"><a href="{{ route("supprimer", {login1 : login })}}">Supprimer le compte</a></div>
