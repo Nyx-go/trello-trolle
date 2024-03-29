@@ -3,7 +3,6 @@
 {% block page_title %}Tableau personnels{% endblock %}
 
 {% block page_content %}
-    {# TODO: Ne pas oublier de mettre une variable tableaux et estProprietaire[] dans l'appelle de cette vue #}
     {% for tableau in tableaux %}
         <div class="ligne_tableau">
             <div>{{ tableau.getTitreTableau() }}</div>
@@ -15,7 +14,7 @@
             <div>
 
                 {% if estProprietaire[tableau.getIdTableau()] %}
-                <a href="{{ route("supprimerTableau",{idTableau : tableau.getIdTableau() })}} ">Supprimer
+                <a href="{{ route("supprimerTableau",{idTableau : tableau.getIdTableau() })}}">Supprimer
                     le tableau</a>
                 {% else %}
                 <a href="{{ route(quitterTableau, {idTableau : tableau.getIdTableau() })}}">Quitter
