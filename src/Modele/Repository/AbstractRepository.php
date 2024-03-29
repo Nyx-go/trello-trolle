@@ -134,7 +134,7 @@ abstract class AbstractRepository
 
         $sql = "DELETE FROM $nomTable WHERE ";
         foreach ($clePrimaires as $cle){
-            $sql.= "$cle =: $cle"."Tag";
+            $sql.= "$cle = :$cle"."Tag";
             $values[$cle.'Tag']= $valeurClePrimaire[$cle];
         }
         $pdoStatement = ConnexionBaseDeDonnees::getPDO()->prepare($sql);
@@ -143,7 +143,7 @@ abstract class AbstractRepository
 
         return ($deleteCount > 0);
     }
-//TODO : pb potentiel à vérifier plus tard
+//TODO : pb potentiel à vérifier plus tard + return bool succes ou non
     public function mettreAJour(AbstractDataObject $object): void
     {
         $nomTable = $this->getNomTable();
