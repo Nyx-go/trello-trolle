@@ -161,7 +161,7 @@ class ControleurUtilisateur extends ControleurGenerique
         }
 
         $repository = new UtilisateurRepository();
-        $repository->supprimer($login);
+        $repository->supprimer($login1);
         ConnexionUtilisateur::deconnecter();
         MessageFlash::ajouter("success", "Votre compte a bien été supprimé !");
         return ControleurUtilisateur::redirection("afficherFormulaireConnexion");
