@@ -15,7 +15,7 @@
             <li>
                 <a href="{{ route("default") }}">Accueil</a>
             </li>
-            {% if idUtilisateurConnecte %}
+            {% if loginUser %}
                 <li>
                     <a href="{{ route("afficherListeMesTableaux") }}">Mes tableaux</a>
                 </li>
