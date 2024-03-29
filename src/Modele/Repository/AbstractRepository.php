@@ -157,7 +157,7 @@ abstract class AbstractRepository
 
         $sql = "UPDATE $nomTable SET $setString WHERE ";
         foreach ($clePrimaires as $cle){
-            $sql.= "$cle =: $cle"."Tag";
+            $sql.= "$cle = :$cle"."Tag";
         }
         $req_prep = ConnexionBaseDeDonnees::getPDO()->prepare($sql);
 
