@@ -52,9 +52,7 @@ class ControleurCarte extends ControleurGenerique
         if ($succesSuppression) {
             MessageFlash::ajouter("success", "La carte a bien été supprimée !");
         }
-        else {
-            return ControleurCarte::redirection("afficherListeMesTableaux");
-        }
+        return ControleurCarte::redirection("afficherListeMesTableaux");
     }
 
     #[Route(path: '/carte/nouvelle', name:'afficherFormulaireCreationCarte', methods:["GET"])]
@@ -89,9 +87,7 @@ class ControleurCarte extends ControleurGenerique
             "colonnes" => $colonnes
         ]);
     }
-    //TODO : changer l'appelle de recupérer par clé primaire
 
-    //TODO : changer l'appelle de recupérer par clé primaire
     #[Route(path: '/carte/nouvelle', name:'creerCarte', methods:["POST"])]
     public static function creerCarte(): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
@@ -185,9 +181,6 @@ class ControleurCarte extends ControleurGenerique
     }
 
     #[Route(path: '/carte/mise-a-jour', name:'mettreAJourCarte', methods:["POST"])]
-    //TODO : changer l'appelle à récupérer par clé primaire
-
-
     public static function mettreAJourCarte(): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurCarte::redirection("afficherFormulaireConnexion");

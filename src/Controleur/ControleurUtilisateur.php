@@ -24,10 +24,8 @@ class ControleurUtilisateur extends ControleurGenerique
             return ControleurTableau::redirection("afficherFormulaireConnexion");
         }
         $utilisateur = (new UtilisateurRepository())->recupererParClePrimaire(array("login"=>ConnexionUtilisateur::getLoginUtilisateurConnecte()));
-        return ControleurUtilisateur::afficherVue('vueGenerale.php', [
-            "utilisateur" => $utilisateur,
-            "pagetitle" => "Détail de l'utilisateur {$utilisateur->getLogin()}",
-            "cheminVueBody" => "utilisateur/detail.php"
+        return ControleurUtilisateur::afficherTwig('utilisateur/detail.html.twig', [
+            "utilisateur" => $utilisateur
         ]);
     }
 
@@ -37,10 +35,8 @@ class ControleurUtilisateur extends ControleurGenerique
         if(ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherListeMesTableaux");
         }
-        return ControleurUtilisateur::afficherVue('vueGenerale.php', [
-            "pagetitle" => "Création d'un utilisateur",
-            "cheminVueBody" => "utilisateur/formulaireCreation.php"
-        ]);
+        return ControleurUtilisateur::afficherTwig(
+            "utilisateur/formulaireCreation.html.twig");
     }
 
     #[Route(path: '/inscription', name:'creerDepuisFormulaire', methods:["POST"])]
@@ -98,9 +94,7 @@ class ControleurUtilisateur extends ControleurGenerique
         $login = ConnexionUtilisateur::getLoginUtilisateurConnecte();
         $repository = new UtilisateurRepository();
         $utilisateur = $repository->recupererParClePrimaire(array("login"=>$login));
-        return ControleurUtilisateur::afficherVue('vueGenerale.php', [
-            "pagetitle" => "Mise à jour du profil",
-            "cheminVueBody" => "utilisateur/formulaireMiseAJour.php",
+        return ControleurUtilisateur::afficherTwig("utilisateur/formulaireMiseAJour.html.twig",[
             "utilisateur" => $utilisateur,
         ]);
     }
@@ -179,10 +173,9 @@ class ControleurUtilisateur extends ControleurGenerique
         if(ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherListeMesTableaux");
         }
-        return ControleurUtilisateur::afficherVue('vueGenerale.php', [
-            "pagetitle" => "Formulaire de connexion",
-            "cheminVueBody" => "utilisateur/formulaireConnexion.php"
-        ]);
+        return ControleurUtilisateur::afficherTwig(
+            "utilisateur/formulaireConnexion.html.twig"
+        );
     }
 
     #[Route(path: '/connexion', name:'connecter', methods:["POST"])]
@@ -231,10 +224,9 @@ class ControleurUtilisateur extends ControleurGenerique
         if(ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherListeMesTableaux");
         }
-        return ControleurUtilisateur::afficherVue('vueGenerale.php', [
-            "pagetitle" => "Récupérer mon compte",
-            "cheminVueBody" => "utilisateur/resetCompte.php"
-        ]);
+        return ControleurUtilisateur::afficherTwig(
+            "utilisateur/resetCompte.html.twig"
+        );
     }
 
     #[Route(path: '/recuperation-compte', name:'recupererCompte', methods:["POST"])]
@@ -252,9 +244,8 @@ class ControleurUtilisateur extends ControleurGenerique
             MessageFlash::ajouter("warning", "Aucun compte associé à cette adresse email");
             return ControleurUtilisateur::redirection("afficherFormulaireConnexion");
         }
-        return ControleurUtilisateur::afficherVue('vueGenerale.php', [
-            "pagetitle" => "Récupérer mon compte",
-            "cheminVueBody" => "utilisateur/resultatResetCompte.php",
+        return ControleurUtilisateur::afficherTwig(
+            "utilisateur/resultatResetCompte.html.twig",[
             "utilisateurs" => $utilisateurs
         ]);
     }

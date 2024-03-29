@@ -7,7 +7,7 @@
         {# TODO: changer les valeurs dans les bons endroits #}
     <form>
     {# TODO: voire car variable pas la #}
-        <h3>Détail du compte {{ login }}</h3>
+        <h3>Détail du compte {{ utilisateur.getLogin() }}</h3>
         <p>
             <label for="">Nom</label>
             <input type="text" disabled value="TODO">
@@ -18,7 +18,7 @@
     {% if login == loginUser %}
         <div class="btn btn_maj"><a href="{{ route("afficherFormulaireMiseAJour") }}">Mettre
         à jour le compte</a></div>
-        <div class="btn btn_suppr"><a href="{{ route("supprimer", {login1 : login })}} controleurFrontal.php?action=supprimer&controleur=utilisateur&login={$loginURL}">Supprimer le compte</a></div>
+        <div class="btn btn_suppr"><a href="{{ route("supprimer", {login1 : login })}}">Supprimer le compte</a></div>
         {% endif %}
     </form>
     </p>

@@ -81,9 +81,7 @@ class ControleurTableau extends ControleurGenerique
             $estParticipantOuProprietaire = false;
         }
 
-        return ControleurTableau::afficherVue('vueGenerale.php', [
-            "pagetitle" => "{$tableau->getTitreTableau()}",
-            "cheminVueBody" => "tableau/tableau.php",
+        return ControleurTableau::afficherTwig("tableau/tableau.html.twig",[
             "estProprietaire"=> $estProprietaire,
             "estParticipantOuProprietaire" => $estParticipantOuProprietaire,
             "tableau" => $tableau,
@@ -378,10 +376,8 @@ class ControleurTableau extends ControleurGenerique
         foreach ($tableaux as $tableau){
             $estProprietaire[$tableau->getIdTableau()] = $tableauRepository->estProprietaire($tableau->getIdTableau(), $login);
         }
-        return ControleurTableau::afficherVue('vueGenerale.php', [
-            "pagetitle" => "Liste des tableaux de $login",
-            "cheminVueBody" => "tableau/listeTableauxUtilisateur.php",
-            "tableaux" => $tableaux,
+        return ControleurTableau::afficherTwig("tableau/listeTableauxUtilisateur.html.twig",
+            ["tableaux" => $tableaux,
             "estProprietaire"=>$estProprietaire
         ]);
     }
