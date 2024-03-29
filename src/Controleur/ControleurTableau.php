@@ -376,9 +376,10 @@ class ControleurTableau extends ControleurGenerique
         foreach ($tableaux as $tableau){
             $estProprietaire[$tableau->getIdTableau()] = $tableauRepository->estProprietaire($tableau->getIdTableau(), $login);
         }
-        return ControleurTableau::afficherTwig("tableau/listeTableauxUtilisateur.html.twig",
-            ["tableaux" => $tableaux,
-            "estProprietaire"=>$estProprietaire
+        return ControleurTableau::afficherTwig("tableau/listeTableauxUtilisateur.html.twig", [
+            "tableaux" => $tableaux,
+            "estProprietaire"=>$estProprietaire,
+            "login"=>$login
         ]);
     }
 
