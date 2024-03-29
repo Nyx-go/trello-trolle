@@ -10,6 +10,6 @@ class ControleurBase extends ControleurGenerique
     #[Route(path: '/', name:'default', methods:["GET"])]
     public static function accueil(): Response
     {
-        return self::afficherTwig("base.html.twig",);
+        return self::afficherTwig("accueil.html.twig",);
     }
 }
