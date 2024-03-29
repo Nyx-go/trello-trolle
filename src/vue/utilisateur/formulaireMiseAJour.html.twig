@@ -24,12 +24,14 @@
                     <label  for="email_id">Email&#42;</label>
                     <input  type="email" value="{{ utilisateur.getEmail() }}" maxlength="255" placeholder="rlebreton@yopmail.com" name="email" id="email_id" required>
                 </p>
-                <p >
-                    <label  for="mdpAncien_id">Ancien mot de passe&#42;</label>
-                    <input  type="password" value="{{ utilisateur.getPassword() }}" placeholder="" name="mdpAncien" id="mdpAncien_id" required>
-                </p>
 
-                <input type='hidden' name='login' value='{{ utilisateur.getLogin }}'>
+                {# <p>
+                <label for="mdpAncien_id">Ancien mot de passe&#42;</label>
+                <input type="password" value="{{ utilisateur.getPassword() }}" placeholder="" name="mdpAncien"
+                       id="mdpAncien_id" required>
+            </p>#}
+
+                <input type='hidden' name='login' value='{{ utilisateur.getLogin() }}'>
                 <input type='hidden' name='action' value='mettreAJour'>
                 <input type='hidden' name='controleur' value='utilisateur'>
                 <p>
