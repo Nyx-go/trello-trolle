@@ -36,36 +36,4 @@ class ColonneRepository extends AbstractRepository
     public function getNextIdColonne() : int {
         return $this->getNextId("idcolonne");
     }
-
-    //TODO: modifier et vérifier la requête
-    public function getNombreColonnesTotalTableau(int $idTableau) : int {
-        $query = "SELECT COUNT(idcolonne) FROM colonnes WHERE idtableau=:idTableau";
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($query);
-        $pdoStatement->execute(["idTableau" => $idTableau]);
-        $obj = $pdoStatement->fetch();
-        return $obj[0];
-    }
-
-    /**
-     * @throws Exception
-     */
-    //TODO: Comprendre pourquoi il jette une exception et ne fait rien
-//    public function ajouter(AbstractDataObject $object): bool
-//    {
-//        throw new Exception("Impossible d'ajouter seulement une colonne...");
-//    }
-
-    public function supprimer(array $valeurClePrimaire): bool
-    {
-        //suppression des cartes de la colonne
-        $carteRepository = new CarteRepository();
-        $cartes = $carteRepository->recupererCartesColonne($valeurClePrimaire['idcolonne']);
-        foreach ($cartes as $carte) {
-            $carteRepository->supprimer($carte->getNomCle());
-        }
-
-        return AbstractRepository::supprimer($valeurClePrimaire);
-    }
-
-
 }
