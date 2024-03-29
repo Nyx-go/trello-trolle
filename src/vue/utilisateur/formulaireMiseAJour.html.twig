@@ -10,26 +10,26 @@
                 <h3>Mise à jour du profil</h3>
                 <p >
                     <label  for="login_id">Login&#42;</label>
-                    <input  type="text" value="{#<?= $loginHTML ?>#}" minlength="3" maxlength="30" placeholder="Ex : rlebreton" name="login" id="login_id" readonly>
+                    <input  type="text" value="{{ login }}" minlength="3" maxlength="30" placeholder="Ex : rlebreton" name="login" id="login_id" readonly>
                 </p>
                 <p >
                     <label  for="prenom_id">Prenom&#42;</label>
-                    <input  type="text" value="{#<?= $prenomHTML ?>#}" minlength="1" maxlength="30" placeholder="Ex : Romain" name="prenom" id="prenom_id" required>
+                    <input  type="text" value="{{ prenom }}" minlength="1" maxlength="30" placeholder="Ex : Romain" name="prenom" id="prenom_id" required>
                 </p>
                 <p >
                     <label  for="nom_id">Nom&#42;</label>
-                    <input  type="text" value="{#<?= $nomHTML ?>#}" minlength="1" maxlength="30"  placeholder="Ex : Lebreton" name="nom" id="nom_id" required>
+                    <input  type="text" value="{{ nom }}" minlength="1" maxlength="30"  placeholder="Ex : Lebreton" name="nom" id="nom_id" required>
                 </p>
                 <p >
                     <label  for="email_id">Email&#42;</label>
-                    <input  type="email" value="{#<?= $emailHTML ?>#}" maxlength="255" placeholder="rlebreton@yopmail.com" name="email" id="email_id" required>
+                    <input  type="email" value="{{ email }}" maxlength="255" placeholder="rlebreton@yopmail.com" name="email" id="email_id" required>
                 </p>
                 <p >
                     <label  for="mdpAncien_id">Ancien mot de passe&#42;</label>
-                    <input  type="password" value="{#<?= $passwordHTML ?>#}" placeholder="" name="mdpAncien" id="mdpAncien_id" required>
+                    <input  type="password" value="{{ password }}" placeholder="" name="mdpAncien" id="mdpAncien_id" required>
                 </p>
 
-                <input type='hidden' name='login' value='{#<?= $loginHTML ?>#}'>
+                <input type='hidden' name='login' value='{{ login }}'>
                 <input type='hidden' name='action' value='mettreAJour'>
                 <input type='hidden' name='controleur' value='utilisateur'>
                 <p>

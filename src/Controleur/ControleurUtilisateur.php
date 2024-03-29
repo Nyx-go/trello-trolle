@@ -156,7 +156,7 @@ class ControleurUtilisateur extends ControleurGenerique
     }
 
     #[Route(path: '/suppression-compte', name:'supprimer', methods:["GET"])]
-    public static function supprimer(): Response
+    public static function supprimer($login1): Response
     {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherFormulaireConnexion");
@@ -165,7 +165,6 @@ class ControleurUtilisateur extends ControleurGenerique
             MessageFlash::ajouter("warning", "Login manquant");
             return ControleurUtilisateur::redirection("afficherDetail");
         }
-        $login = $_REQUEST["login"];
 
         $repository = new UtilisateurRepository();
         $repository->supprimer($login);

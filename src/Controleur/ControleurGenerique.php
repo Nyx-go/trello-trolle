@@ -7,6 +7,7 @@ use App\Trellotrolle\Lib\MessageFlash;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGenerator;
+use Twig\Environment;
 
 class ControleurGenerique {
 
@@ -50,5 +51,13 @@ class ControleurGenerique {
             }
         }
         return true;
+    }
+
+    protected static function afficherTwig(string $cheminVue, array $parametres = []): Response
+    {
+        /** @var Environment $twig */
+        $twig = Conteneur::recupererService("twig");
+        $corpsReponse = $twig->render($cheminVue, $parametres);
+        return new Response($corpsReponse);
     }
 }

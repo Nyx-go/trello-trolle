@@ -10,9 +10,6 @@ class ControleurBase extends ControleurGenerique
     #[Route(path: '/', name:'default', methods:["GET"])]
     public static function accueil(): Response
     {
-        return ControleurBase::afficherVue('vueGenerale.php', [
-            "pagetitle" => "Accueil",
-            "cheminVueBody" => "base/accueil.php"
-        ]);
+        return self::afficherTwig("base.html.twig",);
     }
 }
