@@ -3,5 +3,25 @@
 {% block page_title %}Tableau personnels{% endblock %}
 
 {% block page_content %}
-    {# TODO: la liste avec un for #}
+    {# TODO: Ne pas oublier de mettre une variable tableaux et estProprietaire[] dans l'appelle de cette vue #}
+    {% for tableaux as tableau %}
+        <div class="ligne_tableau">
+            <div>{{ tableau.getTitreTableau() }}/div>
+            <div>
+                <a href="{{ route(afficherTableau, { code : tableau->getCodeTableau()}) }}">
+                    Modifier
+                </a>
+            </div>
+            <div>
+
+                {% if estProprietaire[tableau.getIdTableau()] %}
+                <a href="{{ route("supprimerTableau",{idTableau : tableau.getIdTableau() })}} ">Supprimer
+                    le tableau</a>
+                {% else %}
+                <a href=" {{ route(quitterTableau, {idTableau : tableau.getIdTableau() })}}">Quitter
+                    le tableau</a>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
 {% endblock %}
