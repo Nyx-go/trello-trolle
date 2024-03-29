@@ -6,12 +6,12 @@
     <div><p>Bienvenue sur <strong>Trello-Trollé</strong>!</p></div>
     <div>
         {% if idUtilisateurConnecte %}
-            <span><a href="controleurFrontal.php?action=afficherListeMesTableaux&controleur=tableau">Consulter mes tableaux</a></span>
+            <span><a href="{{ route("afficherListeMesTableaux")}}">Consulter mes tableaux</a></span>
         {% else %}
             <p>
                 Pour créer des tableaux, commencez par vous
-                <a href="controleurFrontal.php?action=afficherFormulaireConnexion&controleur=utilisateur">connecter</a>
-                ou par <a href="controleurFrontal.php?action=afficherFormulaireCreation&controleur=utilisateur">créer un
+                <a href="{{ route("afficherFormulaireConnexion") }}">connecter</a>
+                ou par <a href="{{ route("afficherFormulaireCreation") }}">créer un
                     compte</a>!
             </p>
         {% endif %}

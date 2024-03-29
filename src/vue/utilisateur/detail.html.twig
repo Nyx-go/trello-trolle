@@ -1,11 +1,12 @@
 {% extends "base.html.twig" %}
 
-{% block page_title %}Profil de{# TODO: A modifier potentiellement par le login #}{% endblock %}
+{% block page_title %}Profil de {{ loginUser }}{% endblock %}
 
 {% block page_content %}
     <p>
         {# TODO: changer les valeurs dans les bons endroits #}
     <form>
+    {# TODO: voire car variable pas la #}
         <h3>Détail du compte {{ loginHTML }}</h3>
         <p>
             <label for="">Nom</label>
