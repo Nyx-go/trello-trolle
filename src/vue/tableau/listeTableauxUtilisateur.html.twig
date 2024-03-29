@@ -3,26 +3,29 @@
 {% block page_title %}Tableau personnels{% endblock %}
 
 {% block page_content %}
-    {% for tableau in tableaux %}
-        <div class="ligne_tableau">
-            <div>{{ tableau.getTitreTableau() }}</div>
-            <div>
-                <a href="{{ route(afficherTableau, { code : tableau->getCodeTableau()}) }}">
-                    Modifier
-                </a>
-            </div>
-            <div>
+    <h3>Mes tableaux</h3>
+    <div class="tableaux">
+        {% for tableau in tableaux %}
+            <div class="ligne_tableau">
+                <div>{{ tableau.getTitreTableau() }}</div>
+                <div>
+                    <a href="{{ route(afficherTableau, { code : tableau.getCodeTableau()}) }}">
+                        Modifier
+                    </a>
+                </div>
+                <div>
 
-                {% if estProprietaire[tableau.getIdTableau()] %}
-                <a href="{{ route("supprimerTableau",{idTableau : tableau.getIdTableau() })}}">Supprimer
-                    le tableau</a>
-                {% else %}
-                <a href="{{ route(quitterTableau, {idTableau : tableau.getIdTableau() })}}">Quitter
-                    le tableau</a>
-                {% endif %}
+                    {% if estProprietaire[tableau.getIdTableau()] %}
+                    <a href="{{ route("supprimerTableau",{idTableau : tableau.getIdTableau() })}}">Supprimer
+                        le tableau</a>
+                    {% else %}
+                    <a href="{{ route(quitterTableau, {idTableau : tableau.getIdTableau() })}}">Quitter
+                        le tableau</a>
+                    {% endif %}
+                </div>
             </div>
-        </div>
-        {% else %}
-            <div> <p> Vous n'avez pas de tableaux </p> </div>
-    {% endfor %}
+            {% else %}
+                <div> <p> Vous n'avez pas de tableaux </p> </div>
+        {% endfor %}
+    </div>
 {% endblock %}
