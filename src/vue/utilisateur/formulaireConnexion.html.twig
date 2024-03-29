@@ -5,7 +5,7 @@
 {% block page_content %}
     {# TODO: vérifier pourquoi on récupère par cookie le login, est ce en cas d'erreur pour pas réécrire? #}
     <div>
-        <form method="post" action="controleurFrontal.php">
+        <form method="post" action="{{ route("default") }}">
             <fieldset>
                 <h3>Connexion</h3>
                 <p>
@@ -18,7 +18,7 @@
                     <input type="password" value="{# <?= Cookie::contient("mdp") ? Cookie::lire("mdp") : ""?> #}"
                            placeholder="" name="mdp" id="mdp_id" required>
                 </p>
-                <a href="controleurFrontal.php?action=afficherFormulaireRecuperationCompte&controleur=utilisateur">Login
+                <a href="{{ route("afficherFormulaireRecuperationCompte") }}">Login
                     et/ou mot de passe oubliés ?</a>
                 <input type='hidden' name='action' value='connecter'>
                 <input type='hidden' name='controleur' value='utilisateur'>

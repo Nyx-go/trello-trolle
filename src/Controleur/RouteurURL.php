@@ -2,7 +2,9 @@
 namespace App\Trellotrolle\Controleur;
 
 use App\Trellotrolle\Lib\AttributeRouteControllerLoader;
+use App\Trellotrolle\Lib\ConnexionUtilisateur;
 use App\Trellotrolle\Lib\Conteneur;
+use App\Trellotrolle\Lib\MessageFlash;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -15,6 +17,9 @@ use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Loader\AttributeDirectoryLoader;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
+use Twig\TwigFunction;
 
 class RouteurURL
 {
@@ -34,27 +39,23 @@ class RouteurURL
 
         Conteneur::ajouterService("generateurUrl", $generateurUrl);
         Conteneur::ajouterService("assistantUrl", $assistantUrl);
-//
-//        $twigLoader = new FilesystemLoader(__DIR__ . '/../vue/');
-//        $twig = new Environment(
-//            $twigLoader,
-//            [
-//                'autoescape' => 'html',
-//                'strict_variables' => true
-//            ]
-//        );
-//
-//        $callableRoute = $generateurUrl->generate(...);
-//        $twig->addFunction(new TwigFunction("route", $callableRoute));
-//
-//        $callableAsset = $assistantUrl->getAbsoluteUrl(...);
-//        $twig->addFunction(new TwigFunction("asset", $callableAsset));
-//
-//        $twig->addGlobal('userId', ConnexionUtilisateur::getIdUtilisateurConnecte());
-//        $twig->addGlobal('userEmail', ConnexionUtilisateur::getIdUtilisateurConnecte());
-//        $twig->addGlobal('messagesFlash', new MessageFlash());
-//
-//        Conteneur::ajouterService("twig", $twig);
+
+        $twigLoader = new FilesystemLoader(__DIR__ . '/../vue/');
+        $twig = new Environment(
+            $twigLoader,
+            [
+                'autoescape' => 'html',
+                'strict_variables' => true
+            ]
+        );
+
+        $twig->addFunction(new TwigFunction("route",$generateurUrl->generate(...)));
+        $twig->addFunction(new TwigFunction("asset",$assistantUrl->getAbsoluteUrl(...)));
+        $twig->addGlobal('loginUser', ConnexionUtilisateur::getLoginUtilisateurConnecte());
+//        $twig->addGlobal('userEmail', ConnexionUtilisateur::getLoginUtilisateurConnecte());
+        $twig->addGlobal('messagesFlash', new MessageFlash());
+
+        Conteneur::ajouterService("twig", $twig);
 
         try {
             $associateurUrl = new UrlMatcher($routes, $contexteRequete);
