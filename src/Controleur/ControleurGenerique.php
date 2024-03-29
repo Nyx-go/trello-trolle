@@ -29,7 +29,7 @@ class ControleurGenerique {
         $generateurUrl = Conteneur::recupererService("generateurUrl");
         $url = $generateurUrl->generate($route, $parametres);
 
-        return new RedirectResponse($url, Response::HTTP_FOUND);
+        return new RedirectResponse($url);
     }
 
     public static function afficherErreur($messageErreur = "", $statusCode = 400): Response
