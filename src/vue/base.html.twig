@@ -15,7 +15,7 @@
             <li>
                 <a href="{{ route("default") }}">Accueil</a>
             </li>
-            {% if estConnecte %}
+            {# if estConnecte #}
                 <li>
                     <a href="{{ route("afficherListeMesTableaux") }}">Mes tableaux</a>
                 </li>
@@ -29,7 +29,7 @@
                         Déconnexion <img alt="logout" src="{{ asset("../ressources/img/logout.png") }}">
                     </a>
                 </li>
-            {% else %}
+            {# else #}
                 <li>
                     <a href="{{ route("afficherFormulaireConnexion") }}">
                         Connexion <img alt="login" src="{{ asset("../ressources/img/enter.png") }}" >
@@ -40,7 +40,7 @@
                         Inscription <img alt="S'inscrire" title="S'inscrire" src="{{ asset("../ressources/img/add-user.png") }}" >
                     </a>
                 </li>
-            {% endif %}
+            {# endif #}
         </ul>
     </nav>
     <div>
