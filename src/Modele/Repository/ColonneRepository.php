@@ -11,12 +11,12 @@ class ColonneRepository extends AbstractRepository
 
     protected function getNomTable(): string
     {
-        return "colonnes";
+        return "Colonnes";
     }
 
-    protected function getNomCle(): string
+    protected function getNomCle(): array
     {
-        return "idcolonne";
+        return array("idcolonne");
     }
 
     protected function getNomsColonnes(): array
@@ -50,9 +50,21 @@ class ColonneRepository extends AbstractRepository
      * @throws Exception
      */
     //TODO: Comprendre pourquoi il jette une exception et ne fait rien
-    public function ajouter(AbstractDataObject $object): bool
+//    public function ajouter(AbstractDataObject $object): bool
+//    {
+//        throw new Exception("Impossible d'ajouter seulement une colonne...");
+//    }
+
+    public function supprimer(array $valeurClePrimaire): bool
     {
-        throw new Exception("Impossible d'ajouter seulement une colonne...");
+        //suppression des cartes de la colonne
+        $carteRepository = new CarteRepository();
+        $cartes = $carteRepository->recupererCartesColonne($valeurClePrimaire['idcolonne']);
+        foreach ($cartes as $carte) {
+            $carteRepository->supprimer($carte->getNomCle());
+        }
+
+        return AbstractRepository::supprimer($valeurClePrimaire);
     }
 
 

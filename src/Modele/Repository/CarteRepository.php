@@ -11,12 +11,12 @@ class CarteRepository extends AbstractRepository
 
     protected function getNomTable(): string
     {
-        return "app_db";
+        return "Cartes";
     }
 
-    protected function getNomCle(): string
+    protected function getNomCle(): array
     {
-        return "idcarte";
+        return array("idcarte");
     }
 
     protected function getNomsColonnes(): array
@@ -44,10 +44,10 @@ class CarteRepository extends AbstractRepository
      */
     public function recupererCartesUtilisateur(string $login): array
     {
-        $sql = "SELECT {$this->formatNomsColonnes()} from app_db WHERE affectationscarte @> :json";
+        $sql = "SELECT * from Cartes c left Join affecte a on c.idCarte=a.idCarte WHERE login =:login ";
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
         $values = array(
-            "json" => json_encode(["utilisateurs" => [["login" => $login]]])
+            "login" => $login
         );
         $pdoStatement->execute($values);
         $objets = [];
@@ -58,7 +58,7 @@ class CarteRepository extends AbstractRepository
     }
 
     public function getNombreCartesTotalUtilisateur(string $login) : int {
-        $query = "SELECT COUNT(*) FROM app_db WHERE login=:login";
+        $query = "SELECT COUNT(*) FROM Cartes c JOIN affecte a ON a.idCarte = c.idCarte WHERE login=:login";
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($query);
         $pdoStatement->execute(["login" => $login]);
         $obj = $pdoStatement->fetch();
@@ -67,5 +67,25 @@ class CarteRepository extends AbstractRepository
 
     public function getNextIdCarte() : int {
         return $this->getNextId("idcarte");
+    }
+
+    public function getTableauByIdCarte($idCarte){
+        $sql = "SELECT idTableau FROM cartes c JOIN colonnes co ON c.idCarte = co.idCarte WHERE c.idCarte =:idcarte;";
+        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+        $pdoStatement->execute(["idCarte" => $idCarte]);
+        $obj = $pdoStatement->fetch();
+        return $obj[0];
+    }
+
+    public function supprimer(array $valeurClePrimaire): bool
+    {
+        //suppression des affectations de la carte
+        $affecteRepository = new AffecteRepository();
+        $affectations = $affecteRepository->recupererParIdCarte($valeurClePrimaire['idcarte']);
+        foreach ($affectations as $affectation) {
+            $affecteRepository->supprimer($affectation->getNomCle());
+        }
+
+        return AbstractRepository::supprimer($valeurClePrimaire);
     }
 }

@@ -12,11 +12,10 @@ class AffecteRepository extends AbstractRepository{
         return "Affecte";
     }
 
-    //TODO : Mettre les clés primaires une fois que la signature est changée
 
-    protected function getNomCle(): string
+    protected function getNomCle(): array
     {
-        return "";
+        return array("idCarte", "login");
     }
 
     protected function getNomsColonnes(): array
@@ -27,5 +26,15 @@ class AffecteRepository extends AbstractRepository{
     protected function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
     {
         return new Affecte($objetFormatTableau["idCarte"], $objetFormatTableau["login"]);
+    }
+
+    public function recupererParIdCarte(int $idCarte): array
+    {
+        return $this->recupererPlusieursPar("idCarte", $idCarte);
+    }
+
+    public function recupererParLogin(string $login): array
+    {
+        return $this->recupererPlusieursPar("login", $login);
     }
 }

@@ -3,12 +3,13 @@
 namespace App\Trellotrolle\Modele\Repository;
 
 use App\Trellotrolle\Modele\DataObject\AbstractDataObject;
+use PDO;
 use PDOException;
 
 abstract class AbstractRepository
 {
     protected abstract function getNomTable(): string;
-    protected abstract function getNomCle(): string;
+    protected abstract function getNomCle(): array;
     protected abstract function getNomsColonnes(): array;
     protected abstract function construireDepuisTableau(array $objetFormatTableau) : AbstractDataObject;
 
@@ -91,9 +92,9 @@ abstract class AbstractRepository
     protected function recupererPar(string $nomAttribut, $valeur): ?AbstractDataObject
     {
         $nomTable = $this->getNomTable();
-        $sql = "SELECT DISTINCT {$this->formatNomsColonnes()} from $nomTable WHERE $nomAttribut='$valeur'";
+        $sql = "SELECT DISTINCT {$this->formatNomsColonnes()} from $nomTable WHERE $nomAttribut=:valeur";
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
-        $pdoStatement->execute();
+        $pdoStatement->execute(["valeur"=>$valeur]);
         $objetFormatTableau = $pdoStatement->fetch();
 
         if ($objetFormatTableau !== false) {
@@ -102,35 +103,62 @@ abstract class AbstractRepository
         return null;
     }
 
-    public function recupererParClePrimaire(string $valeurClePrimaire): ?AbstractDataObject
-    {
-        return $this->recupererPar($this->getNomCle(), $valeurClePrimaire);
-    }
+    // prérequis : valeurClePrimaire est sous la forme de $valeurClePrimaire[nomCle] = valeurCle
 
-    public function supprimer(string $valeurClePrimaire): bool
+    public function recupererParClePrimaire(array $valeurClePrimaire): ?AbstractDataObject
     {
         $nomTable = $this->getNomTable();
-        $nomClePrimaire = $this->getNomCle();
-        $sql = "DELETE FROM $nomTable WHERE $nomClePrimaire='$valeurClePrimaire';";
-        $pdoStatement = ConnexionBaseDeDonnees::getPDO()->query($sql);
+        $clePrimaires = $this->getNomCle();
+        $values = [];
+        $sql = "SELECT {$this->formatNomsColonnes()} from $nomTable WHERE ";
+        foreach ($clePrimaires as $cle){
+            $sql.= "$cle = :$cle"."Tag";
+            $values[$cle.'Tag']= $valeurClePrimaire[$cle];
+        }
+
+        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+        $pdoStatement->execute($values);
+        $objetFormatTableau = $pdoStatement->fetch();
+
+        if ($objetFormatTableau !== false) {
+            return $this->construireDepuisTableau($objetFormatTableau);
+        }
+        return null;
+    }
+    // prérequis : valeurClePrimaire est sous la forme de $valeurClePrimaire[nomCle] = valeurCle
+    public function supprimer(array $valeurClePrimaire): bool
+    {
+        $nomTable = $this->getNomTable();
+        $clePrimaires = $this->getNomCle();
+        $values =[];
+
+        $sql = "DELETE FROM $nomTable WHERE ";
+        foreach ($clePrimaires as $cle){
+            $sql.= "$cle =: $cle"."Tag";
+            $values[$cle.'Tag']= $valeurClePrimaire[$cle];
+        }
+        $pdoStatement = ConnexionBaseDeDonnees::getPDO()->prepare($sql);
+        $pdoStatement->execute($values);
         $deleteCount = $pdoStatement->rowCount();
 
         return ($deleteCount > 0);
     }
-
+//TODO : pb potentiel à vérifier plus tard
     public function mettreAJour(AbstractDataObject $object): void
     {
         $nomTable = $this->getNomTable();
-        $nomClePrimaire = $this->getNomCle();
+        $clePrimaires = $this->getNomCle();
         $nomsColonnes = $this->getNomsColonnes();
 
         $partiesSet = array_map(function ($nomcolonne) {
             return "$nomcolonne = :{$nomcolonne}Tag";
         }, $nomsColonnes);
         $setString = join(',', $partiesSet);
-        $whereString = "$nomClePrimaire = :{$nomClePrimaire}Tag";
 
-        $sql = "UPDATE $nomTable SET $setString WHERE $whereString";
+        $sql = "UPDATE $nomTable SET $setString WHERE ";
+        foreach ($clePrimaires as $cle){
+            $sql.= "$cle =: $cle"."Tag";
+        }
         $req_prep = ConnexionBaseDeDonnees::getPDO()->prepare($sql);
 
         $objetFormatTableau = $object->formatTableau();
@@ -138,10 +166,41 @@ abstract class AbstractRepository
 
     }
 
-    public function ajouter(AbstractDataObject $object): bool
+    /** Ancienne fonction d'ajout (potentiellement à remettre en cas de problème */
+//    public function ajouter(AbstractDataObject $object): bool
+//    {
+//        $nomTable = $this->getNomTable();
+//        $nomsColonnes = $this->getNomsColonnes();
+//
+//        $insertString = '(' . join(', ', $nomsColonnes) . ')';
+//
+//        $partiesValues = array_map(function ($nomcolonne) {
+//            return ":{$nomcolonne}Tag";
+//        }, $nomsColonnes);
+//        $valueString = '(' . join(', ', $partiesValues) . ')';
+//
+//        $sql = "INSERT INTO $nomTable $insertString VALUES $valueString";
+//        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+//
+//        $objetFormatTableau = $object->formatTableau();
+//
+//        try {
+//            $pdoStatement->execute($objetFormatTableau);
+//            return true;
+//        } catch (PDOException $exception) {
+//            if ($pdoStatement->errorCode() === "23000") {
+//                return false;
+//            } else {
+//                throw $exception;
+//            }
+//        }
+//    }
+
+    public function ajouter(AbstractDataObject $object)
     {
         $nomTable = $this->getNomTable();
         $nomsColonnes = $this->getNomsColonnes();
+        $nomCle = $this->getNomCle()[0];
 
         $insertString = '(' . join(', ', $nomsColonnes) . ')';
 
@@ -150,14 +209,15 @@ abstract class AbstractRepository
         }, $nomsColonnes);
         $valueString = '(' . join(', ', $partiesValues) . ')';
 
-        $sql = "INSERT INTO $nomTable $insertString VALUES $valueString";
+        $sql = "INSERT INTO $nomTable $insertString VALUES $valueString RETURNING $nomCle";
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
 
         $objetFormatTableau = $object->formatTableau();
 
         try {
             $pdoStatement->execute($objetFormatTableau);
-            return true;
+            $result = $pdoStatement->fetch(PDO::FETCH_ASSOC);
+            return $result[$nomCle];
         } catch (PDOException $exception) {
             if ($pdoStatement->errorCode() === "23000") {
                 return false;

@@ -1,4 +1,3 @@
-
 DROP TABLE Affecte;
 DROP TABLE Cartes;
 DROP TABLE Colonnes;
@@ -16,11 +15,10 @@ CREATE TABLE Utilisateurs(
 );
 
 CREATE TABLE Tableaux(
-    idTableau INT,
+    idTableau SERIAL PRIMARY KEY,
     login VARCHAR(30) NOT NULL,
     codeTableau VARCHAR(255),
     titreTableau VARCHAR (50),
-    PRIMARY KEY (idTableau),
     FOREIGN KEY (login) REFERENCES Utilisateurs
 );
 
@@ -33,20 +31,18 @@ CREATE TABLE Participe(
 );
 
 CREATE TABLE Colonnes(
-    idColonne INT,
+    idColonne SERIAL PRIMARY KEY,
     titreColonne VARCHAR(50),
     idTableau INT NOT NULL,
-    PRIMARY KEY (idColonne),
     FOREIGN KEY (idTableau) REFERENCES Tableaux
 );
 
 CREATE TABLE Cartes(
-    idCarte INT,
+    idCarte SERIAL PRIMARY KEY,
     titreCarte VARCHAR(50),
     descriptifCarte TEXT,
     couleurCarte VARCHAR(7),
     idColonne INT NOT NULL,
-    PRIMARY KEY (idCarte),
     FOREIGN KEY (idColonne) REFERENCES Colonnes
 );
 

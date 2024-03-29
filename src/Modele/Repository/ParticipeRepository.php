@@ -9,13 +9,12 @@ class ParticipeRepository extends AbstractRepository{
 
     protected function getNomTable(): string
     {
-        return "ParticipeRepository";
+        return "Participe";
     }
 
-    protected function getNomCle(): string
+    protected function getNomCle(): array
     {
-        // TODO: Implement getNomCle() method.
-        return "";
+        return array("idTableau", "login");
     }
 
     protected function getNomsColonnes(): array
@@ -26,6 +25,16 @@ class ParticipeRepository extends AbstractRepository{
     protected function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
     {
         return new Participe($objetFormatTableau["idTableau"], $objetFormatTableau["login"]);
+    }
+
+    public function recupererParLogin(string $login): array
+    {
+        return $this->recupererPlusieursPar("login", $login);
+    }
+
+    public function recupererParIdTableau(int $idTableau): array
+    {
+        return $this->recupererPlusieursPar("idTableau", $idTableau);
     }
 
 }

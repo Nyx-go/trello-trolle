@@ -6,7 +6,7 @@ class Carte extends AbstractDataObject
 {
     public function __construct(
         private int $idColonne,
-        private int $idCarte,
+        private ?int $idCarte,
         private string $titreCarte,
         private string $descriptifCarte,
         private string $couleurCarte,

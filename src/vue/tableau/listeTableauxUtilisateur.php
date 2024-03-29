@@ -1,5 +1,6 @@
 <?php
-/** @var Tableau[] $tableaux */
+/** @var Tableau[] $tableaux
+ * @var bool[] $estProprietaire*/
 
 use App\Trellotrolle\Lib\ConnexionUtilisateur;
 use App\Trellotrolle\Modele\DataObject\Tableau;
@@ -19,7 +20,7 @@ use App\Trellotrolle\Modele\DataObject\Tableau;
                 </div>
                 <div>
                     <?php
-                    if ($tableau->estProprietaire(ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
+                    if ($estProprietaire[$tableau->getIdTableau()]) {
                         ?>
                         <a href="controleurFrontal.php?action=supprimerTableau&controleur=tableau&idTableau=<?= $tableau->getIdTableau() ?>">Supprimer
                             le tableau</a>
