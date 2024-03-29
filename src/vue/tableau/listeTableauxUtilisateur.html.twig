@@ -4,7 +4,7 @@
 
 {% block page_content %}
     {# TODO: Ne pas oublier de mettre une variable tableaux et estProprietaire[] dans l'appelle de cette vue #}
-    {% for tableaux as tableau %}
+    {% for tableau in tableaux %}
         <div class="ligne_tableau">
             <div>{{ tableau.getTitreTableau() }}/div>
             <div>
