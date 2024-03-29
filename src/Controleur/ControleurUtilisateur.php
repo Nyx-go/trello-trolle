@@ -84,7 +84,7 @@ class ControleurUtilisateur extends ControleurGenerique
                 return ControleurUtilisateur::redirection("afficherFormulaireCreation");
             }
         } else {
-            MessageFlash::ajouter("danger", "Login, nom, prenom, email ou mot de passe manquant.");
+            MessageFlash::ajouter("danger", "Login, nom, prénom, email ou mot de passe manquant.");
             return ControleurUtilisateur::redirection("afficherFormulaireCreation");
         }
     }
@@ -150,7 +150,7 @@ class ControleurUtilisateur extends ControleurGenerique
             MessageFlash::ajouter("success", "L'utilisateur a bien été modifié !");
             return ControleurUtilisateur::redirection("afficherListeMesTableaux");
         } else {
-            MessageFlash::ajouter("danger", "Login, nom, prenom, email ou mot de passe manquant.");
+            MessageFlash::ajouter("danger", "Login, nom, prénom, email ou mot de passe manquant.");
             return ControleurUtilisateur::redirection("afficherFormulaireMiseAJour");
         }
     }

@@ -46,10 +46,11 @@ class ControleurCarte extends ControleurGenerique
             MessageFlash::ajouter("danger", "Vous n'avez pas de droits d'éditions sur ce tableau");
             return ControleurCarte::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
         }
-        $carteRepository->supprimer($idCarte);
-        $cartes = $carteRepository->recupererCartesTableau($tableau->getIdTableau());
-        if(count($cartes) > 0) {
-            return ControleurCarte::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
+
+        $succesSuppression =  $carteRepository->supprimer($idCarte);
+
+        if ($succesSuppression) {
+            MessageFlash::ajouter("success", "La carte a bien été supprimée !");
         }
         else {
             return ControleurCarte::redirection("afficherListeMesTableaux");
