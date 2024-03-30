@@ -9,7 +9,7 @@
             <div class="ligne_tableau">
                 <div>{{ tableau.getTitreTableau() }}</div>
                 <div>
-                    <a href="{{ route(afficherTableau, { code : tableau.    getCodeTableau()}) }}">
+                    <a href="{{ route("afficherTableau", { code : tableau.    getCodeTableau()}) }}">
                         Modifier
                     </a>
                 </div>
@@ -19,7 +19,7 @@
                     <a href="{{ route("supprimerTableau",{idTableau : tableau.getIdTableau() })}}">Supprimer
                         le tableau</a>
                     {% else %}
-                    <a href="{{ route(quitterTableau, {idTableau : tableau.getIdTableau() })}}">Quitter
+                    <a href="{{ route("quitterTableau", {idTableau : tableau.getIdTableau() })}}">Quitter
                         le tableau</a>
                     {% endif %}
                 </div>
