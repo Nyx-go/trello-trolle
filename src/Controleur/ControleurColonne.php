@@ -24,6 +24,10 @@ class ControleurColonne extends ControleurGenerique
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurColonne::redirection("afficherFormulaireConnexion");
         }
+        if(!$idColonne) {
+            MessageFlash::ajouter("danger", "Identifiant de la colonne manquant");
+            return ControleurColonne::redirection("accueil");
+        }
         $colonneRepository = new ColonneRepository();
         /**
          * @var Colonne $colonne
@@ -56,6 +60,10 @@ class ControleurColonne extends ControleurGenerique
     public static function afficherFormulaireCreationColonne($idTableau): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurColonne::redirection("afficherFormulaireConnexion");
+        }
+        if(!$idTableau) {
+            MessageFlash::ajouter("danger", "Identifiant du tableau manquant");
+            return ControleurColonne::redirection("accueil");
         }
         $tableauRepository = new TableauRepository();
         /**
@@ -125,6 +133,10 @@ class ControleurColonne extends ControleurGenerique
     public static function afficherFormulaireMiseAJourColonne($idColonne): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurColonne::redirection("afficherFormulaireConnexion");
+        }
+        if(!$idColonne) {
+            MessageFlash::ajouter("danger", "Identifiant de la colonne manquant");
+            return ControleurColonne::redirection("accueil");
         }
         $colonneRepository = new ColonneRepository();
         /**

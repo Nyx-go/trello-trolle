@@ -1,6 +1,6 @@
 {% extends "base.html.twig" %}
 
-{% block page_title %}Tableau {{ tableau.getTitre() }}{% endblock %}
+{% block page_title %}Tableau {{ tableau.getTitreTableau() }}{% endblock %}
 
 {% block page_content %}
     <div class="trello-main">
@@ -16,7 +16,7 @@
             <div class="tableau">
 
                 <div class="icons_menu">
-                    <span>{{ tableau.getTitreTableau }}</span>
+                    <span>{{ tableau.getTitreTableau() }}</span>
                 </div>
                 <div class="participants">
                     Membres :
@@ -66,7 +66,7 @@
 
             <div class="tableau">
             <div class="titre icons_menu">
-                {{ tableau.getTitre() }}
+                {{ tableau.getTitreTableau() }}
                 {% if estParticipantOuProprietaire %}
                 <span class="actions">
                         <a href="{{ route("afficherFormulaireMiseAJourTableau", {"idTableau" : tableau.getIdTableau()}) }}"><img class="icon" src="{{ asset("../ressources/img/editer.png") }}" alt="Éditer le tableau"></a>

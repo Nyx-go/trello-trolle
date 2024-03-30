@@ -26,6 +26,10 @@ class ControleurCarte extends ControleurGenerique
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurCarte::redirection("afficherFormulaireConnexion");
         }
+        if(!$idCarte) {
+            MessageFlash::ajouter("danger", "Identifiant de la carte manquant");
+            return ControleurColonne::redirection("accueil");
+        }
         $carteRepository = new CarteRepository();
         $tableauRepository = new TableauRepository();
         /**
@@ -57,6 +61,10 @@ class ControleurCarte extends ControleurGenerique
     public static function afficherFormulaireCreationCarte($idColonne): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurCarte::redirection("afficherFormulaireConnexion");
+        }
+        if(!$idColonne) {
+            MessageFlash::ajouter("danger", "Identifiant de la colonne manquant");
+            return ControleurColonne::redirection("accueil");
         }
         $colonneRepository = new ColonneRepository();
         $tableauRepository = new TableauRepository();
@@ -151,6 +159,10 @@ class ControleurCarte extends ControleurGenerique
     public static function afficherFormulaireMiseAJourCarte($idCarte): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurCarte::redirection("afficherFormulaireConnexion");
+        }
+        if(!$idCarte) {
+            MessageFlash::ajouter("danger", "Identifiant de la carte manquant");
+            return ControleurColonne::redirection("accueil");
         }
         $carteRepository = new CarteRepository();
         $tableauRepository = new TableauRepository();
