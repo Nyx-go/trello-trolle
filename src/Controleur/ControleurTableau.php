@@ -59,7 +59,7 @@ class ControleurTableau extends ControleurGenerique
             foreach ($cartes as $carte) {
                 $affectations = (new AffecteRepository())->recupererParIdCarte($carte->getIdCarte());
                 foreach ($affectations as $affectation) {
-                    $utilisateur = (new UtilisateurRepository())->recupererParClePrimaire($affectation->getLogin());
+                    $utilisateur = (new UtilisateurRepository())->recupererParClePrimaire(array("login"=>$affectation->getLogin()));
                     if(!isset($participants[$utilisateur->getLogin()])) {
                         $participants[$utilisateur->getLogin()] = ["infos" => $utilisateur, "colonnes" => []];
                     }
@@ -81,6 +81,8 @@ class ControleurTableau extends ControleurGenerique
             $estParticipantOuProprietaire = false;
         }
 
+        $utilisateur = (new UtilisateurRepository())->recupererParClePrimaire(array("login"=>$tableau->getIdUtilisateur()));
+
         return ControleurTableau::afficherTwig("tableau/tableau.html.twig",[
             "estProprietaire"=> $estProprietaire,
             "estParticipantOuProprietaire" => $estParticipantOuProprietaire,
@@ -88,6 +90,7 @@ class ControleurTableau extends ControleurGenerique
             "colonnes" => $colonnes,
             "participants" => $participants,
             "data" => $data,
+            "utilisateur"=>$utilisateur
         ]);
     }
 
@@ -126,10 +129,9 @@ class ControleurTableau extends ControleurGenerique
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherFormulaireConnexion");
         }
-        return ControleurTableau::afficherVue('vueGenerale.php', [
-            "pagetitle" => "Ajout d'un tableau",
-            "cheminVueBody" => "tableau/formulaireCreationTableau.php",
-        ]);
+        return ControleurTableau::afficherTwig(
+            "tableau/formulaireCreationTableau.html.twig"
+        );
     }
 
     #[Route(path: '/tableau/nouveau', name:'creerTableau', methods:["POST"])]
