@@ -5,8 +5,6 @@ namespace App\Trellotrolle\Modele\Repository;
 use App\Trellotrolle\Modele\DataObject\AbstractDataObject;
 use App\Trellotrolle\Modele\DataObject\Carte;
 use Exception;
-use PDO;
-use PDOException;
 
 class CarteRepository extends AbstractRepository
 {
@@ -78,34 +76,4 @@ class CarteRepository extends AbstractRepository
         $obj = $pdoStatement->fetch();
         return $obj[0];
     }
-
-    public function supprimer(array $valeurClePrimaire): bool
-    {
-        //suppression des affectations de la carte
-        $affecteRepository = new AffecteRepository();
-        $affectations = $affecteRepository->recupererParIdCarte($valeurClePrimaire['idcarte']);
-        foreach ($affectations as $affectation) {
-            $affecteRepository->supprimer($affectation->getNomCle());
-        }
-
-        return AbstractRepository::supprimer($valeurClePrimaire);
-    }
-
-//    public function ajouter(AbstractDataObject $object)
-//    {
-//        $sql = "INSERT INTO cartes (titrecarte, descriptifcarte, couleurcarte, idcolonne) VALUES (:titrecarte, :descriptifcarte, :couleurcarte, :idcolonne) RETURNING idcarte;";
-//        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
-//
-//        try {
-//            $pdoStatement->execute(array("titrecarte"=>$object->getTitreCarte(), "descriptifcarte"=> $object-> getDescriptifCarte(),"couleurcarte"=>$object->getCouleurCarte(), "idcolonne"=>$object->getIdColonne()));
-//            $result = $pdoStatement->fetch(PDO::FETCH_ASSOC);
-//            return $result["idcarte"];
-//        } catch (PDOException $exception) {
-//            if ($pdoStatement->errorCode() === "23000") {
-//                return false;
-//            } else {
-//                throw $exception;
-//            }
-//        }
-//    }
 }

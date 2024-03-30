@@ -45,20 +45,16 @@ class ControleurColonne extends ControleurGenerique
             MessageFlash::ajouter("danger", "Vous n'avez pas de droits d'éditions sur ce tableau");
             return ControleurColonne::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
         }
-        $carteRepository = new CarteRepository();
 
-        if($carteRepository->getNombreCartesTotalUtilisateur($tableau->getLogin()) == 1) {
-            MessageFlash::ajouter("danger", "Vous ne pouvez pas supprimer cette colonne car cela entrainera la supression du compte du propriétaire du tableau");
-            return ControleurColonne::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
+        $succesSuppression =  $colonneRepository->supprimer($idColonne);
+
+        if ($succesSuppression) {
+            MessageFlash::ajouter("success", "La colonne a bien été supprimée !");
         }
-
-        $colonneRepository->supprimer($idColonne);
-        $colonneRepository = new ColonneRepository();
-        if($colonneRepository->getNombreColonnesTotalTableau($tableau->getIdTableau()) > 0) {
-            return ControleurColonne::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
+        else {
+            MessageFlash::ajouter("warning", "Une erreur est survenue lors de la suppression de la colonne.");
         }
-
-        return ControleurCarte::redirection("afficherListeMesTableaux");
+        return ControleurColonne::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
 
     #[Route(path: '/colonne/nouvelle', name:'afficherFormulaireCreationColonne', methods:["GET"])]
@@ -122,7 +118,15 @@ class ControleurColonne extends ControleurGenerique
             $colonneRepository->getNextIdColonne(),
             $_REQUEST["nomColonne"]
         );
-        $colonneRepository->ajouter($colonne);
+
+        $succesSauvegarde =  $colonneRepository->ajouter($colonne);
+
+        if ($succesSauvegarde) {
+            MessageFlash::ajouter("success", "La colonne a bien été créée !");
+        }
+        else {
+            MessageFlash::ajouter("warning", "Une erreur est survenue lors de la création de la colonne.");
+        }
         return ControleurColonne::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
 
@@ -188,6 +192,9 @@ class ControleurColonne extends ControleurGenerique
         }
         $colonne->setTitreColonne($_REQUEST["nomColonne"]);
         $colonneRepository->mettreAJour($colonne);
+        $succesSauvegarde =  $colonneRepository->ajouter($colonne);
+
+        MessageFlash::ajouter("success", "Votre colonne a bien été modifiée !");
         return ControleurColonne::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
 }

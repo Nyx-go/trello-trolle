@@ -10,7 +10,7 @@ use App\Trellotrolle\Modele\Repository\UtilisateurRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-class zControleurUtilisateur extends ControleurGenerique
+class ControleurUtilisateur extends ControleurGenerique
 {
     public static function afficherErreur($messageErreur = "", $statusCode = "utilisateur"): Response
     {
@@ -99,14 +99,30 @@ class zControleurUtilisateur extends ControleurGenerique
         ]);
     }
 
+    #[Route(path: '/utilisateur/modification-motdepasse', name:'afficherFormulaireMiseAJourMdp', methods:["GET"])]
+    public static function afficherFormulaireMiseAJourMdp(): Response
+    {
+        if(!ConnexionUtilisateur::estConnecte()) {
+            return ControleurTableau::redirection("afficherFormulaireConnexion");
+        }
+        $login = ConnexionUtilisateur::getLoginUtilisateurConnecte();
+        $repository = new UtilisateurRepository();
+        $utilisateur = $repository->recupererParClePrimaire(array("login"=>$login));
+        return ControleurUtilisateur::afficherVue('vueGenerale.php', [
+            "pagetitle" => "Mise à jour du mot de passe",
+            "cheminVueBody" => "utilisateur/formulaireMiseAJourMdp.php",
+            "utilisateur" => $utilisateur,
+        ]);
+    }
+
     #[Route(path: '/utilisateur/modification', name:'mettreAJour', methods:["POST"])]
     public static function mettreAJour(): Response
     {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherFormulaireConnexion");
         }
-        if (ControleurUtilisateur::issetAndNotNull(["login", "prenom", "nom", "mdp", "mdp2", "email"])) {
-            $login = $_REQUEST['login'];
+        if (ControleurUtilisateur::issetAndNotNull(["login", "prenom", "nom", "mdpAncien", "email"])) {
+            $login = ConnexionUtilisateur::getLoginUtilisateurConnecte();
             $repository = new UtilisateurRepository();
 
             /**
@@ -129,19 +145,13 @@ class zControleurUtilisateur extends ControleurGenerique
                 return ControleurUtilisateur::redirection("afficherFormulaireMiseAJour");
             }
 
-            if ($_REQUEST["mdp"] !== $_REQUEST["mdp2"]) {
-                MessageFlash::ajouter("warning", "Mots de passe distincts.");
-                return ControleurUtilisateur::redirection("afficherFormulaireMiseAJour");
-            }
-
             $utilisateur->setNom($_REQUEST["nom"]);
             $utilisateur->setPrenom($_REQUEST["prenom"]);
             $utilisateur->setEmail($_REQUEST["email"]);
-            $utilisateur->setMdpHache(MotDePasse::hacher($_REQUEST["mdp"]));
 
             $repository->mettreAJour($utilisateur);
 
-            MessageFlash::ajouter("success", "L'utilisateur a bien été modifié !");
+            MessageFlash::ajouter("success", "Vos informations ont bien été modifiées !");
             return ControleurUtilisateur::redirection("afficherListeMesTableaux");
         } else {
             MessageFlash::ajouter("danger", "Login, nom, prénom, email ou mot de passe manquant.");
@@ -149,22 +159,69 @@ class zControleurUtilisateur extends ControleurGenerique
         }
     }
 
+    #[Route(path: '/utilisateur/modification-motdepasse', name:'mettreAJourMdp', methods:["POST"])]
+    public static function mettreAJourMdp(): Response
+    {
+        if(!ConnexionUtilisateur::estConnecte()) {
+            return ControleurTableau::redirection("afficherFormulaireConnexion");
+        }
+        if (ControleurUtilisateur::issetAndNotNull(["login", "mdpAncien", "mdp", "mdp2"])) {
+            $login = ConnexionUtilisateur::getLoginUtilisateurConnecte();
+            $repository = new UtilisateurRepository();
+
+            /**
+             * @var Utilisateur $utilisateur
+             */
+            $utilisateur = $repository->recupererParClePrimaire(array("login"=>$login));
+
+            if(!$utilisateur) {
+                MessageFlash::ajouter("danger", "L'utilisateur n'existe pas");
+                return ControleurUtilisateur::redirection("afficherFormulaireMiseAJour");
+            }
+
+            if (!(MotDePasse::verifier($_REQUEST["mdpAncien"], $utilisateur->getMdpHache()))) {
+                MessageFlash::ajouter("warning", "Ancien mot de passe erroné.");
+                return ControleurUtilisateur::redirection("afficherFormulaireMiseAJour");
+            }
+
+            if ($_REQUEST["mdp"] !== $_REQUEST["mdp2"]) {
+                MessageFlash::ajouter("warning", "Mots de passe distincts.");
+                return ControleurUtilisateur::redirection("afficherFormulaireMiseAJour");
+            }
+
+            $utilisateur->setMdpHache(MotDePasse::hacher($_REQUEST["mdp"]));
+
+            $repository->mettreAJour($utilisateur);
+
+            MessageFlash::ajouter("success", "Le mot de passe a bien été modifié !");
+            return ControleurUtilisateur::redirection("afficherListeMesTableaux");
+        } else {
+            MessageFlash::ajouter("danger", "Login ou mot de passe manquant.");
+            return ControleurUtilisateur::redirection("afficherFormulaireMiseAJour");
+        }
+    }
+
+
     #[Route(path: '/suppression-compte', name:'supprimer', methods:["GET"])]
     public static function supprimer($login1): Response
     {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherFormulaireConnexion");
         }
-        if (!ControleurUtilisateur::issetAndNotNull(["login"])) {
-            MessageFlash::ajouter("warning", "Login manquant");
-            return ControleurUtilisateur::redirection("afficherDetail");
-        }
+        $login = ConnexionUtilisateur::getLoginUtilisateurConnecte();
 
         $repository = new UtilisateurRepository();
-        $repository->supprimer($login1);
-        ConnexionUtilisateur::deconnecter();
-        MessageFlash::ajouter("success", "Votre compte a bien été supprimé !");
-        return ControleurUtilisateur::redirection("afficherFormulaireConnexion");
+        $succesSuppression = $repository->supprimer(array("login"=>$login));
+
+        if ($succesSuppression) {
+            ConnexionUtilisateur::deconnecter();
+            MessageFlash::ajouter("success", "Votre compte a bien été supprimé !");
+            return ControleurUtilisateur::redirection("afficherFormulaireConnexion");
+        }
+        else {
+            MessageFlash::ajouter("warning", "Une erreur est survenue lors de la suppression de l'utilisateur.");
+            return ControleurUtilisateur::redirection("afficherDetail",[]);
+        }
     }
 
     #[Route(path: '/connexion', name:'afficherFormulaireConnexion', methods:["GET"])]
