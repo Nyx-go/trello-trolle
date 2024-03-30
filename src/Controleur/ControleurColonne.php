@@ -19,14 +19,10 @@ class ControleurColonne extends ControleurGenerique
         return parent::afficherErreur($messageErreur, $statusCode);
     }
 
-    #[Route(path: '/colonne/suppression', name:'supprimerColonne', methods:["GET"])]
-    public static function supprimerColonne($idColonne = null): Response {
+    #[Route(path: '/colonne/{idColonne}/suppression', name:'supprimerColonne', methods:["GET"])]
+    public static function supprimerColonne($idColonne): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurColonne::redirection("afficherFormulaireConnexion");
-        }
-        if(!$idColonne) {
-            MessageFlash::ajouter("danger", "Identifiant de la colonne manquant");
-            return ControleurColonne::redirection("accueil");
         }
         $colonneRepository = new ColonneRepository();
         /**
@@ -56,14 +52,10 @@ class ControleurColonne extends ControleurGenerique
         return ControleurColonne::redirection("afficherTableau", ["codetableau" => $tableau->getCodeTableau()]);
     }
 
-    #[Route(path: '/colonne/nouvelle', name:'afficherFormulaireCreationColonne', methods:["GET"])]
-    public static function afficherFormulaireCreationColonne($idTableau = null): Response {
+    #[Route(path: '/tableau/{idTableau}/colonne/nouvelle', name:'afficherFormulaireCreationColonne', methods:["GET"])]
+    public static function afficherFormulaireCreationColonne($idTableau): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurColonne::redirection("afficherFormulaireConnexion");
-        }
-        if(!$idTableau) {
-            MessageFlash::ajouter("danger", "Identifiant du tableau manquant");
-            return ControleurColonne::redirection("accueil");
         }
         $tableauRepository = new TableauRepository();
         /**
@@ -129,14 +121,10 @@ class ControleurColonne extends ControleurGenerique
         return ControleurColonne::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
 
-    #[Route(path: '/colonne/mise-a-jour', name:'afficherFormulaireMiseAJourColonne', methods:["GET"])]
-    public static function afficherFormulaireMiseAJourColonne($idColonne = null): Response {
+    #[Route(path: '/colonne/{idColonne}/modification', name:'afficherFormulaireMiseAJourColonne', methods:["GET"])]
+    public static function afficherFormulaireMiseAJourColonne($idColonne): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurColonne::redirection("afficherFormulaireConnexion");
-        }
-        if(!$idColonne) {
-            MessageFlash::ajouter("danger", "Identifiant de la colonne manquant");
-            return ControleurColonne::redirection("accueil");
         }
         $colonneRepository = new ColonneRepository();
         /**
@@ -161,7 +149,7 @@ class ControleurColonne extends ControleurGenerique
         ]);
     }
 
-    #[Route(path: '/colonne/mise-a-jour', name:'mettreAJourColonne', methods:["POST"])]
+    #[Route(path: '/colonne/modification', name:'mettreAJourColonne', methods:["POST"])]
     public static function mettreAJourColonne(): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurColonne::redirection("afficherFormulaireConnexion");

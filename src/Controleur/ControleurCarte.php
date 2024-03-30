@@ -21,14 +21,10 @@ class ControleurCarte extends ControleurGenerique
         return parent::afficherErreur($messageErreur, $statusCode);
     }
 
-    #[Route(path: '/carte/suppression', name:'supprimerCarte', methods:["GET"])]
-    public static function supprimerCarte($idCarte = null): Response {
+    #[Route(path: '/carte/{idCarte}/suppression', name:'supprimerCarte', methods:["GET"])]
+    public static function supprimerCarte($idCarte): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurCarte::redirection("afficherFormulaireConnexion");
-        }
-        if(!$idCarte) {
-            MessageFlash::ajouter("danger", "Identifiant de la carte manquant");
-            return ControleurColonne::redirection("accueil");
         }
         $carteRepository = new CarteRepository();
         $tableauRepository = new TableauRepository();
@@ -57,14 +53,10 @@ class ControleurCarte extends ControleurGenerique
         return ControleurCarte::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
 
-    #[Route(path: '/carte/nouvelle', name:'afficherFormulaireCreationCarte', methods:["GET"])]
-    public static function afficherFormulaireCreationCarte($idColonne = null): Response {
+    #[Route(path: '/colonne/{idColonne}/carte/nouvelle', name:'afficherFormulaireCreationCarte', methods:["GET"])]
+    public static function afficherFormulaireCreationCarte($idColonne): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurCarte::redirection("afficherFormulaireConnexion");
-        }
-        if(!$idColonne) {
-            MessageFlash::ajouter("danger", "Identifiant de la colonne manquant");
-            return ControleurColonne::redirection("accueil");
         }
         $colonneRepository = new ColonneRepository();
         $tableauRepository = new TableauRepository();
@@ -155,14 +147,10 @@ class ControleurCarte extends ControleurGenerique
         return ControleurCarte::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
 
-    #[Route(path: '/carte/mise-a-jour', name:'afficherFormulaireMiseAJourCarte', methods:["GET"])]
-    public static function afficherFormulaireMiseAJourCarte($idCarte = null): Response {
+    #[Route(path: '/carte/{idCarte}/modification', name:'afficherFormulaireMiseAJourCarte', methods:["GET"])]
+    public static function afficherFormulaireMiseAJourCarte($idCarte): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurCarte::redirection("afficherFormulaireConnexion");
-        }
-        if(!$idCarte) {
-            MessageFlash::ajouter("danger", "Identifiant de la carte manquant");
-            return ControleurColonne::redirection("accueil");
         }
         $carteRepository = new CarteRepository();
         $tableauRepository = new TableauRepository();
@@ -190,7 +178,7 @@ class ControleurCarte extends ControleurGenerique
         ]);
     }
 
-    #[Route(path: '/carte/mise-a-jour', name:'mettreAJourCarte', methods:["POST"])]
+    #[Route(path: '/carte/modification', name:'mettreAJourCarte', methods:["POST"])]
     public static function mettreAJourCarte(): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurCarte::redirection("afficherFormulaireConnexion");
