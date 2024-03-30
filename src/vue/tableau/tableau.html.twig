@@ -16,7 +16,7 @@
             <div class="tableau">
 
                 <div class="icons_menu">
-                    <span>{{ tableau.getTitre }}</span>
+                    <span>{{ tableau.getTitreTableau }}</span>
                 </div>
                 <div class="participants">
                     Membres :
@@ -69,7 +69,7 @@
                 {{ tableau.getTitre() }}
                 {% if estParticipantOuProprietaire %}
                 <span class="actions">
-                        <a href="controleurFrontal.php?action=afficherFormulaireMiseAJourTableau&controleur=tableau&idTableau=<?=$tableau->getIdTableau()?>"><img class="icon" src="../ressources/img/editer.png" alt="Éditer le tableau"></a>
+                        <a href="{{ route("afficherFormulaireMiseAJourTableau", {"idTableau" : tableau.getIdTableau()}) }}"><img class="icon" src="{{ asset("../ressources/img/editer.png") }}" alt="Éditer le tableau"></a>
                 </span>
                 {% endif %}
             </div>
@@ -81,8 +81,8 @@
                         <span>{{ colonne[i].getTitreColonne() }}</span>
                         {% if estParticipantOuProprietaire %}
                         <span class="actions">
-                        <a href="controleurFrontal.php?action=afficherFormulaireMiseAJourColonne&controleur=colonne&idColonne=<?=$colonnes[$i]->getIdColonne()?>"><img class="icon" src="../ressources/img/editer.png" alt="Éditer la colonne"></a>
-                        <a href="controleurFrontal.php?action=supprimerColonne&controleur=colonne&idColonne=<?= $colonnes[$i]->getIdColonne()?>"><img class="icon" src="../ressources/img/x.png" alt="Supprimer la colonne"></a>
+                        <a href="{{ route("afficherFormulaireMiseAJourColonne", {"idColonne" : colonne.getIdColonne()}) }}"><img class="icon" src="{{ asset("../ressources/img/editer.png") }}" alt="Éditer la colonne"></a>
+                        <a href="{{ route("supprimerColonne", {"idColonne" : colonne.getIdColonne()}) }}"><img class="icon" src="{{ asset("../ressources/img/x.png") }}" alt="Supprimer la colonne"></a>
                     </span>
                         {% endif %}
                     </div>
@@ -93,8 +93,8 @@
                                 <span>{{ carte.getTitreCarte() }}</span>
                                 {% if estParticipantOuProprietaire %}
                                 <span class="actions">
-                                <a href="controleurFrontal.php?action=afficherFormulaireMiseAJourCarte&controleur=carte&idCarte=<?=$carte->getIdCarte()?>"><img class="icon" src="../ressources/img/editer.png" alt="Éditer la carte"></a>
-                                <a href="controleurFrontal.php?action=supprimerCarte&controleur=carte&idCarte=<?= $carte->getIdCarte()?>"><img class="icon" src="../ressources/img/x.png" alt="Supprimer la carte"></a>
+                                <a href="{{ route("afficherFormulaireMiseAJourCarte", {"idCarte" : carte.getIdCarte()}) }}"><img class="icon" src="{{ asset("../ressources/img/editer.png") }}" alt="Éditer la carte"></a>
+                                <a href="controleurFrontal.php?action=supprimerCarte&controleur=carte&idCarte=<?= $carte->getIdCarte()?>"><img class="icon" src="{{ asset("../ressources/img/x.png") }}" alt="Supprimer la carte"></a>
                             </span>
                                 {% endif %}
                             </div>

@@ -97,26 +97,22 @@ class ControleurTableau extends ControleurGenerique
     }
 
     #[Route(path: '/tableau/mise-a-jour', name:'afficherFormulaireMiseAJourTableau', methods:["GET"])]
-    public static function afficherFormulaireMiseAJourTableau(): Response {
+    public static function afficherFormulaireMiseAJourTableau($idTableau): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherFormulaireConnexion");
-        }
-        if(!ControleurCarte::issetAndNotNull(["idTableau"])) {
-            MessageFlash::ajouter("danger", "Identifiant du tableau manquant");
-            return ControleurTableau::redirection("accueil");
         }
         $tableauRepository = new TableauRepository();
         /**
          * @var Tableau $tableau
          */
-        $tableau = $tableauRepository->recupererParClePrimaire(array("idTableau"=>$_REQUEST["idTableau"]));
+        $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$idTableau));
         if(!$tableau) {
             MessageFlash::ajouter("danger", "Tableau inexistant");
             return ControleurTableau::redirection("accueil");
         }
         if(!$tableauRepository->estParticipantOuProprietaire($tableau->getIdTableau(), ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
             MessageFlash::ajouter("danger", "Vous n'avez pas de droits d'éditions sur ce tableau");
-            return ControleurTableau::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
+            return ControleurTableau::redirection("afficherTableau", ["codetableau" => $tableau->getCodeTableau()]);
         }
         return ControleurTableau::afficherVue('vueGenerale.php', [
             "pagetitle" => "Modification d'un tableau",
