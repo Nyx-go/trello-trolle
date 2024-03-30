@@ -471,7 +471,7 @@ class ControleurTableau extends ControleurGenerique
             MessageFlash::ajouter("danger", "Vous ne pouvez pas supprimer ce tableau car cela entrainera la supression du compte");
             return ControleurTableau::redirection("afficherListeMesTableaux");
         }
-        $tableauRepository->supprimer($idTableau1);
+        $tableauRepository->supprimer(array("idtableau"=>$idTableau1));
         return ControleurTableau::redirection("afficherListeMesTableaux");
     }
 }
