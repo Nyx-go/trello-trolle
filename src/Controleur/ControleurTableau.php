@@ -486,9 +486,7 @@ class ControleurTableau extends ControleurGenerique
         } else $idTableau1 = $idTableau;
 
         $tableauRepository = new TableauRepository();
-        /**
-         * @var Tableau $tableau
-         */
+
         $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$idTableau1));
         if(!$tableau) {
             MessageFlash::ajouter("danger", "Tableau inexistant");
@@ -498,13 +496,8 @@ class ControleurTableau extends ControleurGenerique
             MessageFlash::ajouter("danger", "Vous n'êtes pas propriétaire de ce tableau");
             return ControleurTableau::redirection("afficherListeMesTableaux");
         }
-        if($tableauRepository->getNombreTableauxTotalUtilisateur(ConnexionUtilisateur::getLoginUtilisateurConnecte()) == 1) {
-            MessageFlash::ajouter("danger", "Vous ne pouvez pas supprimer ce tableau car cela entrainera la supression du compte");
-            return ControleurTableau::redirection("afficherListeMesTableaux");
-        }
-        $tableauRepository->supprimer(array("idtableau"=>$idTableau1));
 
-        $succesSuppression =  $tableauRepository->supprimer($idTableau);
+        $succesSuppression =  $tableauRepository->supprimer(array("idtableau"=>$idTableau1));
 
         if ($succesSuppression) {
             MessageFlash::ajouter("success", "Le tableau a bien été supprimé !");
