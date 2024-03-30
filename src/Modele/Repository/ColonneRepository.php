@@ -69,22 +69,22 @@ class ColonneRepository extends AbstractRepository
         return AbstractRepository::supprimer($valeurClePrimaire);
     }
 
-    public function ajouter(AbstractDataObject $object)
-    {
-        $sql = "INSERT INTO colonnes (idtableau ,titrecolonne) VALUES (:idtableau, :titrecolonne) RETURNING idcolonne;";
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
-
-        try {
-            $pdoStatement->execute(array("idtableau"=>$object->getIdTableau(), "titrecolonne"=> $object-> getTitreColonne()));
-            $result = $pdoStatement->fetch(PDO::FETCH_ASSOC);
-            return $result["idcolonne"];
-        } catch (PDOException $exception) {
-            if ($pdoStatement->errorCode() === "23000") {
-                return false;
-            } else {
-                throw $exception;
-            }
-        }
-    }
+//    public function ajouter(AbstractDataObject $object)
+//    {
+//        $sql = "INSERT INTO colonnes (idtableau ,titrecolonne) VALUES (:idtableau, :titrecolonne) RETURNING idcolonne;";
+//        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+//
+//        try {
+//            $pdoStatement->execute(array("idtableau"=>$object->getIdTableau(), "titrecolonne"=> $object-> getTitreColonne()));
+//            $result = $pdoStatement->fetch(PDO::FETCH_ASSOC);
+//            return $result["idcolonne"];
+//        } catch (PDOException $exception) {
+//            if ($pdoStatement->errorCode() === "23000") {
+//                return false;
+//            } else {
+//                throw $exception;
+//            }
+//        }
+//    }
 
 }

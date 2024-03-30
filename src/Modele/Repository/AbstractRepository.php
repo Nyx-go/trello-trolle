@@ -166,42 +166,17 @@ abstract class AbstractRepository
 
     }
 
-    public function ajouter(AbstractDataObject $object): bool
-    {
-        $nomTable = $this->getNomTable();
-        $nomsColonnes = $this->getNomsColonnes();
-
-        $insertString = '(' . join(', ', $nomsColonnes) . ')';
-
-        $partiesValues = array_map(function ($nomcolonne) {
-            return ":{$nomcolonne}Tag";
-        }, $nomsColonnes);
-        $valueString = '(' . join(', ', $partiesValues) . ')';
-
-        $sql = "INSERT INTO $nomTable $insertString VALUES $valueString";
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
-
-        $objetFormatTableau = $object->formatTableau();
-
-        try {
-            $pdoStatement->execute($objetFormatTableau);
-            return true;
-        } catch (PDOException $exception) {
-            if ($pdoStatement->errorCode() === "23000") {
-                return false;
-            } else {
-                throw $exception;
-            }
-        }
-    }
-
-    public function ajouterSerial(AbstractDataObject $object)
+    public function ajouter(AbstractDataObject $object)
     {
         $nomTable = $this->getNomTable();
         $nomsColonnes = $this->getNomsColonnes();
         $nomCle = $this->getNomCle()[0];
-        $key = array_search($nomCle, $nomsColonnes);
-        unset($nomsColonnes[$key]); // enlève la clé primaire de la liste des noms de colonnes de la table afin qu'il n'y ait pas de problème lors de l'insertion à cause du SERIAL
+        if (get_class($this) == get_class(new TableauRepository()) ||
+            get_class($this) == get_class(new CarteRepository()) ||
+            get_class($this) == get_class(new ColonneRepository())) {
+            $key = array_search($nomCle, $nomsColonnes);
+            unset($nomsColonnes[$key]); // enlève la clé primaire de la liste des noms de colonnes de la table afin qu'il n'y ait pas de problème lors de l'insertion à cause du SERIAL
+        }
 
         $insertString = '(' . join(', ', $nomsColonnes) . ')';
 

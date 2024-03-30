@@ -156,7 +156,7 @@ class ControleurTableau extends ControleurGenerique
             $_REQUEST["nomTableau"]
         );
 
-        $idTableau = (new TableauRepository())->ajouterSerial($tableau);
+        $idTableau = (new TableauRepository())->ajouter($tableau);
         $codeTableau = hash("sha256", $idUtilisateur.$idTableau);
         $tableau->setIdTableau($idTableau);
         $tableau->setCodeTableau($codeTableau);
@@ -167,7 +167,7 @@ class ControleurTableau extends ControleurGenerique
             null,
             "Colonne 1"
         );
-        $idColonne = (new ColonneRepository())->ajouterSerial($colonne);
+        $idColonne = (new ColonneRepository())->ajouter($colonne);
 
         $carte = new Carte(
             $idColonne,
@@ -176,7 +176,7 @@ class ControleurTableau extends ControleurGenerique
             "Exemple de carte",
             "#FFFFFF"
         );
-        (new CarteRepository())->ajouterSerial($carte);
+        (new CarteRepository())->ajouter($carte);
 
         return ControleurTableau::redirection("afficherTableau", ["code" => $tableau->getCodeTableau()]);
     }

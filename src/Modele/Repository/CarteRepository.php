@@ -91,21 +91,21 @@ class CarteRepository extends AbstractRepository
         return AbstractRepository::supprimer($valeurClePrimaire);
     }
 
-    public function ajouter(AbstractDataObject $object)
-    {
-        $sql = "INSERT INTO cartes (titrecarte, descriptifcarte, couleurcarte, idcolonne) VALUES (:titrecarte, :descriptifcarte, :couleurcarte, :idcolonne) RETURNING idcarte;";
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
-
-        try {
-            $pdoStatement->execute(array("titrecarte"=>$object->getTitreCarte(), "descriptifcarte"=> $object-> getDescriptifCarte(),"couleurcarte"=>$object->getCouleurCarte(), "idcolonne"=>$object->getIdColonne()));
-            $result = $pdoStatement->fetch(PDO::FETCH_ASSOC);
-            return $result["idcarte"];
-        } catch (PDOException $exception) {
-            if ($pdoStatement->errorCode() === "23000") {
-                return false;
-            } else {
-                throw $exception;
-            }
-        }
-    }
+//    public function ajouter(AbstractDataObject $object)
+//    {
+//        $sql = "INSERT INTO cartes (titrecarte, descriptifcarte, couleurcarte, idcolonne) VALUES (:titrecarte, :descriptifcarte, :couleurcarte, :idcolonne) RETURNING idcarte;";
+//        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+//
+//        try {
+//            $pdoStatement->execute(array("titrecarte"=>$object->getTitreCarte(), "descriptifcarte"=> $object-> getDescriptifCarte(),"couleurcarte"=>$object->getCouleurCarte(), "idcolonne"=>$object->getIdColonne()));
+//            $result = $pdoStatement->fetch(PDO::FETCH_ASSOC);
+//            return $result["idcarte"];
+//        } catch (PDOException $exception) {
+//            if ($pdoStatement->errorCode() === "23000") {
+//                return false;
+//            } else {
+//                throw $exception;
+//            }
+//        }
+//    }
 }
