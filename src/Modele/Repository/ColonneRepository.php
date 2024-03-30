@@ -75,7 +75,7 @@ class ColonneRepository extends AbstractRepository
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
 
         try {
-            $pdoStatement->execute(array("idtableau"=>$object->getIdTableau(), "titrecolonne"=> $object-> getTitreColonne(),"codetableau"=>$object->getCodetableau()));
+            $pdoStatement->execute(array("idtableau"=>$object->getIdTableau(), "titrecolonne"=> $object-> getTitreColonne()));
             $result = $pdoStatement->fetch(PDO::FETCH_ASSOC);
             return $result["idColonne"];
         } catch (PDOException $exception) {
