@@ -25,14 +25,8 @@ class ControleurTableau extends ControleurGenerique
         return parent::afficherErreur($messageErreur, $statusCode);
     }
 
-    #[Route(path: '/tableau/{code}', name:'afficherTableau', methods:["GET"])]
-    public static function afficherTableau($code) : Response {
-        if(!$code) {
-            if(!isset($_REQUEST['code'])){
-                MessageFlash::ajouter("warning", "Code de tableau manquant");
-                return ControleurTableau::redirection("accueil");
-            }else $codeTableau = $_REQUEST['code'];
-        }else $codeTableau = $code;
+    #[Route(path: '/tableau/{codeTableau}', name:'afficherTableau', methods:["GET"])]
+    public static function afficherTableau($codeTableau) : Response {
         $tableauRepository = new TableauRepository();
 
         /**
@@ -256,29 +250,23 @@ class ControleurTableau extends ControleurGenerique
             return ControleurTableau::redirection("afficherTableau", ["codetableau" => $tableau->getCodeTableau()]);
         }
 
-        return ControleurTableau::afficherVue('vueGenerale.php', [
-            "pagetitle" => "Ajout d'un membre",
-            "cheminVueBody" => "tableau/formulaireAjoutMembreTableau.php",
+        return ControleurTableau::afficherTwig("tableau/formulaireAjoutMembreTableau.html.twig", [
             "tableau" => $tableau,
-            "utilisateurs" => $filtredUtilisateurs
+            "utilisateurs" => $utilisateurs
         ]);
     }
 
-    #[Route(path: '/tableau/membres/ajout', name:'ajouterMembre', methods:["POST"])]
-    public static function ajouterMembre(): Response {
+    #[Route(path: '/tableau/{idTableau}/membres/{login}/ajout', name:'ajouterMembre', methods:["POST"])]
+    public static function ajouterMembre($idTableau, $login): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherFormulaireConnexion");
-        }
-        if(!ControleurCarte::issetAndNotNull(["idTableau"])) {
-            MessageFlash::ajouter("danger", "Identifiant du tableau manquant");
-            return ControleurTableau::redirection("accueil");
         }
         $tableauRepository = new TableauRepository();
 
         /**
          * @var Tableau $tableau
          */
-        $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$_REQUEST["idTableau"]));
+        $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$idTableau));
         if(!$tableau) {
             MessageFlash::ajouter("danger", "Tableau inexistant");
             return ControleurTableau::redirection("accueil");
@@ -296,7 +284,7 @@ class ControleurTableau extends ControleurGenerique
         /**
          * @var Utilisateur $utilisateur
          */
-        $utilisateur = $utilisateurRepository->recupererParClePrimaire(array("login"=>$_REQUEST["login"]));
+        $utilisateur = $utilisateurRepository->recupererParClePrimaire(array("login"=>$login));
         if(!$utilisateur) {
             MessageFlash::ajouter("danger", "Utlisateur inexistant");
             return ControleurTableau::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
@@ -307,7 +295,7 @@ class ControleurTableau extends ControleurGenerique
         }
 
         $participe = new Participe(
-            $_REQUEST["idTableau"],
+            $idTableau,
             $utilisateur->getLogin()
         );
         $succesSauvegarde = (new ParticipeRepository())->ajouter($participe);

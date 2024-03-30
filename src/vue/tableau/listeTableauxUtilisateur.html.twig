@@ -1,6 +1,6 @@
 {% extends "base.html.twig" %}
 
-{% block page_title %}Tableau personnels{% endblock %}
+{% block page_title %}Mes tableaux{% endblock %}
 
 {% block page_content %}
     <h3>Mes tableaux</h3>
@@ -9,7 +9,7 @@
             <div class="ligne_tableau">
                 <div>{{ tableau.getTitreTableau() }}</div>
                 <div>
-                    <a href="{{ route("afficherTableau", { "code" : tableau.getCodeTableau()}) }}">
+                    <a href="{{ route("afficherTableau", { "codeTableau" : tableau.getCodeTableau()}) }}">
                         Modifier
                     </a>
                 </div>
