@@ -122,7 +122,7 @@ class ControleurColonne extends ControleurGenerique
             $colonneRepository->getNextIdColonne(),
             $_REQUEST["nomColonne"]
         );
-        $colonneRepository->ajouter($colonne);
+        $colonneRepository->ajouterSerial($colonne);
         return ControleurColonne::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
 

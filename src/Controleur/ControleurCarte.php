@@ -141,7 +141,7 @@ class ControleurCarte extends ControleurGenerique
             $_REQUEST["descriptifCarte"],
             $_REQUEST["couleurCarte"],
         );
-        $carteRepository->ajouter($carte);
+        $carteRepository->ajouterSerial($carte);
         return ControleurCarte::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
 
