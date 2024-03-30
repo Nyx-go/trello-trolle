@@ -69,9 +69,12 @@ class TableauRepository extends AbstractRepository
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
         $pdoStatement->execute(["idTableau" => $idTableau]);
         $obj = $pdoStatement->fetch();
-        foreach ($obj as $item) {
-            if ($item === $login) return true;
+        if ($obj) {
+            foreach ($obj as $item) {
+                if ($item === $login) return true;
+            }
         }
+
         return false;
     }
 

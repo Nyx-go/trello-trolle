@@ -219,23 +219,19 @@ class ControleurTableau extends ControleurGenerique
             $tableauRepository->mettreAJour($tableau);
             MessageFlash::ajouter("success", "Le tableau a bien été modifié !");
         }
-        return ControleurTableau::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
+        return ControleurTableau::redirection("afficherTableau", ["codetableau" => $tableau->getCodeTableau()]);
     }
 
     #[Route(path: '/tableau/membres/ajout', name:'afficherFormulaireAjoutMembre', methods:["GET"])]
-    public static function afficherFormulaireAjoutMembre(): Response {
+    public static function afficherFormulaireAjoutMembre($idTableau): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherFormulaireConnexion");
-        }
-        if(!ControleurCarte::issetAndNotNull(["idTableau"])) {
-            MessageFlash::ajouter("danger", "Identifiant du tableau manquant");
-            return ControleurTableau::redirection("accueil");
         }
         $tableauRepository = new TableauRepository();
         /**
          * @var Tableau $tableau
          */
-        $tableau = $tableauRepository->recupererParClePrimaire(array("idTabeau"=>$_REQUEST["idTableau"]));
+        $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$idTableau));
         if(!$tableau) {
             MessageFlash::ajouter("danger", "Tableau inexistant");
             return ControleurTableau::redirection("accueil");
@@ -255,7 +251,7 @@ class ControleurTableau extends ControleurGenerique
 
         if(empty($filtredUtilisateurs)) {
             MessageFlash::ajouter("warning", "Il n'est pas possible d'ajouter plus de membre à ce tableau.");
-            return ControleurTableau::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
+            return ControleurTableau::redirection("afficherTableau", ["codetableau" => $tableau->getCodeTableau()]);
         }
 
         return ControleurTableau::afficherVue('vueGenerale.php', [
@@ -280,7 +276,7 @@ class ControleurTableau extends ControleurGenerique
         /**
          * @var Tableau $tableau
          */
-        $tableau = $tableauRepository->recupererParClePrimaire(array("idTabeau"=>$_REQUEST["idTableau"]));
+        $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$_REQUEST["idTableau"]));
         if(!$tableau) {
             MessageFlash::ajouter("danger", "Tableau inexistant");
             return ControleurTableau::redirection("accueil");
@@ -324,7 +320,7 @@ class ControleurTableau extends ControleurGenerique
     }
 
     #[Route(path: '/tableau/membres/suppression', name:'supprimerMembre', methods:["GET"])]
-    public static function supprimerMembre(): Response {
+    public static function supprimerMembre($login, $idTableau): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherFormulaireConnexion");
         }
@@ -336,7 +332,7 @@ class ControleurTableau extends ControleurGenerique
         /**
          * @var Tableau $tableau
          */
-        $tableau = $tableauRepository->recupererParClePrimaire(array("idTabeau"=>$_REQUEST["idTableau"]));
+        $tableau = $tableauRepository->recupererParClePrimaire(array("idTabeau"=>$idTableau));
         if(!$tableau) {
             MessageFlash::ajouter("danger", "Tableau inexistant");
             return ControleurTableau::redirection("accueil");
@@ -345,15 +341,11 @@ class ControleurTableau extends ControleurGenerique
             MessageFlash::ajouter("danger", "Vous n'êtes pas propriétaire de ce tableau");
             return ControleurTableau::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
         }
-        if(!ControleurCarte::issetAndNotNull(["login"])) {
-            MessageFlash::ajouter("danger", "Login du membre à supprimer manquant");
-            return ControleurTableau::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
-        }
         $utilisateurRepository = new UtilisateurRepository();
         /**
          * @var Utilisateur $utilisateur
          */
-        $utilisateur = $utilisateurRepository->recupererParClePrimaire(array("login"=>$_REQUEST["login"]));
+        $utilisateur = $utilisateurRepository->recupererParClePrimaire(array("login"=>$login));
         if(!$utilisateur) {
             MessageFlash::ajouter("danger", "Utlisateur inexistant");
             return ControleurTableau::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);

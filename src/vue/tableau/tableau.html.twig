@@ -11,6 +11,7 @@
 
                 {% if estProprietaire %}
                 <span><a href="{{ route("afficherFormulaireMiseAJour") }}"><img class="icon" src="{{ asset("../ressources/img/editer.png") }}" alt="Modifier l'utilisateur"></a></span>
+                {% endif %}
             </div>
             <div class="tableau">
 
@@ -21,14 +22,14 @@
                     Membres :
                     <ul>
                         <li>{{ utilisateur.getPrenom() }} {{ utilisateur.getNom() }}</li>
-                        {% for participan in participans %}
+                        {% for participant in participants %}
                         <li>
                             <div class="icons_menu_stick">
                                 {{ participant.getPrenom()}} {{ participant.getNom() }}
 
                                 {% if estProprietaire %}
                                 <span class="actions">
-                                    <a href="controleurFrontal.php?action=supprimerMembre&controleur=tableau&idTableau=<?=$tableau->getIdTableau()?>&login=<?=rawurlencode($participant->getLogin())?>"><img class="icon" src="../ressources/img/x.png" alt="Retirer le membre"></a>
+                                    <a href="{{ route("supprimerMembre", {"login" : participant.getLogin(), "idTableau" : tableau.getIdTableau()})}}"><img class="icon" src="{{ asset("../ressources/img/x.png") }}" alt="Retirer le membre"></a>
                                 </span>
                                 {% endif %}
                             </div>
@@ -37,7 +38,7 @@
                         <?php
 
                         {% if estProprietaire %}
-                        <li><a href="controleurFrontal.php?action=afficherFormulaireAjoutMembre&controleur=tableau&idTableau=<?=$tableau->getIdTableau()?>">Ajouter un membre</a></li>
+                        <li><a href="{{ route("afficherFormulaireAjoutMembre", {"idTableau" : tableau.getIdTableau()}) }}">Ajouter un membre</a></li>
                         {% endif %}
                     </ul>
                 </div>
