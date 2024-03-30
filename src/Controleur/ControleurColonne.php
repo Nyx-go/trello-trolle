@@ -53,19 +53,15 @@ class ControleurColonne extends ControleurGenerique
     }
 
     #[Route(path: '/colonne/nouvelle', name:'afficherFormulaireCreationColonne', methods:["GET"])]
-    public static function afficherFormulaireCreationColonne(): Response {
+    public static function afficherFormulaireCreationColonne($idTableau): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurColonne::redirection("afficherFormulaireConnexion");
-        }
-        if(!ControleurCarte::issetAndNotNull(["idTableau"])) {
-            MessageFlash::ajouter("warning", "Identifiant du tableau manquant");
-            return ControleurColonne::redirection("accueil");
         }
         $tableauRepository = new TableauRepository();
         /**
          * @var Tableau $tableau
          */
-        $tableau = $tableauRepository->recupererParClePrimaire(array("idTableau"=>$_REQUEST["idTableau"]));
+        $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$idTableau));
         if(!$tableau) {
             MessageFlash::ajouter("warning", "Tableau inexistant");
             return ControleurColonne::redirection("accueil");

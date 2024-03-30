@@ -94,7 +94,7 @@
                                 {% if estParticipantOuProprietaire %}
                                 <span class="actions">
                                 <a href="{{ route("afficherFormulaireMiseAJourCarte", {"idCarte" : carte.getIdCarte()}) }}"><img class="icon" src="{{ asset("../ressources/img/editer.png") }}" alt="Éditer la carte"></a>
-                                <a href="controleurFrontal.php?action=supprimerCarte&controleur=carte&idCarte=<?= $carte->getIdCarte()?>"><img class="icon" src="{{ asset("../ressources/img/x.png") }}" alt="Supprimer la carte"></a>
+                                <a href="{{ route("supprimerCarte", {"idCarte" : carte.getIdCarte()}) }}"><img class="icon" src="{{ asset("../ressources/img/x.png") }}" alt="Supprimer la carte"></a>
                             </span>
                                 {% endif %}
                             </div>
@@ -110,7 +110,7 @@
                         {% endfor %}
 
                         {% if estParticipantOuProprietaire %}
-                        <a class="ajout-tableau" href="controleurFrontal.php?action=afficherFormulaireCreationCarte&controleur=carte&idColonne=<?=$colonnes[$i]->getIdColonne()?>">
+                        <a class="ajout-tableau" href="{{ route("afficherFormulaireCreationCarte", {"idColonne" : colonne.getIdColonne()}) }}">
                             <div>
                                 <div class="titre icons_menu btn-ajout">
                                     <span>Ajouter une carte</span>
@@ -122,7 +122,7 @@
                 </div>
                 {% endfor %}
                 {% if estParticipantOuProprietaire %}
-                <a class="ajout-tableau" href="controleurFrontal.php?action=afficherFormulaireCreationColonne&controleur=colonne&idTableau=<?=$tableau->getIdTableau()?>">
+                <a class="ajout-tableau" href="{{ route("afficherFormulaireCreationColonne", {"idTableau" : tableau.getIdTableau()}) }}">
                     <div class="colonne">
                         <div class="titre icons_menu btn-ajout">
                             <span>Ajouter une colonne</span>
