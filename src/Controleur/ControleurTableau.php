@@ -458,7 +458,7 @@ class ControleurTableau extends ControleurGenerique
         /**
          * @var Tableau $tableau
          */
-        $tableau = $tableauRepository->recupererParClePrimaire(array("idTableau"=>$idTableau1));
+        $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$idTableau1));
         if(!$tableau) {
             MessageFlash::ajouter("danger", "Tableau inexistant");
             return ControleurTableau::redirection("afficherListeMesTableaux");
