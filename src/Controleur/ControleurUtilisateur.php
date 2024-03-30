@@ -121,7 +121,7 @@ class ControleurUtilisateur extends ControleurGenerique
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherFormulaireConnexion");
         }
-        if (ControleurUtilisateur::issetAndNotNull(["login", "prenom", "nom", "email"])) {
+        if (ControleurUtilisateur::issetAndNotNull(["login", "nom", "prenom", "email", "mdpAncien"])) {
             $login = ConnexionUtilisateur::getLoginUtilisateurConnecte();
             $repository = new UtilisateurRepository();
 

@@ -28,10 +28,7 @@
                     <label  for="mdpAncien_id">Ancien mot de passe&#42;</label>
                     <input  type="password" placeholder="" name="mdpAncien" id="mdpAncien_id" required>
                 </p>
-
-                <input type='hidden' name='login' value='{#<?= $loginHTML ?>#}'>
-                <input type='hidden' name='action' value='mettreAJour'>
-                <input type='hidden' name='controleur' value='utilisateur'>
+                <a href="{{ route("afficherFormulaireMiseAJourMdp") }}">Modifier votre mot de passe</a>
                 <p>
                     <input type="submit" value="Mettre à jour"/>
                 </p>
