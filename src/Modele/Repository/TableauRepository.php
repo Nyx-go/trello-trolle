@@ -44,8 +44,8 @@ class TableauRepository extends AbstractRepository
      */
     public function recupererTableauxOuUtilisateurEstMembre(string $login): array
     {
-        $sql = "SELECT DISTINCT t.idtableau, t.login, codetableau, titretableau
-                FROM tableaux t JOIN participe p ON t.idtableau = p.idtableau 
+        $sql = "SELECT t.idtableau, t.login, codetableau, titretableau
+                FROM tableaux t LEFT JOIN participe p ON t.idtableau = p.idtableau 
                 WHERE p.login = :loginTag OR t.login = :loginTag";
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
         $pdoStatement->execute(["loginTag" => $login]);

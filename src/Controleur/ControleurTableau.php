@@ -158,6 +158,7 @@ class ControleurTableau extends ControleurGenerique
 
         $idTableau = (new TableauRepository())->ajouter($tableau);
         $codeTableau = hash("sha256", $idUtilisateur.$idTableau);
+        $tableau->setIdTableau($idTableau);
         $tableau->setCodeTableau($codeTableau);
         (new TableauRepository())->mettreAJour($tableau);
 

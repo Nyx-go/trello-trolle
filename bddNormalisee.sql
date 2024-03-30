@@ -52,4 +52,9 @@ CREATE TABLE Affecte(
     PRIMARY KEY (idCarte, login),
     FOREIGN KEY (idCarte) REFERENCES Cartes ON DELETE CASCADE,
     FOREIGN KEY (login) REFERENCES Utilisateurs ON DELETE CASCADE
-)
+);
+
+
+SELECT t.idtableau, t.login, codetableau, titretableau
+FROM tableaux t LEFT JOIN participe p ON t.idtableau = p.idtableau
+WHERE p.login = 'valdu' OR t.login = 'valdu';
