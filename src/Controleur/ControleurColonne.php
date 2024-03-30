@@ -20,7 +20,7 @@ class ControleurColonne extends ControleurGenerique
     }
 
     #[Route(path: '/colonne/suppression', name:'supprimerColonne', methods:["GET"])]
-    public static function supprimerColonne($idColonne): Response {
+    public static function supprimerColonne($idColonne = null): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurColonne::redirection("afficherFormulaireConnexion");
         }
@@ -57,7 +57,7 @@ class ControleurColonne extends ControleurGenerique
     }
 
     #[Route(path: '/colonne/nouvelle', name:'afficherFormulaireCreationColonne', methods:["GET"])]
-    public static function afficherFormulaireCreationColonne($idTableau): Response {
+    public static function afficherFormulaireCreationColonne($idTableau = null): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurColonne::redirection("afficherFormulaireConnexion");
         }
@@ -130,7 +130,7 @@ class ControleurColonne extends ControleurGenerique
     }
 
     #[Route(path: '/colonne/mise-a-jour', name:'afficherFormulaireMiseAJourColonne', methods:["GET"])]
-    public static function afficherFormulaireMiseAJourColonne($idColonne): Response {
+    public static function afficherFormulaireMiseAJourColonne($idColonne = null): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurColonne::redirection("afficherFormulaireConnexion");
         }

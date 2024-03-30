@@ -97,7 +97,7 @@ class ControleurTableau extends ControleurGenerique
     }
 
     #[Route(path: '/tableau/mise-a-jour', name:'afficherFormulaireMiseAJourTableau', methods:["GET"])]
-    public static function afficherFormulaireMiseAJourTableau($idTableau): Response {
+    public static function afficherFormulaireMiseAJourTableau($idTableau = null): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherFormulaireConnexion");
         }
@@ -229,7 +229,7 @@ class ControleurTableau extends ControleurGenerique
     }
 
     #[Route(path: '/tableau/membres/ajout', name:'afficherFormulaireAjoutMembre', methods:["GET"])]
-    public static function afficherFormulaireAjoutMembre($idTableau): Response {
+    public static function afficherFormulaireAjoutMembre($idTableau = null): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherFormulaireConnexion");
         }
@@ -330,7 +330,7 @@ class ControleurTableau extends ControleurGenerique
     }
 
     #[Route(path: '/tableau/membres/suppression', name:'supprimerMembre', methods:["GET"])]
-    public static function supprimerMembre($login, $idTableau): Response {
+    public static function supprimerMembre($login = null, $idTableau = null): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherFormulaireConnexion");
         }
@@ -415,7 +415,7 @@ class ControleurTableau extends ControleurGenerique
     }
 
     #[Route(path: '/tableau/quitter', name:'quitterTableau', methods:["GET"])]
-    public static function quitterTableau($idTableau): Response {
+    public static function quitterTableau($idTableau = null): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherFormulaireConnexion");
         }

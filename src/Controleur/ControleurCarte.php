@@ -22,7 +22,7 @@ class ControleurCarte extends ControleurGenerique
     }
 
     #[Route(path: '/carte/suppression', name:'supprimerCarte', methods:["GET"])]
-    public static function supprimerCarte($idCarte): Response {
+    public static function supprimerCarte($idCarte = null): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurCarte::redirection("afficherFormulaireConnexion");
         }
@@ -58,7 +58,7 @@ class ControleurCarte extends ControleurGenerique
     }
 
     #[Route(path: '/carte/nouvelle', name:'afficherFormulaireCreationCarte', methods:["GET"])]
-    public static function afficherFormulaireCreationCarte($idColonne): Response {
+    public static function afficherFormulaireCreationCarte($idColonne = null): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurCarte::redirection("afficherFormulaireConnexion");
         }
@@ -156,7 +156,7 @@ class ControleurCarte extends ControleurGenerique
     }
 
     #[Route(path: '/carte/mise-a-jour', name:'afficherFormulaireMiseAJourCarte', methods:["GET"])]
-    public static function afficherFormulaireMiseAJourCarte($idCarte): Response {
+    public static function afficherFormulaireMiseAJourCarte($idCarte = null): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurCarte::redirection("afficherFormulaireConnexion");
         }
