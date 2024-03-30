@@ -109,12 +109,17 @@ class ControleurTableau extends ControleurGenerique
             return ControleurTableau::redirection("afficherTableau", ["codetableau" => $tableau->getCodeTableau()]);
         }
 
+        return ControleurTableau::afficherTwig("tableau/formulaireMiseAJourTableau.html.twig",[
+            "idTableau" => $idTableau,
+            "nomTableau" => $tableau->getTitreTableau()
+        ]);
+        /*
         return ControleurTableau::afficherVue('vueGenerale.php', [
             "pagetitle" => "Modification d'un tableau",
             "cheminVueBody" => "tableau/formulaireMiseAJourTableau.php",
             "idTableau" => $idTableau,
             "nomTableau" => $tableau->getTitreTableau()
-        ]);
+        ]);*/
     }
 
     #[Route(path: '/tableaux/nouveau', name:'afficherFormulaireCreationTableau', methods:["GET"])]
