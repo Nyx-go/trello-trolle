@@ -452,22 +452,15 @@ class ControleurTableau extends ControleurGenerique
         return ControleurTableau::redirection("afficherListeMesTableaux");
     }
 
-    #[Route(path: '/tableau/suppression', name:'supprimerTableau', methods:["GET"])]
-    public static function supprimerTableau($idTableau = null): Response {
+    #[Route(path: '/tableau/{idTableau}/suppression', name:'supprimerTableau', methods:["GET"])]
+    public static function supprimerTableau($idTableau): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherFormulaireConnexion");
         }
 
-        if(!$idTableau){
-            if(!isset($_REQUEST["idTableau"])){
-                MessageFlash::ajouter("danger", "idTableau inexistant");
-                return self::redirection("accueil");
-            } else $idTableau1 = $_REQUEST["idTableau"];
-        } else $idTableau1 = $idTableau;
-
         $tableauRepository = new TableauRepository();
 
-        $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$idTableau1));
+        $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$idTableau));
         if(!$tableau) {
             MessageFlash::ajouter("danger", "Tableau inexistant");
             return ControleurTableau::redirection("afficherListeMesTableaux");
@@ -477,7 +470,7 @@ class ControleurTableau extends ControleurGenerique
             return ControleurTableau::redirection("afficherListeMesTableaux");
         }
 
-        $succesSuppression =  $tableauRepository->supprimer(array("idtableau"=>$idTableau1));
+        $succesSuppression =  $tableauRepository->supprimer(array("idtableau"=>$idTableau));
 
         if ($succesSuppression) {
             MessageFlash::ajouter("success", "Le tableau a bien été supprimé !");
