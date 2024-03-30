@@ -256,17 +256,21 @@ class ControleurTableau extends ControleurGenerique
         ]);
     }
 
-    #[Route(path: '/tableau/{idTableau}/membres/{login}/ajout', name:'ajouterMembre', methods:["POST"])]
-    public static function ajouterMembre($idTableau, $login): Response {
+    #[Route(path: '/tableau/membres/ajout', name:'ajouterMembre', methods:["POST"])]
+    public static function ajouterMembre(): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherFormulaireConnexion");
+        }
+        if(!ControleurCarte::issetAndNotNull(["idTableau"])) {
+            MessageFlash::ajouter("danger", "Identifiant du tableau manquant");
+            return ControleurTableau::redirection("accueil");
         }
         $tableauRepository = new TableauRepository();
 
         /**
          * @var Tableau $tableau
          */
-        $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$idTableau));
+        $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$_REQUEST["idTableau"]));
         if(!$tableau) {
             MessageFlash::ajouter("danger", "Tableau inexistant");
             return ControleurTableau::redirection("accueil");
@@ -284,7 +288,7 @@ class ControleurTableau extends ControleurGenerique
         /**
          * @var Utilisateur $utilisateur
          */
-        $utilisateur = $utilisateurRepository->recupererParClePrimaire(array("login"=>$login));
+        $utilisateur = $utilisateurRepository->recupererParClePrimaire(array("login"=>$_REQUEST["login"]));
         if(!$utilisateur) {
             MessageFlash::ajouter("danger", "Utlisateur inexistant");
             return ControleurTableau::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
@@ -295,7 +299,7 @@ class ControleurTableau extends ControleurGenerique
         }
 
         $participe = new Participe(
-            $idTableau,
+            $_REQUEST["idTableau"],
             $utilisateur->getLogin()
         );
         $succesSauvegarde = (new ParticipeRepository())->ajouter($participe);
