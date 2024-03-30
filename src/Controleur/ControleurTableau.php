@@ -26,17 +26,19 @@ class ControleurTableau extends ControleurGenerique
     }
 
     #[Route(path: '/tableau', name:'afficherTableau', methods:["GET"])]
-    public static function afficherTableau($code) : Response {
+    public static function afficherTableau($code = null) : Response {
         if(!$code) {
-            MessageFlash::ajouter("warning", "Code de tableau manquant");
-            return ControleurTableau::redirection("accueil");
-        }
+            if(!isset($_REQUEST['code'])){
+                MessageFlash::ajouter("warning", "Code de tableau manquant");
+                return ControleurTableau::redirection("accueil");
+            }else $codeTableau = $_REQUEST['code'];
+        }else $codeTableau = $code;
         $tableauRepository = new TableauRepository();
 
         /**
          * @var Tableau $tableau
          */
-        $tableau = $tableauRepository->recupererParCodeTableau($code);
+        $tableau = $tableauRepository->recupererParCodeTableau($codeTableau);
         if(!$tableau) {
             MessageFlash::ajouter("warning", "Tableau inexistant");
             return ControleurTableau::redirection("accueil");
