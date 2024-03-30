@@ -32,7 +32,7 @@ class ColonneRepository extends AbstractRepository
     }
 
     public function recupererColonnesTableau(int $idTableau): array {
-        return $this->recupererPlusieursParOrdonne("idtableau", $idTableau, "idcolonne");
+        return $this->recupererPlusieursParOrdonne("idtableau", $idTableau, array("idcolonne"));
     }
 
     public function getNextIdColonne() : int {
