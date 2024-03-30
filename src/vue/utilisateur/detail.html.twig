@@ -10,9 +10,9 @@
         <h3>Détail du compte {{ utilisateur.getLogin() }}</h3>
         <p>
             <label for="">Nom</label>
-            <input type="text" disabled value="TODO">
+            <input type="text" disabled value="{{ utilisateur.getNom() }}">
             <label for="">Prénom</label>
-            <input type="text" disabled value="TODO">
+            <input type="text" disabled value="{{ utilisateur.getPrenom() }}">
         </p>
         {# TODO: if vérification que le login est celui de l'utilisateur connecté #}
     {% if utilisateur.getLogin() == loginUser %}
