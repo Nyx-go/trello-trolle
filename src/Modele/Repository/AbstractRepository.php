@@ -76,7 +76,7 @@ abstract class AbstractRepository
     {
         $nomTable = $this->getNomTable();
         $attributsTexte = join(",", $attributs);
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare("SELECT DISTINCT {$this->formatNomsColonnes()} FROM $nomTable WHERE $nomAttribut=:valeur ORDER BY $attributsTexte $sens");
+        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare("SELECT DISTINCT {$this->formatNomsColonnes()} FROM $nomTable WHERE $nomAttribut=:'$valeur' ORDER BY $attributsTexte $sens");
         $values = array(
             "valeur" => $valeur,
         );
@@ -92,7 +92,7 @@ abstract class AbstractRepository
     protected function recupererPar(string $nomAttribut, $valeur): ?AbstractDataObject
     {
         $nomTable = $this->getNomTable();
-        $sql = "SELECT DISTINCT {$this->formatNomsColonnes()} from $nomTable WHERE $nomAttribut=:valeur";
+        $sql = "SELECT DISTINCT {$this->formatNomsColonnes()} from $nomTable WHERE $nomAttribut=:'$valeur'";
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
         $pdoStatement->execute(["valeur"=>$valeur]);
         $objetFormatTableau = $pdoStatement->fetch();
