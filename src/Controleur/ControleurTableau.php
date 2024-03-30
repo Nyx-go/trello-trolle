@@ -34,7 +34,7 @@ class ControleurTableau extends ControleurGenerique
          */
         $tableau = $tableauRepository->recupererParCodeTableau($codeTableau);
         if(!$tableau) {
-            MessageFlash::ajouter("warning", "Tableau inexistant 1");
+            MessageFlash::ajouter("warning", "Tableau inexistant");
             return ControleurTableau::redirection("accueil");
         }
         $colonneRepository = new ColonneRepository();
@@ -101,7 +101,7 @@ class ControleurTableau extends ControleurGenerique
          */
         $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$idTableau));
         if(!$tableau) {
-            MessageFlash::ajouter("danger", "Tableau inexistant 2");
+            MessageFlash::ajouter("danger", "Tableau inexistant");
             return ControleurTableau::redirection("accueil");
         }
         if(!$tableauRepository->estParticipantOuProprietaire($tableau->getIdTableau(), ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
@@ -195,7 +195,7 @@ class ControleurTableau extends ControleurGenerique
          */
         $tableau = $tableauRepository->recupererParClePrimaire(array("idTabeau"=>$_REQUEST["idTableau"]));
         if(!$tableau) {
-            MessageFlash::ajouter("danger", "Tableau inexistant 3");
+            MessageFlash::ajouter("danger", "Tableau inexistant");
             return ControleurTableau::redirection("accueil");
         }
         if(!ControleurCarte::issetAndNotNull(["nomTableau"])) {
@@ -230,7 +230,7 @@ class ControleurTableau extends ControleurGenerique
          */
         $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$idTableau));
         if(!$tableau) {
-            MessageFlash::ajouter("danger", "Tableau inexistant 4");
+            MessageFlash::ajouter("danger", "Tableau inexistant");
             return ControleurTableau::redirection("accueil");
         }
         if(!$tableauRepository->estProprietaire($tableau->getIdTableau(),ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
@@ -273,7 +273,7 @@ class ControleurTableau extends ControleurGenerique
          */
         $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$_REQUEST["idTableau"]));
         if(!$tableau) {
-            MessageFlash::ajouter("danger", "Tableau inexistant 5");
+            MessageFlash::ajouter("danger", "Tableau inexistant");
             return ControleurTableau::redirection("accueil");
         }
         if(!$tableauRepository->estProprietaire($tableau->getIdTableau(),ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
@@ -325,7 +325,7 @@ class ControleurTableau extends ControleurGenerique
          */
         $tableau = $tableauRepository->recupererParClePrimaire(array("idTabeau"=>$idTableau));
         if(!$tableau) {
-            MessageFlash::ajouter("danger", "Tableau inexistant 6");
+            MessageFlash::ajouter("danger", "Tableau inexistant");
             return ControleurTableau::redirection("accueil");
         }
         if(!$tableauRepository->estProprietaire($tableau->getIdTableau(),ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
@@ -407,7 +407,7 @@ class ControleurTableau extends ControleurGenerique
          */
         $tableau = $tableauRepository->recupererParClePrimaire(array("idTableau"=>$idTableau));
         if(!$tableau) {
-            MessageFlash::ajouter("danger", "Tableau inexistant 7");
+            MessageFlash::ajouter("danger", "Tableau inexistant");
             return ControleurTableau::redirection("afficherListeMesTableaux");
         }
 
@@ -455,7 +455,7 @@ class ControleurTableau extends ControleurGenerique
 
         $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$idTableau));
         if(!$tableau) {
-            MessageFlash::ajouter("danger", "Tableau inexistant 8");
+            MessageFlash::ajouter("danger", "Tableau inexistant");
             return ControleurTableau::redirection("afficherListeMesTableaux");
         }
         if(!$tableauRepository->estProprietaire($tableau->getIdTableau(),ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
