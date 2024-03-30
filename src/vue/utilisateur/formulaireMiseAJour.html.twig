@@ -10,7 +10,7 @@
                 <h3>Mise à jour du profil</h3>
                 <p >
                     <label  for="login_id">Login&#42;</label>
-                    <input  type="text" value="{{ utilisateur.getLogin() }}" minlength="3" maxlength="30" placeholder="Ex : rlebreton" name="login" id="login_id" readonly>
+                    <input  type="text" value="{{ utilisateur.getLogin() }}" minlength="3" maxlength="30" placeholder="Ex : rlebreton" name='login' id="login_id" readonly>
                 </p>
                 <p >
                     <label  for="prenom_id">Prenom&#42;</label>
@@ -26,7 +26,7 @@
                 </p>
                 <p >
                     <label  for="mdpAncien_id">Ancien mot de passe&#42;</label>
-                    <input  type="password" value="{#<?= $passwordHTML ?>#}" placeholder="" name="mdpAncien" id="mdpAncien_id" required>
+                    <input  type="password" placeholder="" name="mdpAncien" id="mdpAncien_id" required>
                 </p>
 
                 <input type='hidden' name='login' value='{#<?= $loginHTML ?>#}'>
