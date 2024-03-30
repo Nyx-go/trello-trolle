@@ -108,9 +108,7 @@ class ControleurUtilisateur extends ControleurGenerique
         $login = ConnexionUtilisateur::getLoginUtilisateurConnecte();
         $repository = new UtilisateurRepository();
         $utilisateur = $repository->recupererParClePrimaire(array("login"=>$login));
-        return ControleurUtilisateur::afficherVue('vueGenerale.php', [
-            "pagetitle" => "Mise à jour du mot de passe",
-            "cheminVueBody" => "utilisateur/formulaireMiseAJourMdp.php",
+        return ControleurUtilisateur::afficherTwig("utilisateur/formulaireMiseAJourMdp.html.twig",[
             "utilisateur" => $utilisateur,
         ]);
     }
@@ -125,9 +123,6 @@ class ControleurUtilisateur extends ControleurGenerique
             $login = ConnexionUtilisateur::getLoginUtilisateurConnecte();
             $repository = new UtilisateurRepository();
 
-            /**
-             * @var Utilisateur $utilisateur
-             */
             $utilisateur = $repository->recupererParClePrimaire(array("login"=>$login));
 
             if(!$utilisateur) {
@@ -149,10 +144,16 @@ class ControleurUtilisateur extends ControleurGenerique
             $utilisateur->setPrenom($_REQUEST["prenom"]);
             $utilisateur->setEmail($_REQUEST["email"]);
 
-            $repository->mettreAJour($utilisateur);
+            $succesMiseAJour = $repository->mettreAJour($utilisateur);
 
-            MessageFlash::ajouter("success", "Vos informations ont bien été modifiées !");
-            return ControleurUtilisateur::redirection("afficherListeMesTableaux");
+            if ($succesMiseAJour) {
+                MessageFlash::ajouter("success", "Vos informations ont bien été modifiées !");
+                return ControleurUtilisateur::redirection("afficherDetail");
+            }
+            else {
+                MessageFlash::ajouter("warning", "Une erreur est survenue lors de la modification des informations.");
+                return ControleurUtilisateur::redirection("afficherFormulaireMiseAJour");
+            }
         } else {
             MessageFlash::ajouter("danger", "Login, nom, prénom, email ou mot de passe manquant.");
             return ControleurUtilisateur::redirection("afficherFormulaireMiseAJour");
@@ -169,9 +170,6 @@ class ControleurUtilisateur extends ControleurGenerique
             $login = ConnexionUtilisateur::getLoginUtilisateurConnecte();
             $repository = new UtilisateurRepository();
 
-            /**
-             * @var Utilisateur $utilisateur
-             */
             $utilisateur = $repository->recupererParClePrimaire(array("login"=>$login));
 
             if(!$utilisateur) {
@@ -191,19 +189,25 @@ class ControleurUtilisateur extends ControleurGenerique
 
             $utilisateur->setMdpHache(MotDePasse::hacher($_REQUEST["mdp"]));
 
-            $repository->mettreAJour($utilisateur);
+            $succesMiseAJour = $repository->mettreAJour($utilisateur);
 
-            MessageFlash::ajouter("success", "Le mot de passe a bien été modifié !");
-            return ControleurUtilisateur::redirection("afficherListeMesTableaux");
+            if ($succesMiseAJour) {
+                MessageFlash::ajouter("success", "Le mot de passe a bien été modifié !");
+                return ControleurUtilisateur::redirection("afficherDetail");
+            }
+            else {
+                MessageFlash::ajouter("warning", "Une erreur est survenue lors de la modification des informations.");
+                return ControleurUtilisateur::redirection("afficherFormulaireMiseAJourMdp");
+            }
         } else {
             MessageFlash::ajouter("danger", "Login ou mot de passe manquant.");
-            return ControleurUtilisateur::redirection("afficherFormulaireMiseAJour");
+            return ControleurUtilisateur::redirection("afficherFormulaireMiseAJourMdp");
         }
     }
 
 
     #[Route(path: '/suppression-compte', name:'supprimer', methods:["GET"])]
-    public static function supprimer($login1): Response
+    public static function supprimer(): Response
     {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherFormulaireConnexion");
@@ -220,7 +224,7 @@ class ControleurUtilisateur extends ControleurGenerique
         }
         else {
             MessageFlash::ajouter("warning", "Une erreur est survenue lors de la suppression de l'utilisateur.");
-            return ControleurUtilisateur::redirection("afficherDetail",[]);
+            return ControleurUtilisateur::redirection("afficherDetail");
         }
     }
 

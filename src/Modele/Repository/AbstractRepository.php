@@ -144,7 +144,7 @@ abstract class AbstractRepository
         return ($deleteCount > 0);
     }
 //TODO : pb potentiel à vérifier plus tard + return bool succes ou non
-    public function mettreAJour(AbstractDataObject $object): void
+    public function mettreAJour(AbstractDataObject $object): bool
     {
         $nomTable = $this->getNomTable();
         $clePrimaires = $this->getNomCle();
@@ -163,7 +163,9 @@ abstract class AbstractRepository
 
         $objetFormatTableau = $object->formatTableau();
         $req_prep->execute($objetFormatTableau);
+        $deleteCount = $req_prep->rowCount();
 
+        return ($req_prep > 0);
     }
 
     public function ajouter(AbstractDataObject $object)
