@@ -260,8 +260,15 @@ class ControleurCarte extends ControleurGenerique
                 }
             }
         }
-        $carteRepository->mettreAJour($carte);
-        MessageFlash::ajouter("success", "La carte a bien été modifiée !");
+
+        $succesMiseAJour = $carteRepository->mettreAJour($carte);
+
+        if ($succesMiseAJour) {
+            MessageFlash::ajouter("success", "La carte a bien été modifiée !");
+        }
+        else {
+            MessageFlash::ajouter("warning", "Une erreur est survenue lors de la modification de la carte.");
+        }
         return ControleurCarte::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
 }

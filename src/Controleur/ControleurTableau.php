@@ -460,6 +460,14 @@ class ControleurTableau extends ControleurGenerique
         $cartes = $carteRepository->recupererCartesTableau($tableau->getIdTableau());
         foreach ($cartes as $carte) {
             $affecteRepository->supprimer(array($carte->getIdCarte(), $utilisateur->getLogin()));
+            $succesSuppression =  $tableauRepository->supprimer($idTableau);
+
+            if ($succesSuppression) {
+                MessageFlash::ajouter("success", "Vous avez bien quitté le tableau !");
+            }
+            else {
+                MessageFlash::ajouter("warning", "Une erreur est survenue lorsque vous avez essayé de quitter le tableau.");
+            }
         }
         return ControleurTableau::redirection("afficherListeMesTableaux");
     }

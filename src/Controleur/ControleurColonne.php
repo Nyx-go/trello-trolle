@@ -190,10 +190,15 @@ class ControleurColonne extends ControleurGenerique
             return ControleurColonne::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
         }
         $colonne->setTitreColonne($_REQUEST["nomColonne"]);
-        $colonneRepository->mettreAJour($colonne);
-        $succesSauvegarde =  $colonneRepository->ajouter($colonne);
 
-        MessageFlash::ajouter("success", "Votre colonne a bien été modifiée !");
+        $succesMiseAJour = $colonneRepository->mettreAJour($colonne);
+
+        if ($succesMiseAJour) {
+            MessageFlash::ajouter("success", "Votre colonne a bien été modifiée !");
+        }
+        else {
+            MessageFlash::ajouter("warning", "Une erreur est survenue lors de la modification de la colonne.");
+        }
         return ControleurColonne::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
 }
