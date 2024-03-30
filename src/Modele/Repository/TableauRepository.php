@@ -67,7 +67,7 @@ class TableauRepository extends AbstractRepository
     public function estParticipant($idTableau, $login) : bool{
         $sql = "SELECT login FROM participe WHERE idtableau =:idTableau";
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
-        $pdoStatement->execute(["idTableau" => $idTableau]);
+        $pdoStatement->execute(["idtableau" => $idTableau]);
         $obj = $pdoStatement->fetch();
         foreach ($obj as $item) {
             if ($item === $login) return true;
