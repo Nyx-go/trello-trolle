@@ -1,6 +1,6 @@
 {% extends "base.html.twig" %}
 
-{% block page_title %}Modification du profil{% endblock %}
+{% block page_title %}Modification du mot de passe{% endblock %}
 
 {# TODO: changer pour préremplir les champs #}
 {% block page_content %}
@@ -25,9 +25,6 @@
                     <label  for="mdp2_id">Vérification du nouveau mot de passe&#42;</label>
                     <input  type="password" value="" placeholder="" minlength="6" maxlength="50" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*_=+\-]).{6,50}" name="mdp2" id="mdp2_id" required>
                 </p>
-                <input type='hidden' name='login' value='{{ login }}'>
-                <input type='hidden' name='action' value='mettreAJourMdp'>
-                <input type='hidden' name='controleur' value='utilisateur'>
                 <p>
                     <input type="submit" value="Mettre à jour Mdp"/>
                 </p>

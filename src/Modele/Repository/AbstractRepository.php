@@ -163,9 +163,9 @@ abstract class AbstractRepository
 
         $objetFormatTableau = $object->formatTableau();
         $req_prep->execute($objetFormatTableau);
-        $deleteCount = $req_prep->rowCount();
+        $updateCount = $req_prep->rowCount();
 
-        return ($req_prep > 0);
+        return ($updateCount > 0);
     }
 
     public function ajouter(AbstractDataObject $object)
