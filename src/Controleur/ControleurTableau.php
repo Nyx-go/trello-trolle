@@ -478,12 +478,17 @@ class ControleurTableau extends ControleurGenerique
             return ControleurTableau::redirection("afficherFormulaireConnexion");
         }
 
-        if(!$idTableau){
+        /*if(!$idTableau){
             if(!isset($_REQUEST["idTableau"])){
                 MessageFlash::ajouter("danger", "idTableau inexistant");
                 return self::redirection("accueil");
             } else $idTableau1 = $_REQUEST["idTableau"];
-        } else $idTableau1 = $idTableau;
+        } else $idTableau1 = $idTableau;*/
+
+        if(!isset($_REQUEST["idTableau"])){
+            MessageFlash::ajouter("danger", "idTableau inexistant");
+            return self::redirection("accueil");
+        } else $idTableau1 = $_REQUEST["idTableau"];
 
         $tableauRepository = new TableauRepository();
 
