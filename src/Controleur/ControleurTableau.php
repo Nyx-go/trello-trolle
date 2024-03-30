@@ -175,7 +175,7 @@ class ControleurTableau extends ControleurGenerique
         );
         (new CarteRepository())->ajouter($carte);
 
-        return ControleurTableau::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
+        return ControleurTableau::redirection("afficherTableau", ["code" => $tableau->getCodeTableau()]);
     }
 
     #[Route(path: '/tableau/mise-a-jour', name:'mettreAJourTableau', methods:["POST"])]
