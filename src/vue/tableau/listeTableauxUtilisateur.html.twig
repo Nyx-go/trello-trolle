@@ -16,10 +16,10 @@
                 <div>
 
                     {% if estProprietaire[tableau.getIdTableau()] %}
-                    <a href="{{ route("supprimerTableau",{idTableau : tableau.getIdTableau() })}}">Supprimer
+                    <a href="{{ route("supprimerTableau",{"idTableau" : tableau.getIdTableau() })}}">Supprimer
                         le tableau</a>
                     {% else %}
-                    <a href="{{ route("quitterTableau", {idTableau : tableau.getIdTableau() })}}">Quitter
+                    <a href="{{ route("quitterTableau", {"idTableau" : tableau.getIdTableau() })}}">Quitter
                         le tableau</a>
                     {% endif %}
                 </div>
