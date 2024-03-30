@@ -63,7 +63,7 @@ class ControleurColonne extends ControleurGenerique
          */
         $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$idTableau));
         if(!$tableau) {
-            MessageFlash::ajouter("warning", "Tableau inexistant 9");
+            MessageFlash::ajouter("warning", "Tableau inexistant");
             return ControleurColonne::redirection("accueil");
         }
         if(!$tableauRepository->estParticipantOuProprietaire($tableau->getIdTableau(), ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
@@ -92,7 +92,7 @@ class ControleurColonne extends ControleurGenerique
          */
         $tableau = $tableauRepository->recupererParClePrimaire(array("idTableau"=>$_REQUEST["idTableau"]));
         if(!$tableau) {
-            MessageFlash::ajouter("danger", "Tableau inexistant 10");
+            MessageFlash::ajouter("danger", "Tableau inexistant");
             return ControleurColonne::redirection("accueil");
         }
         if(!ControleurCarte::issetAndNotNull(["nomColonne"])) {

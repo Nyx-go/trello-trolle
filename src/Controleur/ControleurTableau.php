@@ -117,7 +117,7 @@ class ControleurTableau extends ControleurGenerique
         ]);
     }
 
-    #[Route(path: '/tableau/nouveau', name:'afficherFormulaireCreationTableau', methods:["GET"])]
+    #[Route(path: '/tableaux/nouveau', name:'afficherFormulaireCreationTableau', methods:["GET"])]
     public static function afficherFormulaireCreationTableau(): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherFormulaireConnexion");
@@ -127,7 +127,7 @@ class ControleurTableau extends ControleurGenerique
         );
     }
 
-    #[Route(path: '/tableau/nouveau', name:'creerTableau', methods:["POST"])]
+    #[Route(path: '/tableaux/nouveau', name:'creerTableau', methods:["POST"])]
     public static function creerTableau(): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherFormulaireConnexion");
