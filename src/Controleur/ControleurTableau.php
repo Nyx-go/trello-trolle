@@ -25,7 +25,7 @@ class ControleurTableau extends ControleurGenerique
         return parent::afficherErreur($messageErreur, $statusCode);
     }
 
-    #[Route(path: '/tableau', name:'afficherTableau', methods:["GET"])]
+    #[Route(path: '/tableau/{code}', name:'afficherTableau', methods:["GET"])]
     public static function afficherTableau($code = null) : Response {
         if(!$code) {
             if(!isset($_REQUEST['code'])){
@@ -228,14 +228,10 @@ class ControleurTableau extends ControleurGenerique
         return ControleurTableau::redirection("afficherTableau", ["codetableau" => $tableau->getCodeTableau()]);
     }
 
-    #[Route(path: '/tableau/membres/ajout', name:'afficherFormulaireAjoutMembre', methods:["GET"])]
-    public static function afficherFormulaireAjoutMembre($idTableau = null): Response {
+    #[Route(path: '/tableau/{idTableau}/membres/ajout', name:'afficherFormulaireAjoutMembre', methods:["GET"])]
+    public static function afficherFormulaireAjoutMembre($idTableau): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherFormulaireConnexion");
-        }
-        if(!$idTableau) {
-            MessageFlash::ajouter("danger", "Identifiant du tableau manquant");
-            return ControleurColonne::redirection("accueil");
         }
         $tableauRepository = new TableauRepository();
         /**
