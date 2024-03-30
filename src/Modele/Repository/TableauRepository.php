@@ -120,7 +120,7 @@ class TableauRepository extends AbstractRepository
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
 
         try {
-            $pdoStatement->execute(array("login"=>$object->getLogin(), "titretableau"=> $object-> getTitretableau(),"codetableau"=>$object->getCodetableau()));
+            $pdoStatement->execute(array("login"=>$object->getLogin(), "titretableau"=> $object-> getTitreTableau(),"codetableau"=>$object->getCodeTableau()));
             $result = $pdoStatement->fetch(PDO::FETCH_ASSOC);
             return $result["idtableau"];
         } catch (PDOException $exception) {

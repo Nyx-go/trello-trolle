@@ -5,6 +5,8 @@ namespace App\Trellotrolle\Modele\Repository;
 use App\Trellotrolle\Modele\DataObject\AbstractDataObject;
 use App\Trellotrolle\Modele\DataObject\Colonne;
 use Exception;
+use PDO;
+use PDOException;
 
 class ColonneRepository extends AbstractRepository
 {
@@ -67,5 +69,22 @@ class ColonneRepository extends AbstractRepository
         return AbstractRepository::supprimer($valeurClePrimaire);
     }
 
+    public function ajouter(AbstractDataObject $object)
+    {
+        $sql = "INSERT INTO colonnes (idtableau ,titrecolonne) VALUES (:idtableau, :titrecolonne) RETURNING idcolonne;";
+        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+
+        try {
+            $pdoStatement->execute(array("idtableau"=>$object->getIdTableau(), "titrecolonne"=> $object-> getTitreColonne(),"codetableau"=>$object->getCodetableau()));
+            $result = $pdoStatement->fetch(PDO::FETCH_ASSOC);
+            return $result["idColonne"];
+        } catch (PDOException $exception) {
+            if ($pdoStatement->errorCode() === "23000") {
+                return false;
+            } else {
+                throw $exception;
+            }
+        }
+    }
 
 }
