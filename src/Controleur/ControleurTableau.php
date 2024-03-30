@@ -111,7 +111,7 @@ class ControleurTableau extends ControleurGenerique
         return ControleurTableau::afficherVue('vueGenerale.php', [
             "pagetitle" => "Modification d'un tableau",
             "cheminVueBody" => "tableau/formulaireMiseAJourTableau.php",
-            "idTableau" => $_REQUEST["idTableau"],
+            "idTableau" => $idTableau,
             "nomTableau" => $tableau->getTitreTableau()
         ]);
     }
