@@ -81,7 +81,7 @@ class ControleurTableau extends ControleurGenerique
             $estParticipantOuProprietaire = false;
         }
 
-        $utilisateur = (new UtilisateurRepository())->recupererParClePrimaire(array("login"=>$tableau->getIdUtilisateur()));
+        $utilisateur = (new UtilisateurRepository())->recupererParClePrimaire(array("login"=>$tableau->getLogin()));
 
         return ControleurTableau::afficherTwig("tableau/tableau.html.twig",[
             "estProprietaire"=> $estProprietaire,

@@ -21,14 +21,14 @@ class Tableau extends AbstractDataObject
         );
     }
 
-    public function getIdUtilisateur(): string
+    public function getLogin(): string
     {
         return $this->login;
     }
 
-    public function setIdUtilisateur(string $idUtilisateur): void
+    public function setLogin(string $login): void
     {
-        $this->login = $idUtilisateur;
+        $this->login = $login;
     }
 
     public function getIdTableau(): ?int
