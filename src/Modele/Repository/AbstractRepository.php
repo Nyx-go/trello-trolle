@@ -143,7 +143,7 @@ abstract class AbstractRepository
 
         return ($deleteCount > 0);
     }
-//TODO : pb potentiel à vérifier plus tard + return bool succes ou non
+
     public function mettreAJour(AbstractDataObject $object): bool
     {
         $nomTable = $this->getNomTable();

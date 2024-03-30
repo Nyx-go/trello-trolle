@@ -212,8 +212,14 @@ class ControleurTableau extends ControleurGenerique
         }
         else {
             $tableau->setTitreTableau($_REQUEST["nomTableau"]);
-            $tableauRepository->mettreAJour($tableau);
-            MessageFlash::ajouter("success", "Le tableau a bien été modifié !");
+            $succesMiseAJour = $tableauRepository->mettreAJour($tableau);
+            
+            if ($succesMiseAJour) {
+                MessageFlash::ajouter("success", "Le tableau a bien été modifié !");
+            }
+            else {
+                MessageFlash::ajouter("warning", "Une erreur est survenue lors de la modification du tableau.");
+            }
         }
         return ControleurTableau::redirection("afficherTableau", ["codetableau" => $tableau->getCodeTableau()]);
     }
