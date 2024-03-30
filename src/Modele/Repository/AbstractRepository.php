@@ -171,11 +171,13 @@ abstract class AbstractRepository
         $nomTable = $this->getNomTable();
         $nomsColonnes = $this->getNomsColonnes();
         $nomCle = $this->getNomCle()[0];
+        $objetFormatTableau = $object->formatTableau();
         if (get_class($this) == get_class(new TableauRepository()) ||
             get_class($this) == get_class(new CarteRepository()) ||
             get_class($this) == get_class(new ColonneRepository())) {
             $key = array_search($nomCle, $nomsColonnes);
             unset($nomsColonnes[$key]); // enlève la clé primaire de la liste des noms de colonnes de la table afin qu'il n'y ait pas de problème lors de l'insertion à cause du SERIAL
+            unset($objetFormatTableau[$nomCle."Tag"]);
         }
 
         $insertString = '(' . join(', ', $nomsColonnes) . ')';
@@ -188,7 +190,6 @@ abstract class AbstractRepository
         $sql = "INSERT INTO $nomTable $insertString VALUES $valueString RETURNING $nomCle";
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
 
-        $objetFormatTableau = $object->formatTableau();
 
         try {
             $pdoStatement->execute($objetFormatTableau);
