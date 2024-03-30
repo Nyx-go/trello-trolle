@@ -116,7 +116,7 @@ class TableauRepository extends AbstractRepository
 
     public function ajouter(AbstractDataObject $object)
     {
-        $sql = "INSERT INTO tableaux (login, titretableau, codetableau) VALUES (:login, :titretableau, :codetableau) RETURNING idtableau ";
+        $sql = "INSERT INTO tableaux (login, titretableau, codetableau) VALUES (:login, :titretableau, :codetableau) RETURNING idtableau;";
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
 
         try {
