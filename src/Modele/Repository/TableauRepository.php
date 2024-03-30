@@ -106,7 +106,7 @@ class TableauRepository extends AbstractRepository
 
         //suppression des participations du tableau
         $participeRepository = new ParticipeRepository();
-        $participations = $participeRepository->recupererParLogin($valeurClePrimaire['login']);
+        $participations = $participeRepository->recupererParIdTableau($valeurClePrimaire['idtableau']);
         foreach ($participations as $participation) {
             $participeRepository->supprimer($participation->getNomCle());
         }
