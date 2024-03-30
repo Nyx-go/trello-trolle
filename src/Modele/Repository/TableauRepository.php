@@ -6,6 +6,8 @@ use App\Trellotrolle\Modele\DataObject\AbstractDataObject;
 use App\Trellotrolle\Modele\DataObject\Carte;
 use App\Trellotrolle\Modele\DataObject\Tableau;
 use Exception;
+use PDO;
+use PDOException;
 
 class TableauRepository extends AbstractRepository
 {
@@ -110,5 +112,23 @@ class TableauRepository extends AbstractRepository
         }
 
         return AbstractRepository::supprimer($valeurClePrimaire);
+    }
+
+    public function ajouter(AbstractDataObject $object)
+    {
+        $sql = "INSERT INTO tableaux (login, titretableau, codetableau) VALUES (:login, :titretableau, :codetableau) RETURNING idtableau ";
+        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+
+        try {
+            $pdoStatement->execute(array("login"=>$object->getLogin(), "titretableau"=> $object-> getTitretableau(),"codetableau"=>$object->getCodetableau()));
+            $result = $pdoStatement->fetch(PDO::FETCH_ASSOC);
+            return $result["idtableau"];
+        } catch (PDOException $exception) {
+            if ($pdoStatement->errorCode() === "23000") {
+                return false;
+            } else {
+                throw $exception;
+            }
+        }
     }
 }
