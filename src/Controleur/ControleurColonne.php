@@ -70,10 +70,8 @@ class ControleurColonne extends ControleurGenerique
             MessageFlash::ajouter("danger", "Vous n'avez pas de droits d'éditions sur ce tableau");
             return ControleurColonne::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
         }
-        return ControleurTableau::afficherVue('vueGenerale.php', [
-            "pagetitle" => "Création d'une colonne",
-            "cheminVueBody" => "colonne/formulaireCreationColonne.php",
-            "idTableau" => $_REQUEST["idTableau"],
+        return ControleurTableau::afficherTwig("colonne/formulaireCreationColonne.html.twig",[
+            "idTableau" => $idTableau
         ]);
     }
 
@@ -141,10 +139,8 @@ class ControleurColonne extends ControleurGenerique
             MessageFlash::ajouter("danger", "Vous n'avez pas de droits d'éditions sur ce tableau");
             return ControleurColonne::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
         }
-        return ControleurTableau::afficherVue('vueGenerale.php', [
-            "pagetitle" => "Modification d'une colonne",
-            "cheminVueBody" => "colonne/formulaireMiseAJourColonne.php",
-            "idColonne" => $_REQUEST["idColonne"],
+        return ControleurTableau::afficherTwig("colonne/formulaireMiseAJourColonne.html.twig",[
+            "idColonne" => $idColonne,
             "nomColonne" => $colonne->getTitreColonne()
         ]);
     }

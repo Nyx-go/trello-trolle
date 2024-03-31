@@ -1,0 +1,22 @@
+{% extends "base.html.twig" %}
+
+{% block page_title %}Créer une colonne{% endblock %}
+
+{% block page_content %}
+    <div>
+        <form method="post" action="{{ route("creerColonne") }}">
+            <fieldset>
+                <h3>Création d'une colonne :</h3>
+                <p>
+                    <label for="nomColonne">Nom de la colonne&#42;</label>
+                    <input type="text" placeholder="KO" name="nomColonne" id="nomColonne" minlength="1" maxlength="50" required>
+                </p>
+                <input type='hidden' name='idTableau' value='{{ idTableau }}'>
+                <p>
+                    <input type="submit" value="Créer la colonne">
+                </p>
+            </fieldset>
+        </form>
+    </div>
+
+{% endblock %}
