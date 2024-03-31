@@ -34,7 +34,7 @@ class ParticipeRepository extends AbstractRepository{
 
     public function recupererParIdTableau(int $idTableau): array
     {
-        return $this->recupererPlusieursPar("idTableau", $idTableau);
+        return $this->recupererPlusieursPar("idtableau", $idTableau);
     }
 
 }
