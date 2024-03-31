@@ -46,7 +46,7 @@
                     <ul>
                         {% for participant in participants %}
                         <li>
-                            <div>{{ participant["info"].getPrenom() }} {{ participant["info"].getNom() }}</div>
+                            <div>{{ participant.getPrenom() }} {{ participant.getNom() }}</div>
                             <ul>
                                 {% for colonne in participant["colonnes"] %}
                                 <li>{{ colonne[1] }} {{ colonne[0]}} </li>

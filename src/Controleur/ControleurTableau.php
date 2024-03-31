@@ -52,19 +52,6 @@ class ControleurTableau extends ControleurGenerique
              * @var Carte[] $cartes
              */
             $cartes = $carteRepository->recupererCartesColonne($colonne->getIdColonne());
-//            foreach ($cartes as $carte) {
-//                $affectations = (new AffecteRepository())->recupererParIdCarte($carte->getIdCarte());
-//                foreach ($affectations as $affectation) {
-//                    $utilisateur = (new UtilisateurRepository())->recupererParClePrimaire(array("login"=>$affectation->getLogin()));
-//                    if(!isset($participants[$utilisateur->getLogin()])) {
-//                        $participants[$utilisateur->getLogin()] = ["infos" => $utilisateur, "colonnes" => []];
-//                    }
-//                    if(!isset($participants[$utilisateur->getLogin()]["colonnes"][$colonne->getIdColonne()])) {
-//                        $participants[$utilisateur->getLogin()]["colonnes"][$colonne->getIdColonne()] = [$colonne->getTitreColonne(), 0];
-//                    }
-//                    $participants[$utilisateur->getLogin()]["colonnes"][$colonne->getIdColonne()][1]++;
-//                }
-//            }
             $data[] = $cartes;
         }
 
