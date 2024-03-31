@@ -74,7 +74,7 @@ class ControleurTableau extends ControleurGenerique
         $utilisateurRepository = new UtilisateurRepository();
 
         foreach ($participes as $participe) {
-            $participants[] = $utilisateurRepository->recupererParClePrimaire($participe->getLogin());
+            $participants[] = $utilisateurRepository->recupererParClePrimaire(["login" => $participe->getLogin()]);
         }
 
         if(ConnexionUtilisateur::estConnecte()) {
