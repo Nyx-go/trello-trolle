@@ -44,6 +44,7 @@ class ControleurTableau extends ControleurGenerique
          */
         $colonnes = $colonneRepository->recupererColonnesTableau($tableau->getIdTableau());
         $data = [];
+        $participants = [];
 
         $carteRepository = new CarteRepository();
         foreach ($colonnes as $colonne) {
@@ -68,7 +69,13 @@ class ControleurTableau extends ControleurGenerique
         }
 
         $participeRepository = new ParticipeRepository();
-        $participants = $participeRepository->recupererParIdTableau($tableau->getIdTableau());
+        $participes = $participeRepository->recupererParIdTableau($tableau->getIdTableau());
+
+        $utilisateurRepository = new UtilisateurRepository();
+
+        foreach ($participes as $participe) {
+            $participants[] = $utilisateurRepository->recupererParClePrimaire($participe->getLogin());
+        }
 
         if(ConnexionUtilisateur::estConnecte()) {
             $estProprietaire = $tableauRepository->estProprietaire($tableau->getIdTableau(), ConnexionUtilisateur::getLoginUtilisateurConnecte());
