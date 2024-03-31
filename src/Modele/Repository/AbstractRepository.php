@@ -81,6 +81,7 @@ abstract class AbstractRepository
             "valeur" => $valeur,
         );
         $pdoStatement->execute($values);
+        var_dump($pdoStatement);
         $objets = [];
         foreach ($pdoStatement as $objetFormatTableau) {
             $objets[] = $this->construireDepuisTableau($objetFormatTableau);
