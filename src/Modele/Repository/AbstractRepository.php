@@ -62,8 +62,8 @@ abstract class AbstractRepository
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare("SELECT DISTINCT {$this->formatNomsColonnes()} FROM $nomTable WHERE $nomAttribut=:valeur");
         $pdoStatement->execute(["valeur"=>$valeur]);
         $objets = [];
-        var_dump($pdoStatement);
         foreach ($pdoStatement as $objetFormatTableau) {
+            var_dump($objetFormatTableau);
             $objets[] = $this->construireDepuisTableau($objetFormatTableau);
         }
 
