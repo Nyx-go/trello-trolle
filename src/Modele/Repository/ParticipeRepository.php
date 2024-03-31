@@ -24,7 +24,7 @@ class ParticipeRepository extends AbstractRepository{
 
     protected function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
     {
-        return new Participe($objetFormatTableau["idTableau"], $objetFormatTableau["login"]);
+        return new Participe($objetFormatTableau["idtableau"], $objetFormatTableau["login"]);
     }
 
     public function recupererParLogin(string $login): array
