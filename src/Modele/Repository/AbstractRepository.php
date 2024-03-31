@@ -59,9 +59,10 @@ abstract class AbstractRepository
     protected function recupererPlusieursPar(string $nomAttribut, $valeur): array
     {
         $nomTable = $this->getNomTable();
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare("SELECT DISTINCT {$this->formatNomsColonnes()} FROM $nomTable WHERE $nomAttribut='$valeur'");
-        $pdoStatement->execute();
+        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare("SELECT DISTINCT {$this->formatNomsColonnes()} FROM $nomTable WHERE $nomAttribut=:valeur");
+        $pdoStatement->execute(["valeur"=>$valeur]);
         $objets = [];
+        var_dump($pdoStatement);
         foreach ($pdoStatement as $objetFormatTableau) {
             $objets[] = $this->construireDepuisTableau($objetFormatTableau);
         }
@@ -81,7 +82,6 @@ abstract class AbstractRepository
             "valeur" => $valeur,
         );
         $pdoStatement->execute($values);
-        var_dump($pdoStatement);
         $objets = [];
         foreach ($pdoStatement as $objetFormatTableau) {
             $objets[] = $this->construireDepuisTableau($objetFormatTableau);
