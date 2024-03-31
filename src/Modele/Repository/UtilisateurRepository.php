@@ -29,8 +29,8 @@ class UtilisateurRepository extends AbstractRepository
         return Utilisateur::construireDepuisTableau($objetFormatTableau);
     }
 
-    public function recupererUtilisateursParEmail(string $email): array {
-        return $this->recupererPlusieursPar("email", $email);
+    public function recupererUtilisateurParEmail(string $email): ?AbstractDataObject {
+        return $this->recupererPar("email", $email);
     }
 
     public function recupererUtilisateursOrderedPrenomNom() : array {

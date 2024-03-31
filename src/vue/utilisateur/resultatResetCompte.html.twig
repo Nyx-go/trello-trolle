@@ -1,7 +1,21 @@
 {% extends "base.html.twig" %}
 
-{% block page_title %}Reset Compte{% endblock %}
+{% block page_title %}Vérification du compte{% endblock %}
 
 {% block page_content %}
-    <p>Page désactivée temporairement</p>
+    <div>
+        <form method="post" action="{{ route("accueil") }}">
+            <fieldset>
+                <h3>Récupérer mon compte</h3>
+                <p class="InputAddOn">
+                    <label class="InputAddOn-item" for="nonce_id">Code envoyé par email (5 caractères)&#42;</label>
+                    <input class="InputAddOn-field" type="text" value="" placeholder="AB123" name="code" id="nonce_id"
+                           minlength="4" maxlength="8" required>
+                </p>
+                <p>
+                    <input class="InputAddOn-field" type="submit" value="Changer mon mot de passe"/>
+                </p>
+            </fieldset>
+        </form>
+    </div>
 {% endblock %}

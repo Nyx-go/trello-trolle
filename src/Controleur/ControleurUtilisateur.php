@@ -7,6 +7,9 @@ use App\Trellotrolle\Lib\MessageFlash;
 use App\Trellotrolle\Lib\MotDePasse;
 use App\Trellotrolle\Modele\DataObject\Utilisateur;
 use App\Trellotrolle\Modele\Repository\UtilisateurRepository;
+use App\Trellotrolle\Service\Exception\ServiceConnexionException;
+use App\Trellotrolle\Service\Exception\ServiceException;
+use App\Trellotrolle\Service\UtilisateurService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -292,22 +295,20 @@ class ControleurUtilisateur extends ControleurGenerique
 
     #[Route(path: '/recuperation-compte', name:'recupererCompte', methods:["POST"])]
     public static function recupererCompte(): Response {
-        if(ConnexionUtilisateur::estConnecte()) {
-            return ControleurTableau::redirection("afficherListeMesTableaux");
-        }
-        if (!ControleurUtilisateur::issetAndNotNull(["email"])) {
-            MessageFlash::ajouter("warning", "Adresse email manquante");
-            return ControleurUtilisateur::redirection("afficherFormulaireConnexion");
-        }
-        $repository = new UtilisateurRepository();
-        $utilisateurs = $repository->recupererUtilisateursParEmail($_REQUEST["email"]);
-        if(empty($utilisateurs)) {
-            MessageFlash::ajouter("warning", "Aucun compte associé à cette adresse email");
-            return ControleurUtilisateur::redirection("afficherFormulaireConnexion");
+        $mail = $_POST["email"] ?? null;
+        try {
+            (new UtilisateurService())->recupererCompte($mail);
+        } catch (ServiceConnexionException $e) {
+            MessageFlash::ajouter("warning",$e->getMessage());
+            return ControleurUtilisateur::redirection("accueil");
+        } catch (ServiceException $e) {
+            MessageFlash::ajouter("warning",$e->getMessage());
+            return ControleurUtilisateur::redirection("afficherFormulaireRecuperationCompte");
         }
         return ControleurUtilisateur::afficherTwig(
             "utilisateur/resultatResetCompte.html.twig",[
-            "utilisateurs" => $utilisateurs
+            "utilisateurs" => "not implemented"
         ]);
+        //TODO: TEMPORAIRE
     }
 }

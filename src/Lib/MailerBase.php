@@ -12,14 +12,17 @@ class MailerBase implements MailerInterface
 {
     public static function envoyerMail(string $mail, string $sujet, string $text)
     {
-        // TODO: Implement envoyerMail() method.
         $mailer = new Mailer(ConfigurationSmtpBase::getTransport());
-        $email = (new Email())
-            ->from('no-reply@trellotrolle.fr')
+        /*$email = (new Email())
+            ->from('noreply@trellotrolle.fr')
             ->to($mail)
             ->subject($sujet)
-            ->text($text);
+            ->text($text);*/
+        $email= (new Email())
+            ->from('noreply@yopmail.fr')
+            ->to("test@yopmail.fr")
+            ->subject("retest")
+            ->text("test");
         $mailer->send($email);
-        echo "test worked";
     }
 }
