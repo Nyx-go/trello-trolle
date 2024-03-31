@@ -9,6 +9,7 @@
     "symfony/routing": "^6.4",
     "symfony/http-kernel": "^6.4",
     "symfony/config": "^6.4",
+    "symfony/mailer": "^7.0",
     "ext-pdo": "*",
     "twig/twig": "^3.8"
   }
