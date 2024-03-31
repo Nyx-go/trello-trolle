@@ -14,12 +14,12 @@ class ParticipeRepository extends AbstractRepository{
 
     protected function getNomCle(): array
     {
-        return array("idTableau", "login");
+        return array("idtableau", "login");
     }
 
     protected function getNomsColonnes(): array
     {
-        return array("idTableau", "login");
+        return array("idtableau", "login");
     }
 
     protected function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
