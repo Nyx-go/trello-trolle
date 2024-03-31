@@ -39,6 +39,7 @@ class UtilisateurService {
         }
         Session::getInstance()->enregistrer("recupMdp",$tab);
         echo $tab["nonce"];
+        echo $tab["mail"];
         MailerBase::envoyerMail(
             $mail,
             "Récupération de votre compte",
