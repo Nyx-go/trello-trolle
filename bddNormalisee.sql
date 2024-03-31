@@ -19,22 +19,22 @@ CREATE TABLE Tableaux(
     login VARCHAR(30) NOT NULL,
     codeTableau VARCHAR(255),
     titreTableau VARCHAR (50),
-    FOREIGN KEY (login) REFERENCES Utilisateurs
+    FOREIGN KEY (login) REFERENCES Utilisateurs ON DELETE CASCADE
 );
 
 CREATE TABLE Participe(
     idTableau INT,
     login VARCHAR(30),
     PRIMARY KEY (idTableau, login),
-    FOREIGN KEY (idTableau) REFERENCES Tableaux,
-    FOREIGN KEY (login) REFERENCES Utilisateurs
+    FOREIGN KEY (idTableau) REFERENCES Tableaux ON DELETE CASCADE,
+    FOREIGN KEY (login) REFERENCES Utilisateurs ON DELETE CASCADE
 );
 
 CREATE TABLE Colonnes(
     idColonne SERIAL PRIMARY KEY,
     titreColonne VARCHAR(50),
     idTableau INT NOT NULL,
-    FOREIGN KEY (idTableau) REFERENCES Tableaux
+    FOREIGN KEY (idTableau) REFERENCES Tableaux ON DELETE CASCADE
 );
 
 CREATE TABLE Cartes(
@@ -43,13 +43,13 @@ CREATE TABLE Cartes(
     descriptifCarte TEXT,
     couleurCarte VARCHAR(7),
     idColonne INT NOT NULL,
-    FOREIGN KEY (idColonne) REFERENCES Colonnes
+    FOREIGN KEY (idColonne) REFERENCES Colonnes ON DELETE CASCADE
 );
 
 CREATE TABLE Affecte(
     idCarte INT,
     login VARCHAR(30),
     PRIMARY KEY (idCarte, login),
-    FOREIGN KEY (idCarte) REFERENCES Cartes,
-    FOREIGN KEY (login) REFERENCES Utilisateurs
+    FOREIGN KEY (idCarte) REFERENCES Cartes ON DELETE CASCADE,
+    FOREIGN KEY (login) REFERENCES Utilisateurs ON DELETE CASCADE
 )

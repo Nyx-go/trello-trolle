@@ -26,12 +26,11 @@ class ControleurTableau extends ControleurGenerique
     }
 
     #[Route(path: '/tableau', name:'afficherTableau', methods:["GET"])]
-    public static function afficherTableau() : Response {
-        if(!ControleurTableau::issetAndNotNull(["codeTableau"])) {
+    public static function afficherTableau($code) : Response {
+        if(!$code) {
             MessageFlash::ajouter("warning", "Code de tableau manquant");
             return ControleurTableau::redirection("accueil");
         }
-        $code = $_REQUEST["codeTableau"];
         $tableauRepository = new TableauRepository();
 
         /**
@@ -146,15 +145,17 @@ class ControleurTableau extends ControleurGenerique
             return ControleurTableau::redirection("afficherFormulaireCreationTableau");
         }
 
+        $idUtilisateur = ConnexionUtilisateur::getLoginUtilisateurConnecte();
+
         $tableau = new Tableau(
-            ConnexionUtilisateur::getLoginUtilisateurConnecte(),
+            $idUtilisateur,
             null,
             null,
             $_REQUEST["nomTableau"]
         );
 
         $idTableau = (new TableauRepository())->ajouter($tableau);
-        $codeTableau = hash("sha256", $utilisateur->getLogin().$idTableau); // Je ne sais pas d'où sort le "Unreachable statement", probablement un bug d'affichage
+        $codeTableau = hash("sha256", $idUtilisateur.$idTableau);
         $tableau->setCodeTableau($codeTableau);
         $tableau->setIdTableau($idTableau);
         (new TableauRepository())->mettreAJour($tableau);
@@ -173,8 +174,15 @@ class ControleurTableau extends ControleurGenerique
             "Exemple de carte",
             "#FFFFFF"
         );
-        (new CarteRepository())->ajouter($carte);
 
+        $idCarte = (new CarteRepository())->ajouter($carte);
+
+        if ($idTableau && $idColonne && $idCarte) {
+            MessageFlash::ajouter("success", "Le tableau a bien été créé !");
+        }
+        else {
+            MessageFlash::ajouter("warning", "Une erreur est survenue lors de la création du tableau.");
+        }
         return ControleurTableau::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
 
@@ -207,6 +215,7 @@ class ControleurTableau extends ControleurGenerique
         else {
             $tableau->setTitreTableau($_REQUEST["nomTableau"]);
             $tableauRepository->mettreAJour($tableau);
+            MessageFlash::ajouter("success", "Le tableau a bien été modifié !");
         }
         return ControleurTableau::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
@@ -301,8 +310,14 @@ class ControleurTableau extends ControleurGenerique
             $_REQUEST["idTableau"],
             $utilisateur->getLogin()
         );
-        (new ParticipeRepository())->ajouter($participe);
+        $succesSauvegarde = (new ParticipeRepository())->ajouter($participe);
 
+        if ($succesSauvegarde) {
+            MessageFlash::ajouter("success", "Le membre a bien été ajouté !");
+        }
+        else {
+            MessageFlash::ajouter("warning", "Une erreur est survenue lors de l'ajout du membre'.");
+        }
         return ControleurTableau::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
 
@@ -350,7 +365,7 @@ class ControleurTableau extends ControleurGenerique
             return ControleurTableau::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
         }
 
-        (new ParticipeRepository())->supprimer(array($tableau->getIdTableau(), $utilisateur->getLogin()));
+        $succesSauvegarde = (new ParticipeRepository())->supprimer(array($tableau->getIdTableau(), $utilisateur->getLogin()));
 
         $cartesRepository = new CarteRepository();
         $cartes = $cartesRepository->recupererCartesTableau($tableau->getIdTableau());
@@ -361,6 +376,13 @@ class ControleurTableau extends ControleurGenerique
                     (new AffecteRepository())->supprimer(array($carte->getIdCarte(), $utilisateur->getLogin()));
                 }
             }
+        }
+
+        if ($succesSauvegarde) {
+            MessageFlash::ajouter("success", "Le membre a bien été supprimé !");
+        }
+        else {
+            MessageFlash::ajouter("warning", "Une erreur est survenue lors de la suppression du membre'.");
         }
         return ControleurTableau::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
@@ -386,25 +408,29 @@ class ControleurTableau extends ControleurGenerique
     }
 
     #[Route(path: '/tableau/quitter', name:'quitterTableau', methods:["GET"])]
-    public static function quitterTableau(): Response {
+    public static function quitterTableau($idTableau): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherFormulaireConnexion");
         }
-        if(!ControleurCarte::issetAndNotNull(["idTableau"])) {
+        if(!$idTableau) {
             MessageFlash::ajouter("danger", "Identifiant du tableau manquant");
             return ControleurTableau::redirection("afficherListeMesTableaux");
         }
         $tableauRepository = new TableauRepository();
+        $utilisateurRepository = new UtilisateurRepository();
+        $participeRepository = new ParticipeRepository();
+        $affecteRepository = new AffecteRepository();
+        $carteRepository = new CarteRepository();
+
         /**
          * @var Tableau $tableau
          */
-        $tableau = $tableauRepository->recupererParClePrimaire(array("idTableau"=>$_REQUEST["idTableau"]));
+        $tableau = $tableauRepository->recupererParClePrimaire(array("idTableau"=>$idTableau));
         if(!$tableau) {
             MessageFlash::ajouter("danger", "Tableau inexistant");
             return ControleurTableau::redirection("afficherListeMesTableaux");
         }
 
-        $utilisateurRepository = new UtilisateurRepository();
 
         /**
          * @var Utilisateur $utilisateur
@@ -418,26 +444,21 @@ class ControleurTableau extends ControleurGenerique
             MessageFlash::ajouter("danger", "Vous n'appartenez pas à ce tableau");
             return ControleurTableau::redirection("afficherListeMesTableaux");
         }
-        $participants = array_filter($tableau->getParticipants(), function ($u) use ($utilisateur) {return $u->getLogin() !== $utilisateur->getLogin();});
-        $tableau->setParticipants($participants);
-        $tableauRepository->mettreAJour($tableau);
 
-        $carteRepository = new CarteRepository();
+        $participeRepository->supprimer(array($tableau->getIdTableau(), $utilisateur->getLogin()));
 
         /**
          * @var Carte[] $cartes
          */
         $cartes = $carteRepository->recupererCartesTableau($tableau->getIdTableau());
         foreach ($cartes as $carte) {
-            $affectations = array_filter($carte->getAffectationsCarte(), function ($u) use ($utilisateur) {return $u->getLogin() != $utilisateur->getLogin();});
-            $carte->setAffectationsCarte($affectations);
-            $carteRepository->mettreAJour($carte);
+            $affecteRepository->supprimer(array($carte->getIdCarte(), $utilisateur->getLogin()));
         }
         return ControleurTableau::redirection("afficherListeMesTableaux");
     }
 
     #[Route(path: '/tableau/suppression', name:'supprimerTableau', methods:["GET"])]
-    public static function supprimerTableau(): Response {
+    public static function supprimerTableau($idTableau): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherFormulaireConnexion");
         }
@@ -446,7 +467,6 @@ class ControleurTableau extends ControleurGenerique
             return ControleurTableau::redirection("afficherListeMesTableaux");
         }
         $tableauRepository = new TableauRepository();
-        $idTableau = $_REQUEST["idTableau"];
         /**
          * @var Tableau $tableau
          */
@@ -463,7 +483,15 @@ class ControleurTableau extends ControleurGenerique
             MessageFlash::ajouter("danger", "Vous ne pouvez pas supprimer ce tableau car cela entrainera la supression du compte");
             return ControleurTableau::redirection("afficherListeMesTableaux");
         }
-        $tableauRepository->supprimer($idTableau);
+
+        $succesSuppression =  $tableauRepository->supprimer($idTableau);
+
+        if ($succesSuppression) {
+            MessageFlash::ajouter("success", "Le tableau a bien été supprimé !");
+        }
+        else {
+            MessageFlash::ajouter("warning", "Une erreur est survenue lors de la suppression du tableau.");
+        }
         return ControleurTableau::redirection("afficherListeMesTableaux");
     }
 }

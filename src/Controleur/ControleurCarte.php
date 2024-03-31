@@ -46,14 +46,16 @@ class ControleurCarte extends ControleurGenerique
             MessageFlash::ajouter("danger", "Vous n'avez pas de droits d'éditions sur ce tableau");
             return ControleurCarte::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
         }
-        $carteRepository->supprimer($idCarte);
-        $cartes = $carteRepository->recupererCartesTableau($tableau->getIdTableau());
-        if(count($cartes) > 0) {
-            return ControleurCarte::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
+
+        $succesSuppression =  $carteRepository->supprimer($idCarte);
+
+        if ($succesSuppression) {
+            MessageFlash::ajouter("success", "La carte a bien été supprimée !");
         }
         else {
-            return ControleurCarte::redirection("afficherListeMesTableaux");
+            MessageFlash::ajouter("warning", "Une erreur est survenue lors de la suppression de la carte.");
         }
+        return ControleurCarte::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
 
     #[Route(path: '/carte/nouvelle', name:'afficherFormulaireCreationCarte', methods:["GET"])]
@@ -144,7 +146,15 @@ class ControleurCarte extends ControleurGenerique
             $_REQUEST["descriptifCarte"],
             $_REQUEST["couleurCarte"],
         );
-        $carteRepository->ajouter($carte);
+
+        $succesSauvegarde = $carteRepository->ajouter($carte);
+
+        if ($succesSauvegarde) {
+            MessageFlash::ajouter("success", "La carte a bien été créée !");
+        }
+        else {
+            MessageFlash::ajouter("warning", "Une erreur est survenue lors de la création de la carte.");
+        }
         return ControleurCarte::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
 
@@ -257,6 +267,7 @@ class ControleurCarte extends ControleurGenerique
             }
         }
         $carteRepository->mettreAJour($carte);
+        MessageFlash::ajouter("success", "La carte a bien été modifiée !");
         return ControleurCarte::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
 }
