@@ -1,0 +1,53 @@
+{% extends "base.html.twig" %}
+
+{% block page_title %}Modifier votre carte{% endblock %}
+
+{% block page_content %}
+    <div>
+        <form method="post" action="{{ route("mettreAJourCarte") }}">
+            <fieldset>
+                <h3>Modification d'une carte :</h3>
+                <p>
+                    <label for="titreCarte">Titre de la carte&#42;</label> :
+                    <input type="text" placeholder="Ma super tâche" name="titreCarte" id="titreCarte" value="{{ carte.getTitreCarte() }}" minlength="1" maxlength="50" required>
+                </p>
+                <p>
+                    <label for="descriptifCarte">Description de la carte&#42;</label> :
+                <div>
+                    <textarea placeholder="Description de la tâche..." name="descriptifCarte" id="descriptifCarte" required>{{ carte.getDescriptifCarte() }}</textarea>
+                </div>
+                </p>
+                <p>
+                    <label for="couleurCarte">Couleur de la carte&#42;</label> :
+                    <input type="color" value="{{ carte.getCouleurCarte() }}" name="couleurCarte" id="couleurCarte" required>
+                </p>
+                <p>
+                    <label for="idColonne">Colonne de la carte&#42;</label> :
+                    <select name="idColonne" id="idColonne">
+                        {% for colonne in colonnes %}
+                            <option {% if colonne.getIdColonne() == colonneCarte.getIdColonne() %}selected{% endif %} value="{{ colonne.getIdColonne() }}">{{ colonne.getTitreColonne()|e }}</option>
+                        {% endfor %}
+                        <?php foreach ($colonnes as $colonne) {?>
+                        <option <?= $colonne->getIdColonne() === $colonneCarte->getIdColonne() ? "selected" : "" ?> value="<?=$colonne->getIdColonne()?>"><?=htmlspecialchars($colonne->getTitreColonne())?></option>
+                        <?php }?>
+                    </select>
+                </p>
+                <p>
+                    <label for="affectationsCarte">Membres affectés :</label>
+                <div>
+                    <select multiple name="affectationsCarte[]" id="affectationsCarte">
+                        <option {% if proprietaire.getLogin() in loginsAffectes %}selected{% endif %} value="{{ proprietaire.getLogin() }}">{{ proprietaire.getPrenom()|e }} {{ proprietaire.getNom()|e }} ({{ proprietaire.getLogin() }})</option>
+                        {% for membre in tableau.getParticipants() %}
+                            <option {% if membre.getLogin() in loginsAffectes %}selected{% endif %} value="{{ membre.getLogin() }}">{{ membre.getPrenom()|e }} {{ membre.getNom()|e }} ({{ membre.getLogin() }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                </p>
+                <input type='hidden' name='idCarte' value='{{ carte.getIdCarte() }}'>
+                <p>
+                    <input type="submit" value="Mettre à jour la carte">
+                </p>
+            </fieldset>
+        </form>
+    </div>
+{% endblock %}

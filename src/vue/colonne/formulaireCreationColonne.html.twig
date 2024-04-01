@@ -11,7 +11,7 @@
                     <label for="nomColonne">Nom de la colonne&#42;</label>
                     <input type="text" placeholder="KO" name="nomColonne" id="nomColonne" minlength="1" maxlength="50" required>
                 </p>
-                <input type='hidden' name='idTableau' value='{{ idTableau }}'>
+                <input type='hidden' name='idTableau' value='{{ idTableau|e }}'>
                 <p>
                     <input type="submit" value="Créer la colonne">
                 </p>
