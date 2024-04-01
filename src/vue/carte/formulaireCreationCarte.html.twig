@@ -1,0 +1,50 @@
+{% extends "base.html.twig" %}
+
+{% block page_title %}Créer une carte{% endblock %}
+
+{% block page_content %}
+    <div>
+        <form method="post" action="{{ route("creerCarte") }}">
+            <fieldset>
+                <h3>Création d'une carte :</h3>
+                <p>
+                    <label for="titreCarte">Titre de la carte&#42;</label> :
+                    <input type="text" placeholder="Ma super tâche" name="titreCarte" id="titreCarte" minlength="1" maxlength="50" required>
+                </p>
+                <p>
+                    <label for="descriptifCarte">Description de la carte&#42;</label> :
+                <div>
+                    <textarea placeholder="Description de la tâche..." name="descriptifCarte" id="descriptifCarte" required></textarea>
+                </div>
+                </p>
+                <p>
+                    <label for="couleurCarte">Couleur de la carte&#42;</label> :
+                    <input type="color" value="#FFFFFF" name="couleurCarte" id="couleurCarte" required>
+                </p>
+                <p>
+                    <label for="idColonne">Colonne de la carte&#42;</label> :
+                    <select name="idColonne" id="idColonne">
+                        {% for colonneOption in colonnes %}
+                            <option {% if colonneOption.getIdColonne() == colonne.getIdColonne() %}selected{% endif %} value="{{ colonneOption.getIdColonne() }}">{{ colonneOption.getTitreColonne()|e }}</option>
+                        {% endfor %}
+                    </select>
+                </p>
+                <p>
+                    <label for="affectationsCarte">Membres affectés :</label>
+                <div>
+                    <select multiple name="affectationsCarte[]" id="affectationsCarte">
+                        <option value="{{ proprietaire.getLogin() }}">{{ proprietaire.getPrenom()|e }} {{ proprietaire.getNom()|e }} ({{ proprietaire.getLogin() }})</option>
+                        {% for membre in tableau.getParticipants() %}
+                            <option value="{{ membre.getLogin() }}">{{ membre.getPrenom()|e }} {{ membre.getNom()|e }} ({{ membre.getLogin() }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                </p>
+                <p>
+                    <input type="submit" value="Créer la carte">
+                </p>
+            </fieldset>
+        </form>
+    </div>
+
+{% endblock %}

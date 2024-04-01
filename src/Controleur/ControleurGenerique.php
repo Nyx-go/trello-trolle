@@ -7,6 +7,7 @@ use App\Trellotrolle\Lib\MessageFlash;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGenerator;
+use Twig\Environment;
 
 class ControleurGenerique {
 
@@ -28,14 +29,12 @@ class ControleurGenerique {
         $generateurUrl = Conteneur::recupererService("generateurUrl");
         $url = $generateurUrl->generate($route, $parametres);
 
-        return new RedirectResponse($url, Response::HTTP_FOUND);
+        return new RedirectResponse($url);
     }
 
     public static function afficherErreur($messageErreur = "", $statusCode = 400): Response
     {
-        $reponse = ControleurGenerique::afficherVue('vueGenerale.php', [
-            "pagetitle" => "Problème",
-            "cheminVueBody" => "erreur.php",
+        $reponse = ControleurGenerique::afficherTwig( "erreur.html.twig",[
             "messageErreur" => $messageErreur
         ]);
 
@@ -50,5 +49,13 @@ class ControleurGenerique {
             }
         }
         return true;
+    }
+
+    protected static function afficherTwig(string $cheminVue, array $parametres = []): Response
+    {
+        /** @var Environment $twig */
+        $twig = Conteneur::recupererService("twig");
+        $corpsReponse = $twig->render($cheminVue, $parametres);
+        return new Response($corpsReponse);
     }
 }

@@ -15,7 +15,7 @@ class Carte extends AbstractDataObject
 
     public static function construireDepuisTableau(array $objetFormatTableau) : Carte {
         return new Carte(
-            $objetFormatTableau["idColonne"],
+            $objetFormatTableau["idcolonne"],
             $objetFormatTableau["idcarte"],
             $objetFormatTableau["titrecarte"],
             $objetFormatTableau["descriptifcarte"],

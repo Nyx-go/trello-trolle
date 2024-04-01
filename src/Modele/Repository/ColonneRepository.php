@@ -11,7 +11,7 @@ class ColonneRepository extends AbstractRepository
 
     protected function getNomTable(): string
     {
-        return "Colonnes";
+        return "colonnes";
     }
 
     protected function getNomCle(): array
@@ -30,7 +30,7 @@ class ColonneRepository extends AbstractRepository
     }
 
     public function recupererColonnesTableau(int $idTableau): array {
-        return $this->recupererPlusieursParOrdonne("idtableau", $idTableau, "idcolonne");
+        return $this->recupererPlusieursParOrdonne("idtableau", $idTableau, array("idcolonne"));
     }
 
     public function getNextIdColonne() : int {

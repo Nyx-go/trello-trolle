@@ -1,27 +1,34 @@
 {% extends "base.html.twig" %}
 
-{% block page_title %}Tableau personnels{% endblock %}
+{% block page_title %}Mes tableaux{% endblock %}
 
 {% block page_content %}
-    {# TODO: Ne pas oublier de mettre une variable tableaux et estProprietaire[] dans l'appelle de cette vue #}
-    {% for tableaux as tableau %}
-        <div class="ligne_tableau">
-            <div>{{ tableau.getTitreTableau() }}/div>
-            <div>
-                <a href="{{ route(afficherTableau, { code : tableau->getCodeTableau()}) }}">
-                    Modifier
-                </a>
-            </div>
-            <div>
+    <h3>Mes tableaux</h3>
+    <div class="tableaux">
+        {% for tableau in tableaux %}
+            <div class="ligne_tableau">
+                <div>{{ tableau.getTitreTableau() }}</div>
+                <div>
+                    <a href="{{ route("afficherTableau", { "codeTableau" : tableau.getCodeTableau()}) }}">
+                        Modifier
+                    </a>
+                </div>
+                <div>
 
-                {% if estProprietaire[tableau.getIdTableau()] %}
-                <a href="{{ route("supprimerTableau",{idTableau : tableau.getIdTableau() })}} ">Supprimer
-                    le tableau</a>
-                {% else %}
-                <a href=" {{ route(quitterTableau, {idTableau : tableau.getIdTableau() })}}">Quitter
-                    le tableau</a>
-                {% endif %}
+                    {% if estProprietaire[tableau.getIdTableau()] %}
+                    <a href="{{ route("supprimerTableau",{"idTableau" : tableau.getIdTableau() })}}">Supprimer
+                        le tableau</a>
+                    {% else %}
+                    <a href="{{ route("quitterTableau", {"idTableau" : tableau.getIdTableau() })}}">Quitter
+                        le tableau</a>
+                    {% endif %}
+                </div>
             </div>
-        </div>
-    {% endfor %}
+            {% else %}
+                <div> <p> Vous n'avez pas de tableaux </p> </div>
+        {% endfor %}
+    </div>
+    <div>
+        <a href="{{ route("afficherFormulaireCreationTableau") }}">Ajouter un tableau</a>
+    </div>
 {% endblock %}

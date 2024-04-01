@@ -14,17 +14,17 @@ class ParticipeRepository extends AbstractRepository{
 
     protected function getNomCle(): array
     {
-        return array("idTableau", "login");
+        return array("idtableau", "login");
     }
 
     protected function getNomsColonnes(): array
     {
-        return array("idTableau", "login");
+        return array("idtableau", "login");
     }
 
     protected function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
     {
-        return new Participe($objetFormatTableau["idTableau"], $objetFormatTableau["login"]);
+        return new Participe($objetFormatTableau["idtableau"], $objetFormatTableau["login"]);
     }
 
     public function recupererParLogin(string $login): array
@@ -34,7 +34,7 @@ class ParticipeRepository extends AbstractRepository{
 
     public function recupererParIdTableau(int $idTableau): array
     {
-        return $this->recupererPlusieursPar("idTableau", $idTableau);
+        return $this->recupererPlusieursPar("idtableau", $idTableau);
     }
 
 }

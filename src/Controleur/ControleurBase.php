@@ -7,12 +7,9 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class ControleurBase extends ControleurGenerique
 {
-    #[Route(path: '/', name:'default', methods:["GET"])]
+    #[Route(path: '/', name:'accueil', methods:["GET"])]
     public static function accueil(): Response
     {
-        return ControleurBase::afficherVue('vueGenerale.php', [
-            "pagetitle" => "Accueil",
-            "cheminVueBody" => "base/accueil.php"
-        ]);
+        return self::afficherTwig("base/accueil.html.twig",);
     }
 }

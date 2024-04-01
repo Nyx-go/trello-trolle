@@ -3,16 +3,16 @@
 {% block page_title %}Trello-Trollé{% endblock %}
 
 {% block page_content %}
-    <div><p>Bienvenue sur <strong>Trello-Trollé</strong>!</p></div>
+    <div><p>Bienvenue sur <strong>Trello-Trollé</strong> !</p></div>
     <div>
-        {% if idUtilisateurConnecte %}
+        {% if estConnecte %}
             <span><a href="{{ route("afficherListeMesTableaux")}}">Consulter mes tableaux</a></span>
         {% else %}
             <p>
                 Pour créer des tableaux, commencez par vous
                 <a href="{{ route("afficherFormulaireConnexion") }}">connecter</a>
                 ou par <a href="{{ route("afficherFormulaireCreation") }}">créer un
-                    compte</a>!
+                    compte</a> !
             </p>
         {% endif %}
     </div>

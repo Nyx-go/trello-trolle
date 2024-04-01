@@ -59,8 +59,8 @@ abstract class AbstractRepository
     protected function recupererPlusieursPar(string $nomAttribut, $valeur): array
     {
         $nomTable = $this->getNomTable();
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare("SELECT DISTINCT {$this->formatNomsColonnes()} FROM $nomTable WHERE $nomAttribut='$valeur'");
-        $pdoStatement->execute();
+        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare("SELECT DISTINCT {$this->formatNomsColonnes()} FROM $nomTable WHERE $nomAttribut=:valeur");
+        $pdoStatement->execute(["valeur"=>$valeur]);
         $objets = [];
         foreach ($pdoStatement as $objetFormatTableau) {
             $objets[] = $this->construireDepuisTableau($objetFormatTableau);
@@ -143,8 +143,8 @@ abstract class AbstractRepository
 
         return ($deleteCount > 0);
     }
-//TODO : pb potentiel à vérifier plus tard + return bool succes ou non
-    public function mettreAJour(AbstractDataObject $object): void
+
+    public function mettreAJour(AbstractDataObject $object): bool
     {
         $nomTable = $this->getNomTable();
         $clePrimaires = $this->getNomCle();
@@ -163,44 +163,24 @@ abstract class AbstractRepository
 
         $objetFormatTableau = $object->formatTableau();
         $req_prep->execute($objetFormatTableau);
+        $updateCount = $req_prep->rowCount();
 
+        return ($updateCount > 0);
     }
-
-    /** Ancienne fonction d'ajout (potentiellement à remettre en cas de problème */
-//    public function ajouter(AbstractDataObject $object): bool
-//    {
-//        $nomTable = $this->getNomTable();
-//        $nomsColonnes = $this->getNomsColonnes();
-//
-//        $insertString = '(' . join(', ', $nomsColonnes) . ')';
-//
-//        $partiesValues = array_map(function ($nomcolonne) {
-//            return ":{$nomcolonne}Tag";
-//        }, $nomsColonnes);
-//        $valueString = '(' . join(', ', $partiesValues) . ')';
-//
-//        $sql = "INSERT INTO $nomTable $insertString VALUES $valueString";
-//        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
-//
-//        $objetFormatTableau = $object->formatTableau();
-//
-//        try {
-//            $pdoStatement->execute($objetFormatTableau);
-//            return true;
-//        } catch (PDOException $exception) {
-//            if ($pdoStatement->errorCode() === "23000") {
-//                return false;
-//            } else {
-//                throw $exception;
-//            }
-//        }
-//    }
 
     public function ajouter(AbstractDataObject $object)
     {
         $nomTable = $this->getNomTable();
         $nomsColonnes = $this->getNomsColonnes();
         $nomCle = $this->getNomCle()[0];
+        $objetFormatTableau = $object->formatTableau();
+        if (get_class($this) == get_class(new TableauRepository()) ||
+            get_class($this) == get_class(new CarteRepository()) ||
+            get_class($this) == get_class(new ColonneRepository())) {
+            $key = array_search($nomCle, $nomsColonnes);
+            unset($nomsColonnes[$key]); // enlève la clé primaire de la liste des noms de colonnes de la table afin qu'il n'y ait pas de problème lors de l'insertion à cause du SERIAL
+            unset($objetFormatTableau[$nomCle."Tag"]);
+        }
 
         $insertString = '(' . join(', ', $nomsColonnes) . ')';
 
@@ -212,7 +192,6 @@ abstract class AbstractRepository
         $sql = "INSERT INTO $nomTable $insertString VALUES $valueString RETURNING $nomCle";
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
 
-        $objetFormatTableau = $object->formatTableau();
 
         try {
             $pdoStatement->execute($objetFormatTableau);

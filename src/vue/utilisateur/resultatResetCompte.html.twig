@@ -1,7 +1,39 @@
 {% extends "base.html.twig" %}
 
-{% block page_title %}Reset Compte{% endblock %}
+{% block page_title %}Vérification du compte{% endblock %}
 
 {% block page_content %}
-    <p>Page désactivée temporairement</p>
+    <div>
+        <form method="post" action="{{ route("changementMotDePasseRecuperation") }}">
+            <fieldset>
+                <h3>Récupérer mon compte</h3>
+                <p>Veuillez copier-coller le code reçu par mail pour vérifier votre identité</p>
+                <p>Note: pour éviter le vol de compte, veuillez sécuriser votre adresse mail par l'identification à deux
+                    facteurs et un changement de mot de passe régulier</p>
+                <p class="InputAddOn">
+                    <label class="InputAddOn-item" for="nonce_id">Code envoyé par email (5 caractères)&#42;</label>
+                    <input class="InputAddOn-field" type="text" value="" placeholder="AB1c3" name="nonce" id="nonce_id"
+                           minlength="5" maxlength="5" required>
+                </p>
+                <p class="InputAddOn">
+                    <label for="mdp_id" class="InputAddOn-item">Mot de passe&#42;</label>
+                    <label for="mdp_id" class="InputAddOn-item"><strong>6 à 50 caractères, au moins une minusle, une
+                            majuscule, un chiffre et un caractère spécial</strong></label>
+                    <input class="InputAddOn-field" type="password" minlength="6" maxlength="50"
+                           pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*_=+\-]).{6,50}" value="" placeholder=""
+                           name="mdp" id="mdp_id" required>
+                </p>
+                <p class="InputAddOn">
+                    <label class="InputAddOn-item" for="mdp2_id">Vérification du mot de passe&#42;</label>
+                    <input class="InputAddOn-field" type="password" minlength="6" maxlength="50"
+                           pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*_=+\-]).{6,50}" value="" placeholder=""
+                           name="mdp2" id="mdp2_id"
+                           required>
+                </p>
+                <p>
+                    <input class="InputAddOn-field" type="submit" value="Changer mon mot de passe"/>
+                </p>
+            </fieldset>
+        </form>
+    </div>
 {% endblock %}

@@ -52,7 +52,7 @@ class RouteurURL
         $twig->addFunction(new TwigFunction("route",$generateurUrl->generate(...)));
         $twig->addFunction(new TwigFunction("asset",$assistantUrl->getAbsoluteUrl(...)));
         $twig->addGlobal('loginUser', ConnexionUtilisateur::getLoginUtilisateurConnecte());
-//        $twig->addGlobal('userEmail', ConnexionUtilisateur::getLoginUtilisateurConnecte());
+        $twig->addGlobal('estConnecte', ConnexionUtilisateur::estConnecte());
         $twig->addGlobal('messagesFlash', new MessageFlash());
 
         Conteneur::ajouterService("twig", $twig);

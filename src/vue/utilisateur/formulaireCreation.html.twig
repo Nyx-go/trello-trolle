@@ -4,7 +4,7 @@
 
 {% block page_content %}
     <div>
-        <form method="post" action="{{ route("default") }}">
+        <form method="post" action="{{ route("creerDepuisFormulaire") }}">
             <fieldset>
                 <h3>Inscription</h3>
                 <p>
@@ -29,8 +29,8 @@
                 </p>
                 <p>
                     <label for="mdp_id">Mot de passe&#42;</label>
-                    <label for="mdp_id"><strong>6 à 50 caractères, au moins une minusle, une majuscule et un caractère
-                            spécial</strong></label>
+                    <label for="mdp_id"><strong>6 à 50 caractères, au moins une minusle, une majuscule, un chiffre et un
+                            caractère spécial</strong></label>
                     <input type="password" minlength="6" maxlength="50"
                            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*_=+\-]).{6,50}" value="" placeholder=""
                            name="mdp" id="mdp_id" required>
@@ -42,8 +42,6 @@
                            name="mdp2" id="mdp2_id"
                            required>
                 </p>
-                <input type='hidden' name='action' value='creerDepuisFormulaire'>
-                <input type='hidden' name='controleur' value='utilisateur'>
                 <p>
                     <input type="submit" value="S'inscrire"/>
                 </p>

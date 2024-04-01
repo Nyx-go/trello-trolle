@@ -65,7 +65,7 @@ class Colonne extends AbstractDataObject
     public function formatTableau(): array
     {
         return array(
-            "idtableau" => $this->idTableau,
+            "idtableauTag" => $this->idTableau,
             "idcolonneTag" => $this->idColonne,
             "titrecolonneTag" => $this->titreColonne,
         );

@@ -7,6 +7,9 @@ use App\Trellotrolle\Lib\MessageFlash;
 use App\Trellotrolle\Lib\MotDePasse;
 use App\Trellotrolle\Modele\DataObject\Utilisateur;
 use App\Trellotrolle\Modele\Repository\UtilisateurRepository;
+use App\Trellotrolle\Service\Exception\ServiceConnexionException;
+use App\Trellotrolle\Service\Exception\ServiceException;
+use App\Trellotrolle\Service\UtilisateurService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -24,10 +27,8 @@ class ControleurUtilisateur extends ControleurGenerique
             return ControleurTableau::redirection("afficherFormulaireConnexion");
         }
         $utilisateur = (new UtilisateurRepository())->recupererParClePrimaire(array("login"=>ConnexionUtilisateur::getLoginUtilisateurConnecte()));
-        return ControleurUtilisateur::afficherVue('vueGenerale.php', [
-            "utilisateur" => $utilisateur,
-            "pagetitle" => "Détail de l'utilisateur {$utilisateur->getLogin()}",
-            "cheminVueBody" => "utilisateur/detail.php"
+        return ControleurUtilisateur::afficherTwig('utilisateur/detail.html.twig', [
+            "utilisateur" => $utilisateur
         ]);
     }
 
@@ -37,10 +38,8 @@ class ControleurUtilisateur extends ControleurGenerique
         if(ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherListeMesTableaux");
         }
-        return ControleurUtilisateur::afficherVue('vueGenerale.php', [
-            "pagetitle" => "Création d'un utilisateur",
-            "cheminVueBody" => "utilisateur/formulaireCreation.php"
-        ]);
+        return ControleurUtilisateur::afficherTwig(
+            "utilisateur/formulaireCreation.html.twig");
     }
 
     #[Route(path: '/inscription', name:'creerDepuisFormulaire', methods:["POST"])]
@@ -98,9 +97,7 @@ class ControleurUtilisateur extends ControleurGenerique
         $login = ConnexionUtilisateur::getLoginUtilisateurConnecte();
         $repository = new UtilisateurRepository();
         $utilisateur = $repository->recupererParClePrimaire(array("login"=>$login));
-        return ControleurUtilisateur::afficherVue('vueGenerale.php', [
-            "pagetitle" => "Mise à jour du profil",
-            "cheminVueBody" => "utilisateur/formulaireMiseAJour.php",
+        return ControleurUtilisateur::afficherTwig("utilisateur/formulaireMiseAJour.html.twig",[
             "utilisateur" => $utilisateur,
         ]);
     }
@@ -114,9 +111,7 @@ class ControleurUtilisateur extends ControleurGenerique
         $login = ConnexionUtilisateur::getLoginUtilisateurConnecte();
         $repository = new UtilisateurRepository();
         $utilisateur = $repository->recupererParClePrimaire(array("login"=>$login));
-        return ControleurUtilisateur::afficherVue('vueGenerale.php', [
-            "pagetitle" => "Mise à jour du mot de passe",
-            "cheminVueBody" => "utilisateur/formulaireMiseAJourMdp.php",
+        return ControleurUtilisateur::afficherTwig("utilisateur/formulaireMiseAJourMdp.html.twig",[
             "utilisateur" => $utilisateur,
         ]);
     }
@@ -127,13 +122,10 @@ class ControleurUtilisateur extends ControleurGenerique
         if(!ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherFormulaireConnexion");
         }
-        if (ControleurUtilisateur::issetAndNotNull(["login", "prenom", "nom", "mdpAncien", "email"])) {
+        if (ControleurUtilisateur::issetAndNotNull(["login", "nom", "prenom", "email", "mdpAncien"])) {
             $login = ConnexionUtilisateur::getLoginUtilisateurConnecte();
             $repository = new UtilisateurRepository();
 
-            /**
-             * @var Utilisateur $utilisateur
-             */
             $utilisateur = $repository->recupererParClePrimaire(array("login"=>$login));
 
             if(!$utilisateur) {
@@ -155,10 +147,16 @@ class ControleurUtilisateur extends ControleurGenerique
             $utilisateur->setPrenom($_REQUEST["prenom"]);
             $utilisateur->setEmail($_REQUEST["email"]);
 
-            $repository->mettreAJour($utilisateur);
+            $succesMiseAJour = $repository->mettreAJour($utilisateur);
 
-            MessageFlash::ajouter("success", "Vos informations ont bien été modifiées !");
-            return ControleurUtilisateur::redirection("afficherListeMesTableaux");
+            if ($succesMiseAJour) {
+                MessageFlash::ajouter("success", "Vos informations ont bien été modifiées !");
+                return ControleurUtilisateur::redirection("afficherDetail");
+            }
+            else {
+                MessageFlash::ajouter("warning", "Une erreur est survenue lors de la modification des informations.");
+                return ControleurUtilisateur::redirection("afficherFormulaireMiseAJour");
+            }
         } else {
             MessageFlash::ajouter("danger", "Login, nom, prénom, email ou mot de passe manquant.");
             return ControleurUtilisateur::redirection("afficherFormulaireMiseAJour");
@@ -175,9 +173,6 @@ class ControleurUtilisateur extends ControleurGenerique
             $login = ConnexionUtilisateur::getLoginUtilisateurConnecte();
             $repository = new UtilisateurRepository();
 
-            /**
-             * @var Utilisateur $utilisateur
-             */
             $utilisateur = $repository->recupererParClePrimaire(array("login"=>$login));
 
             if(!$utilisateur) {
@@ -197,13 +192,19 @@ class ControleurUtilisateur extends ControleurGenerique
 
             $utilisateur->setMdpHache(MotDePasse::hacher($_REQUEST["mdp"]));
 
-            $repository->mettreAJour($utilisateur);
+            $succesMiseAJour = $repository->mettreAJour($utilisateur);
 
-            MessageFlash::ajouter("success", "Le mot de passe a bien été modifié !");
-            return ControleurUtilisateur::redirection("afficherListeMesTableaux");
+            if ($succesMiseAJour) {
+                MessageFlash::ajouter("success", "Le mot de passe a bien été modifié !");
+                return ControleurUtilisateur::redirection("afficherDetail");
+            }
+            else {
+                MessageFlash::ajouter("warning", "Une erreur est survenue lors de la modification des informations.");
+                return ControleurUtilisateur::redirection("afficherFormulaireMiseAJourMdp");
+            }
         } else {
             MessageFlash::ajouter("danger", "Login ou mot de passe manquant.");
-            return ControleurUtilisateur::redirection("afficherFormulaireMiseAJour");
+            return ControleurUtilisateur::redirection("afficherFormulaireMiseAJourMdp");
         }
     }
 
@@ -226,7 +227,7 @@ class ControleurUtilisateur extends ControleurGenerique
         }
         else {
             MessageFlash::ajouter("warning", "Une erreur est survenue lors de la suppression de l'utilisateur.");
-            return ControleurUtilisateur::redirection("afficherDetail",[]);
+            return ControleurUtilisateur::redirection("afficherDetail");
         }
     }
 
@@ -236,10 +237,9 @@ class ControleurUtilisateur extends ControleurGenerique
         if(ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherListeMesTableaux");
         }
-        return ControleurUtilisateur::afficherVue('vueGenerale.php', [
-            "pagetitle" => "Formulaire de connexion",
-            "cheminVueBody" => "utilisateur/formulaireConnexion.php"
-        ]);
+        return ControleurUtilisateur::afficherTwig(
+            "utilisateur/formulaireConnexion.html.twig"
+        );
     }
 
     #[Route(path: '/connexion', name:'connecter', methods:["POST"])]
@@ -288,31 +288,41 @@ class ControleurUtilisateur extends ControleurGenerique
         if(ConnexionUtilisateur::estConnecte()) {
             return ControleurTableau::redirection("afficherListeMesTableaux");
         }
-        return ControleurUtilisateur::afficherVue('vueGenerale.php', [
-            "pagetitle" => "Récupérer mon compte",
-            "cheminVueBody" => "utilisateur/resetCompte.php"
-        ]);
+        return ControleurUtilisateur::afficherTwig(
+            "utilisateur/resetCompte.html.twig"
+        );
     }
 
     #[Route(path: '/recuperation-compte', name:'recupererCompte', methods:["POST"])]
     public static function recupererCompte(): Response {
-        if(ConnexionUtilisateur::estConnecte()) {
-            return ControleurTableau::redirection("afficherListeMesTableaux");
+        $mail = $_POST["email"] ?? null;
+        try {
+            (new UtilisateurService())->recupererCompte($mail);
+        } catch (ServiceConnexionException $e) {
+            MessageFlash::ajouter("danger",$e->getMessage());
+            return ControleurUtilisateur::redirection("accueil");
+        } catch (ServiceException $e) {
+            MessageFlash::ajouter("warning",$e->getMessage());
+            return ControleurUtilisateur::redirection("afficherFormulaireRecuperationCompte");
         }
-        if (!ControleurUtilisateur::issetAndNotNull(["email"])) {
-            MessageFlash::ajouter("warning", "Adresse email manquante");
-            return ControleurUtilisateur::redirection("afficherFormulaireConnexion");
+        return ControleurUtilisateur::afficherTwig("utilisateur/resultatResetCompte.html.twig");
+    }
+
+    #[Route(path: '/recuperation-compte/validation', name:'changementMotDePasseRecuperation', methods:["POST"])]
+    public static function changementMotDePasseRecuperation(): Response {
+        $nonce = $_POST["nonce"] ?? null;
+        $mdp = $_POST["mdp"] ?? null;
+        $mdp2 = $_POST["mdp2"] ?? null;
+        try {
+            (new UtilisateurService())->changementMotDePasseRecuperation($nonce,$mdp,$mdp2);
+        } catch (ServiceConnexionException $e) {
+            MessageFlash::ajouter("danger",$e->getMessage());
+            return ControleurGenerique::redirection("accueil");
+        } catch (ServiceException $e) {
+            MessageFlash::ajouter("warning",$e->getMessage());
+            return ControleurUtilisateur::afficherTwig("utilisateur/resultatResetCompte.html.twig");
         }
-        $repository = new UtilisateurRepository();
-        $utilisateurs = $repository->recupererUtilisateursParEmail($_REQUEST["email"]);
-        if(empty($utilisateurs)) {
-            MessageFlash::ajouter("warning", "Aucun compte associé à cette adresse email");
-            return ControleurUtilisateur::redirection("afficherFormulaireConnexion");
-        }
-        return ControleurUtilisateur::afficherVue('vueGenerale.php', [
-            "pagetitle" => "Récupérer mon compte",
-            "cheminVueBody" => "utilisateur/resultatResetCompte.php",
-            "utilisateurs" => $utilisateurs
-        ]);
+        MessageFlash::ajouter("success","Mot de passe modifié, veuillez vous connecter");
+        return self::redirection("afficherFormulaireConnexion");
     }
 }

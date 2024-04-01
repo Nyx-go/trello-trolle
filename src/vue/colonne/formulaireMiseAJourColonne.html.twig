@@ -1,0 +1,21 @@
+{% extends "base.html.twig" %}
+
+{% block page_title %}Modifier votre carte{% endblock %}
+
+{% block page_content %}
+    <div>
+        <form method="post" action="{{ route("mettreAJourColonne") }}">
+            <fieldset>
+                <h3>Modification d'une colonne :</h3>
+                <p>
+                    <label for="nomColonne">Nom de la colonne&#42;</label> :
+                    <input type="text" placeholder="KO" name="nomColonne" id="nomColonne" minlength="1" maxlength="50" value='{{ nomColonne|e }}' required>
+                </p>
+                <input type='hidden' name='idColonne' value='{{ idColonne|e }}'>
+                <p>
+                    <input type="submit" value="Modifier la colonne">
+                </p>
+            </fieldset>
+        </form>
+    </div>
+{% endblock %}
