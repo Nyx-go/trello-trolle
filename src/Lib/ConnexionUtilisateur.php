@@ -43,10 +43,4 @@ class ConnexionUtilisateur
             ConnexionUtilisateur::getLoginUtilisateurConnecte() == $login
         );
     }
-
-    public static function important($x, $y)
-    {
-        //Je crois que ça ne marche pas hahahaha
-        //Je vais simplement retirer le code pour le moment
-    }
 }
