@@ -299,16 +299,30 @@ class ControleurUtilisateur extends ControleurGenerique
         try {
             (new UtilisateurService())->recupererCompte($mail);
         } catch (ServiceConnexionException $e) {
-            MessageFlash::ajouter("warning",$e->getMessage());
+            MessageFlash::ajouter("danger",$e->getMessage());
             return ControleurUtilisateur::redirection("accueil");
         } catch (ServiceException $e) {
             MessageFlash::ajouter("warning",$e->getMessage());
             return ControleurUtilisateur::redirection("afficherFormulaireRecuperationCompte");
         }
-        return ControleurUtilisateur::afficherTwig(
-            "utilisateur/resultatResetCompte.html.twig",[
-            "utilisateurs" => "not implemented"
-        ]);
-        //TODO: TEMPORAIRE
+        return ControleurUtilisateur::afficherTwig("utilisateur/resultatResetCompte.html.twig");
+    }
+
+    #[Route(path: '/recuperation-compte/validation', name:'changementMotDePasseRecuperation', methods:["POST"])]
+    public static function changementMotDePasseRecuperation (): Response {
+        $nonce = $_POST["nonce"] ?? null;
+        $mdp = $_POST["mdp"] ?? null;
+        $mdp2 = $_POST["mdp2"] ?? null;
+        try {
+            (new UtilisateurService())->changementMotDePasseRecuperation($nonce,$mdp,$mdp2);
+        } catch (ServiceConnexionException $e) {
+            MessageFlash::ajouter("danger",$e->getMessage());
+            return ControleurGenerique::redirection("accueil");
+        } catch (ServiceException $e) {
+            MessageFlash::ajouter("warning",$e->getMessage());
+            return ControleurGenerique::redirection("recupererCompte");
+        }
+        MessageFlash::ajouter("success","Mot de passe modifié, veuillez vous connecter");
+        return self::redirection("afficherFormulaireConnexion");
     }
 }
