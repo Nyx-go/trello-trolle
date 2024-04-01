@@ -50,47 +50,24 @@ class ControleurUtilisateur extends ControleurGenerique
     #[Route(path: '/inscription', name: 'creerDepuisFormulaire', methods: ["POST"])]
     public static function creerDepuisFormulaire(): Response
     {
-        if(ConnexionUtilisateur::estConnecte()) {
-            return ControleurTableau::redirection("afficherListeMesTableaux");
+        $login = $_REQUEST["login"] ?? null;
+        $nom = $_REQUEST["nom"] ?? null;
+        $prenom = $_REQUEST["prenom"] ?? null;
+        $mdp = $_REQUEST["mdp"] ?? null;
+        $mdp2 = $_REQUEST["mdp2"] ?? null;
+        $email = $_REQUEST["email"] ?? null;
+        try {
+            (new UtilisateurService())->creerDepuisFormulaire($login, $nom, $prenom, $mdp, $mdp2, $email);
+        } catch (ServiceConnexionException $e) {
+            MessageFlash::ajouter("danger", $e->getMessage());
+            return ControleurGenerique::redirection("accueil");
+        } catch (ServiceException $e) {
+            MessageFlash::ajouter("warning", $e->getMessage());
+            return ControleurUtilisateur::afficherTwig("utilisateur/afficherFormulaireCreation.html.twig");
         }
-        if (ControleurUtilisateur::issetAndNotNull(["login", "prenom", "nom", "mdp", "mdp2", "email"])) {
-            if ($_REQUEST["mdp"] !== $_REQUEST["mdp2"]) {
-                MessageFlash::ajouter("warning", "Mots de passe distincts.");
-                return ControleurUtilisateur::redirection("afficherFormulaireCreation");
-            }
+        MessageFlash::ajouter("success", "L'utilisateur a bien été créé !");
+        return self::redirection("afficherFormulaireConnexion");
 
-            if (!filter_var($_REQUEST["email"], FILTER_VALIDATE_EMAIL)) {
-                MessageFlash::ajouter("warning", "Email non valide");
-                return ControleurUtilisateur::redirection("afficherFormulaireCreation");
-            }
-
-            $utilisateurRepository = new UtilisateurRepository();
-
-            $checkUtilisateur = $utilisateurRepository->recupererParClePrimaire(array("login"=>$_REQUEST["login"]));
-            if($checkUtilisateur) {
-                MessageFlash::ajouter("warning", "Le login est déjà pris.");
-                return ControleurUtilisateur::redirection("afficherFormulaireCreation");
-            }
-
-            $mdpHache = MotDePasse::hacher($_REQUEST["mdp"]);
-
-            $utilisateurRepository = new UtilisateurRepository();
-
-            $utilisateur = new Utilisateur($_REQUEST["login"],$_REQUEST["nom"],$_REQUEST["prenom"],$_REQUEST["email"],$mdpHache);
-            $succesSauvegarde = $utilisateurRepository->ajouter($utilisateur);
-
-            if ($succesSauvegarde) {
-                MessageFlash::ajouter("success", "L'utilisateur a bien été créé !");
-                return ControleurUtilisateur::redirection("afficherFormulaireConnexion");
-            }
-            else {
-                MessageFlash::ajouter("warning", "Une erreur est survenue lors de la création de l'utilisateur.");
-                return ControleurUtilisateur::redirection("afficherFormulaireCreation");
-            }
-        } else {
-            MessageFlash::ajouter("danger", "Login, nom, prénom, email ou mot de passe manquant.");
-            return ControleurUtilisateur::redirection("afficherFormulaireCreation");
-        }
     }
 
     #[Route(path: '/utilisateur/modification', name: 'afficherFormulaireMiseAJour', methods: ["GET"])]

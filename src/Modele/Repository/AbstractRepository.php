@@ -2,6 +2,7 @@
 
 namespace App\Trellotrolle\Modele\Repository;
 
+use App\Trellotrolle\Lib\MessageFlash;
 use App\Trellotrolle\Modele\DataObject\AbstractDataObject;
 use PDO;
 use PDOException;
@@ -136,7 +137,9 @@ abstract class AbstractRepository
         foreach ($clePrimaires as $cle){
             $sql.= "$cle = :$cle"."Tag";
             $values[$cle.'Tag']= $valeurClePrimaire[$cle];
+            $sql.= " AND ";
         }
+        MessageFlash::ajouter("success", "Test".$sql);
         $pdoStatement = ConnexionBaseDeDonnees::getPDO()->prepare($sql);
         $pdoStatement->execute($values);
         $deleteCount = $pdoStatement->rowCount();
