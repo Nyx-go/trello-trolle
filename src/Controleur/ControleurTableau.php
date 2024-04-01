@@ -48,7 +48,8 @@ class ControleurTableau extends ControleurGenerique
          */
         $colonnes = $colonneRepository->recupererColonnesTableau($tableau->getIdTableau());
         $data = [];
-        $participants = [];
+        $affectations = [];
+        $affectationsCartes = [];
 
         $carteRepository = new CarteRepository();
         foreach ($colonnes as $colonne) {
@@ -57,16 +58,18 @@ class ControleurTableau extends ControleurGenerique
              */
             $cartes = $carteRepository->recupererCartesColonne($colonne->getIdColonne());
             foreach ($cartes as $carte) {
-                $affectations = (new AffecteRepository())->recupererParIdCarte($carte->getIdCarte());
-                foreach ($affectations as $affectation) {
+                $affectationsCartes[$carte->getIdCarte()] = [];
+                $affectationsCarte = (new AffecteRepository())->recupererParIdCarte($carte->getIdCarte());
+                foreach ($affectationsCarte as $affectation) {
                     $utilisateur = (new UtilisateurRepository())->recupererParClePrimaire(array("login"=>$affectation->getLogin()));
-                    if(!isset($participants[$utilisateur->getLogin()])) {
-                        $participants[$utilisateur->getLogin()] = ["infos" => $utilisateur, "colonnes" => []];
+                    if(!isset($affectations[$utilisateur->getLogin()])) {
+                        $affectations[$utilisateur->getLogin()] = ["infos" => $utilisateur, "colonnes" => []];
                     }
-                    if(!isset($participants[$utilisateur->getLogin()]["colonnes"][$colonne->getIdColonne()])) {
-                        $participants[$utilisateur->getLogin()]["colonnes"][$colonne->getIdColonne()] = [$colonne->getTitreColonne(), 0];
+                    if(!isset($affectations[$utilisateur->getLogin()]["colonnes"][$colonne->getIdColonne()])) {
+                        $affectations[$utilisateur->getLogin()]["colonnes"][$colonne->getIdColonne()] = [$colonne->getTitreColonne(), 0];
                     }
-                    $participants[$utilisateur->getLogin()]["colonnes"][$colonne->getIdColonne()][1]++;
+                    $affectations[$utilisateur->getLogin()]["colonnes"][$colonne->getIdColonne()][1]++;
+                    $affectationsCartes[$carte->getIdCarte()][] = $utilisateur;
                 }
             }
             $data[] = $cartes;
@@ -82,15 +85,24 @@ class ControleurTableau extends ControleurGenerique
         }
 
         $utilisateur = (new UtilisateurRepository())->recupererParClePrimaire(array("login"=>$tableau->getLogin()));
+        $participes = (new ParticipeRepository())->recupererParIdTableau($tableau->getIdTableau());
+
+        $participants = [];
+
+        foreach ($participes as $participe) {
+            $participants[] = (new UtilisateurRepository())->recupererParClePrimaire(["login" => $participe->getLogin()]);
+        }
 
         return ControleurTableau::afficherTwig("tableau/tableau.html.twig",[
             "estProprietaire"=> $estProprietaire,
             "estParticipantOuProprietaire" => $estParticipantOuProprietaire,
             "tableau" => $tableau,
             "colonnes" => $colonnes,
+            "affectations" => $affectations,
             "participants" => $participants,
             "data" => $data,
-            "utilisateur"=>$utilisateur
+            "utilisateur"=>$utilisateur,
+            "affectationsCartes" => $affectationsCartes
         ]);
     }
 
@@ -175,8 +187,8 @@ class ControleurTableau extends ControleurGenerique
         }
 
         return ControleurTableau::afficherTwig("tableau/formulaireAjoutMembreTableau.html.twig", [
-            "tableau" => $tableau,
-            "utilisateurs" => $utilisateurs
+            "tableau" => $value["tableau"],
+            "utilisateurs" => $value["filtredUtilisateurs"]
         ]);
     }
 

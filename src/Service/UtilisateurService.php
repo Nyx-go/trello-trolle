@@ -43,10 +43,10 @@ class UtilisateurService extends ServiceGenerique
                 <p>Bonjour,</p>" . htmlspecialchars($utilisateur->getLogin()) . "
                 <p>Suite à une requête de votre part, nous vous communiquons le code de réinitialisation suivant :
                 <strong>" . $tab["nonce"] . "</strong></p>
-                <p>Si cette requête ne viens pas de vous, veuillez ignorer ce mail et ne communiquez ce code à quiconque</p>
+                <p>Si cette requête ne vient pas de vous, veuillez ignorer ce mail et ne communiquez ce code à quiconque</p>
             "
         )) {
-            throw new ServiceConnexionException("Erreur de connexion de notre service mail, veuillez réessayez plus tard");
+            throw new ServiceConnexionException("Erreur de connexion de notre service mail, veuillez réessayer plus tard");
         }
         Session::getInstance()->enregistrer("recupMdp", $tab);
     }

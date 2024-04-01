@@ -27,9 +27,6 @@
                         {% for colonne in colonnes %}
                             <option {% if colonne.getIdColonne() == colonneCarte.getIdColonne() %}selected{% endif %} value="{{ colonne.getIdColonne() }}">{{ colonne.getTitreColonne()|e }}</option>
                         {% endfor %}
-                        <?php foreach ($colonnes as $colonne) {?>
-                        <option <?= $colonne->getIdColonne() === $colonneCarte->getIdColonne() ? "selected" : "" ?> value="<?=$colonne->getIdColonne()?>"><?=htmlspecialchars($colonne->getTitreColonne())?></option>
-                        <?php }?>
                     </select>
                 </p>
                 <p>

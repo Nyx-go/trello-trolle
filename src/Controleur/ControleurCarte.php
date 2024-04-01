@@ -168,9 +168,13 @@ class ControleurCarte extends ControleurGenerique
         }
         $colonneRepository = new ColonneRepository();
         $colonnes = $colonneRepository->recupererColonnesTableau($tableau->getIdTableau());
+
+        $proprietaire = (new UtilisateurRepository())->recupererParClePrimaire(["login" => $tableau->getLogin()]);
         return ControleurTableau::afficherTwig("carte/formulaireMiseAJourCarte.html.twig",[
-            "idColonne" => $carte,
-            "nomColonne" => $colonnes
+            "carte" => $carte,
+            "colonnes" => $colonnes,
+            "proprietaire" => $proprietaire,
+            "colonneCarte" => $colonne
         ]);
     }
 
