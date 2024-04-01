@@ -12,7 +12,7 @@ use App\Trellotrolle\Service\Exception\ServiceConnexionException;
 use App\Trellotrolle\Service\Exception\ServiceException;
 use Exception;
 
-class UtilisateurService
+class UtilisateurService extends ServiceGenerique
 {
     /**
      * @throws ServiceConnexionException
@@ -20,10 +20,8 @@ class UtilisateurService
      */
     public function recupererCompte(?string $mail): void
     {
-        //LIGNE A SUPPRIMER
-        //Session::getInstance()->supprimer("recupMdp");
         if (Session::getInstance()->contient("recupMdp")) return;
-        if (ConnexionUtilisateur::estConnecte()) throw new ServiceConnexionException("L'utilisateur est déjà connecté");
+        self::doitEtreDeconnecte();
         if (is_null($mail)) throw new ServiceException("Veuillez saisir un mail");
         /**
          * @var Utilisateur $utilisateur
@@ -57,22 +55,18 @@ class UtilisateurService
      * @throws ServiceConnexionException
      * @throws ServiceException
      */
-    public function changementMotDePasseRecuperation(?string $nonce , ?string $mdp , ?string $mdp2): void
+    public function changementMotDePasseRecuperation(?string $nonce, ?string $mdp, ?string $mdp2): void
     {
-        if (!Session::getInstance()->contient("recupMdp") || ConnexionUtilisateur::estConnecte()) {
+        self::doitEtreDeconnecte();
+        if (!Session::getInstance()->contient("recupMdp")) {
             throw new ServiceConnexionException("Accès invalide");
         }
         $tab = Session::getInstance()->lire("recupMdp");
-        if ( is_null($nonce) || $nonce !== $tab["nonce"]) {
+        if (is_null($nonce) || $nonce !== $tab["nonce"]) {
             Session::getInstance()->supprimer("recupMdp");
             throw new ServiceConnexionException("Veuillez refaire l'action de mot de passe oublié");
         }
-        //TODO: factorisation de la vérif mot de passe
-        if (is_null($mdp) || is_null($mdp2)) throw new ServiceException("Veuillez saisir 2 mots de passe");
-        if ($mdp2 !== $mdp) throw new ServiceException("Veuillez saisir 2 fois le même mot de passe");
-        if (preg_match("/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*_=+\-]).{6,50}$/" , $mdp) !== 1) {
-            throw new ServiceException("Veuillez saisir un paterne valide");
-        }
+        $this->verifyDoublePasswordValidity($mdp, $mdp2);
         Session::getInstance()->supprimer("recupMdp");
         /** @var Utilisateur $utilisateur */
         $utilisateur = (new UtilisateurRepository())->recupererUtilisateurParEmail($tab["mail"]);
