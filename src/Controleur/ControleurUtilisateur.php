@@ -309,7 +309,7 @@ class ControleurUtilisateur extends ControleurGenerique
     }
 
     #[Route(path: '/recuperation-compte/validation', name:'changementMotDePasseRecuperation', methods:["POST"])]
-    public static function changementMotDePasseRecuperation (): Response {
+    public static function changementMotDePasseRecuperation(): Response {
         $nonce = $_POST["nonce"] ?? null;
         $mdp = $_POST["mdp"] ?? null;
         $mdp2 = $_POST["mdp2"] ?? null;
@@ -320,7 +320,7 @@ class ControleurUtilisateur extends ControleurGenerique
             return ControleurGenerique::redirection("accueil");
         } catch (ServiceException $e) {
             MessageFlash::ajouter("warning",$e->getMessage());
-            return ControleurGenerique::redirection("recupererCompte");
+            return ControleurUtilisateur::afficherTwig("utilisateur/resultatResetCompte.html.twig");
         }
         MessageFlash::ajouter("success","Mot de passe modifié, veuillez vous connecter");
         return self::redirection("afficherFormulaireConnexion");
