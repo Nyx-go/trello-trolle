@@ -6,11 +6,11 @@ class ConfigurationBaseDeDonnees {
 
 	//Informations de connexion pour le serveur PostgreSQL SAE de l'IUT
     static private array $configurationBaseDeDonnees = array(
-        'nomHote' => '162.38.222.151',
-        'nomBaseDeDonnees' => 'iut',
+        'nomHote' => 'bd',
+        'nomBaseDeDonnees' => 'bd',
         'port' => '5673',
-        'login' => 'gilletp',
-        'motDePasse' => 'applied'
+        'login' => 'admin',
+        'motDePasse' => 'admin'
     );
 
     static public function getLogin() : string {

@@ -25,14 +25,17 @@ class ConnexionBaseDeDonnees
         $motDePasse = ConfigurationBaseDeDonnees::getMotDePasse();
         $nomBaseDeDonnees = ConfigurationBaseDeDonnees::getNomBaseDeDonnees();
 
-        $this->pdo = new PDO(
-            "pgsql:host=$nomHote;port=$port;dbname=$nomBaseDeDonnees",
-            $login,
-            $motDePasse,
-            array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
-        );
+        try {
+            $this->pdo = new PDO(
+                "pgsql:host=$nomHote;port=$port;dbname=$nomBaseDeDonnees",
+                $login,
+                $motDePasse,
+            );
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        }catch (\PDOException $e){
+            echo "la connexion à échoué : ".$e->getMessage();
+        }
 
-        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
     private static function getInstance(): ConnexionBaseDeDonnees
