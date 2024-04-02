@@ -39,6 +39,9 @@ use Twig\TwigFunction;
 
 class RouteurURL
 {
+    /**
+     * @throws Exception
+     */
     public static function traiterRequete(): void
     {
 
@@ -110,7 +113,7 @@ class RouteurURL
             $reponse = (new ControleurGenerique)->afficherErreur($exception->getMessage(), 404);
         } catch (MethodNotAllowedException $exception) {
             $reponse = (new ControleurGenerique)->afficherErreur($exception->getMessage(), 405);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $reponse = (new ControleurGenerique)->afficherErreur($exception->getMessage()) ;
         }
         $reponse->send();
