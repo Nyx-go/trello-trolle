@@ -4,27 +4,30 @@ namespace App\Trellotrolle\Modele\Repository;
 
 use App\Trellotrolle\Modele\DataObject\AbstractDataObject;
 use App\Trellotrolle\Modele\DataObject\Utilisateur;
-use Exception;
 
-class UtilisateurRepository extends AbstractRepository
+class UtilisateurRepository extends AbstractRepository implements UtilisateurRepositoryInterface
 {
+    public function __construct(private ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees)
+    {
+        parent::__construct($connexionBaseDeDonnees);
+    }
 
-    protected function getNomTable(): string
+    public function getNomTable(): string
     {
         return "Utilisateurs";
     }
 
-    protected function getNomCle(): array
+    public function getNomCle(): array
     {
         return array("login");
     }
 
-    protected function getNomsColonnes(): array
+    public function getNomsColonnes(): array
     {
         return ["login", "nom", "prenom", "email", "mdphache"];
     }
 
-    protected function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
+    public function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
     {
         return Utilisateur::construireDepuisTableau($objetFormatTableau);
     }

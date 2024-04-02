@@ -1,0 +1,73 @@
+parameters:
+
+services:
+
+  configuration_bdd:
+    class: App\Trellotrolle\Configuration\ConfigurationBaseDeDonnees
+
+  connexion_base_de_donnees:
+    class: App\Trellotrolle\Modele\Repository\ConnexionBaseDeDonnees
+    arguments: ['@configuration_bdd']
+
+  #Repositories
+  tableau_repository:
+    class: App\Trellotrolle\Modele\Repository\TableauRepository
+    arguments: ['@connexion_base_de_donnees']
+
+  utilisateur_repository:
+    class: App\Trellotrolle\Modele\Repository\UtilisateurRepository
+    arguments: ['@connexion_base_de_donnees']
+
+  colonne_repository:
+    class: App\Trellotrolle\Modele\Repository\ColonneRepository
+    arguments: ['@connexion_base_de_donnees']
+
+  carte_repository:
+    class: App\Trellotrolle\Modele\Repository\CarteRepository
+    arguments: ['@connexion_base_de_donnees']
+
+  affecte_repository:
+    class: App\Trellotrolle\Modele\Repository\AffecteRepository
+    arguments: ['@connexion_base_de_donnees']
+
+  participe_repository:
+    class: App\Trellotrolle\Modele\Repository\ParticipeRepository
+    arguments: ['@connexion_base_de_donnees']
+
+  #Services
+  utilisateur_service:
+    class: App\Trellotrolle\Service\UtilisateurService
+    arguments: ['@utilisateur_repository']
+
+  tableau_service:
+    class: App\Trellotrolle\Service\TableauService
+    arguments: ['@tableau_repository', '@utilisateur_repository', '@colonne_repository', '@carte_repository','@affecte_repository','@participe_repository']
+
+  carte_service:
+    class: App\Trellotrolle\Service\CarteService
+    arguments: ['@carte_repository', '@colonne_repository', '@tableau_repository']
+
+  colonne_service:
+    class: App\Trellotrolle\Service\ColonneService
+    arguments: ['@colonne_repository','@tableau_repository']
+
+  #Controleur
+
+  controleur_tableau:
+    class: App\Trellotrolle\Controleur\ControleurTableau
+    arguments: ['@tableau_service','@utilisateur_service']
+
+  controleur_utilisateur:
+    class: App\Trellotrolle\Controleur\ControleurUtilisateur
+    arguments: ['@utilisateur_service']
+
+  controleur_base:
+    class: App\Trellotrolle\Controleur\ControleurBase
+
+  controleur_carte_api:
+    class: App\Trellotrolle\Controleur\ControleurCarteAPI
+    arguments: ['@carte_service']
+
+  controleur_colonne:
+    class: App\Trellotrolle\Controleur\ControleurColonne
+    arguments: ['@colonne_repository', '@tableau_repository']

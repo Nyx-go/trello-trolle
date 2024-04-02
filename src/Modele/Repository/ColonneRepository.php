@@ -4,27 +4,31 @@ namespace App\Trellotrolle\Modele\Repository;
 
 use App\Trellotrolle\Modele\DataObject\AbstractDataObject;
 use App\Trellotrolle\Modele\DataObject\Colonne;
-use Exception;
 
-class ColonneRepository extends AbstractRepository
+class ColonneRepository extends AbstractRepository implements ColonneRepositoryInterface
 {
 
-    protected function getNomTable(): string
+    public function __construct(private ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees)
+    {
+        parent::__construct($connexionBaseDeDonnees);
+    }
+
+    public function getNomTable(): string
     {
         return "colonnes";
     }
 
-    protected function getNomCle(): array
+    public function getNomCle(): array
     {
         return array("idcolonne");
     }
 
-    protected function getNomsColonnes(): array
+    public function getNomsColonnes(): array
     {
         return ["idtableau", "idcolonne", "titrecolonne"];
     }
 
-    protected function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
+    public function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
     {
         return Colonne::construireDepuisTableau($objetFormatTableau);
     }

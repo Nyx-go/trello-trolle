@@ -11,7 +11,7 @@ use Twig\Environment;
 
 class ControleurGenerique {
 
-    protected static function afficherVue(string $cheminVue, array $parametres = []): Response
+    protected  function afficherVue(string $cheminVue, array $parametres = []): Response
     {
         extract($parametres);
 //        $messagesFlash = $_REQUEST["messagesFlash"] ?? [];
@@ -23,7 +23,7 @@ class ControleurGenerique {
     }
 
     // https://stackoverflow.com/questions/768431/how-do-i-make-a-redirect-in-php
-    protected static function redirection(string $route, array $parametres = []): RedirectResponse
+    protected  function redirection(string $route, array $parametres = []): RedirectResponse
     {
         /** @var UrlGenerator $generateurUrl */
         $generateurUrl = Conteneur::recupererService("generateurUrl");
@@ -32,7 +32,7 @@ class ControleurGenerique {
         return new RedirectResponse($url);
     }
 
-    public static function afficherErreur($messageErreur = "", $statusCode = 400): Response
+    public  function afficherErreur($messageErreur = "", $statusCode = 400): Response
     {
         $reponse = ControleurGenerique::afficherTwig( "erreur.html.twig",[
             "messageErreur" => $messageErreur
@@ -42,7 +42,7 @@ class ControleurGenerique {
         return $reponse;
     }
 
-    public static function issetAndNotNull(array $requestParams) : bool {
+    public  function issetAndNotNull(array $requestParams) : bool {
         foreach ($requestParams as $param) {
             if(!(isset($_REQUEST[$param]) && $_REQUEST[$param] != null)) {
                 return false;
@@ -51,7 +51,7 @@ class ControleurGenerique {
         return true;
     }
 
-    protected static function afficherTwig(string $cheminVue, array $parametres = []): Response
+    protected  function afficherTwig(string $cheminVue, array $parametres = []): Response
     {
         /** @var Environment $twig */
         $twig = Conteneur::recupererService("twig");

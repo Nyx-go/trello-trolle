@@ -3,7 +3,6 @@
 namespace App\Trellotrolle\Lib;
 
 use App\Trellotrolle\Configuration\ConfigurationSmtpBase;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mime\Email;
