@@ -43,6 +43,10 @@ services:
     class: App\Trellotrolle\Service\TableauService
     arguments: ['@tableau_repository', '@utilisateur_repository', '@colonne_repository', '@carte_repository','@affecte_repository','@participe_repository']
 
+  carte_service:
+    class: App\Trellotrolle\Service\CarteService
+    arguments: ['@carte_repository', '@colonne_repository', '@tableau_repository']
+
   #Controleur
 
   controleur_tableau:
@@ -55,3 +59,7 @@ services:
 
   controleur_base:
     class: App\Trellotrolle\Controleur\ControleurBase
+
+  controleur_carteApi:
+    class: App\Trellotrolle\Controleur\ControleurCarteApi
+    arguments: ['@']

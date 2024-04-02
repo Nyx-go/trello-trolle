@@ -3,6 +3,7 @@
 namespace App\Trellotrolle\Controleur;
 
 use App\Trellotrolle\Service\CarteService;
+use App\Trellotrolle\Service\CarteServiceInterface;
 use App\Trellotrolle\Service\Exception\ServiceException;
 use JsonException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -13,11 +14,15 @@ use Symfony\Component\HttpFoundation\Request;
 //TODO: injection de dépendance
 class ControleurCarteAPI extends ControleurGenerique
 {
+    public function __construct(private CarteServiceInterface $carteService)
+    {
+    }
+
     #[Route(path: 'api/carte/afficherCarte/{idCarte}', name: 'afficherCarte', methods: ["GET"])]
-    public static function afficherCarte($idCarte): Response
+    public  function afficherCarte($idCarte): Response
     {
         try {
-            $carte = (new CarteService())->recupererCarte($idCarte);
+            $carte = $this->carteService->recupererCarte($idCarte);
         } catch (ServiceException $e) {
             return new JsonResponse(["error" => $e->getMessage()], $e->getCode());
         }
@@ -26,7 +31,7 @@ class ControleurCarteAPI extends ControleurGenerique
 
     //changement uniquement titre / descriptif / couleur
     #[Route(path: 'api/carte/mettreAJourCarte', name: 'modifierCarte', methods: ["PATCH"])]
-    public static function mettreAJourCarte(Request $request): Response
+    public  function mettreAJourCarte(Request $request): Response
     {
         try {
             $content = json_decode($request->getContent(), flags: JSON_THROW_ON_ERROR);
@@ -34,7 +39,7 @@ class ControleurCarteAPI extends ControleurGenerique
             $titre = $content->titre ?? null;
             $descriptif = $content->descriptif ?? null;
             $couleur = $content->couleur ?? null;
-            (new CarteService())->mettreAJour($idCarte, $titre, $descriptif, $couleur);
+            $this->carteService->mettreAJour($idCarte, $titre, $descriptif, $couleur);
         } catch (ServiceException $e) {
             return new JsonResponse(["error" => $e->getMessage()], $e->getCode());
         } catch (JsonException $exception) {
@@ -47,10 +52,10 @@ class ControleurCarteAPI extends ControleurGenerique
     }
 
     #[Route(path: 'api/carte/ajouterCarte/{idColonne}', name: 'ajouterCarte', methods: ["PUT"])]
-    public static function ajouterCarte($idColonne): Response
+    public  function ajouterCarte($idColonne): Response
     {
         try {
-            $carte = (new CarteService())->ajouter($idColonne);
+            $carte = $this->carteService->ajouter($idColonne);
         } catch (ServiceException $e) {
             return new JsonResponse(["error" => $e->getMessage()], $e->getCode());
         }
@@ -58,10 +63,10 @@ class ControleurCarteAPI extends ControleurGenerique
     }
 
     #[Route(path: 'api/carte/supprimerCarte/{idCarte}', name: 'supprimerCarte', methods: ["DELETE"])]
-    public static function supprimerCarte($idCarte): Response
+    public  function supprimerCarte($idCarte): Response
     {
         try {
-            (new CarteService())->supprimer($idCarte);
+            $this->carteService->supprimer($idCarte);
         } catch (ServiceException $e) {
             return new JsonResponse(["error" => $e->getMessage()], $e->getCode());
         }
@@ -69,7 +74,7 @@ class ControleurCarteAPI extends ControleurGenerique
     }
 
     #[Route(path: 'api/carte/deplacerCarte', name: 'deplacerCarteColonne', methods: ["PATCH"])]
-    public static function deplacerCarteColonne(Request $request): Response
+    public  function deplacerCarteColonne(Request $request): Response
     {
         //TODO: à faire après avoir réussi à rendre les cartes draggable
         return new Response();
