@@ -58,10 +58,14 @@ class ControleurCarteAPI extends ControleurGenerique
     }
 
     #[Route(path: 'api/carte/supprimerCarte/{idCarte}', name: 'supprimerCarte', methods: ["DELETE"])]
-    public static function supprimerCarte(): Response
+    public static function supprimerCarte($idCarte): Response
     {
-        //TODO: à faire après avoir réussi à créér une carte
-        return new Response();
+        try {
+            (new CarteService())->supprimer($idCarte);
+        } catch (ServiceException $e) {
+            return new JsonResponse(["error" => $e->getMessage()], $e->getCode());
+        }
+        return new JsonResponse("", Response::HTTP_OK);
     }
 
     #[Route(path: 'api/carte/deplacerCarte', name: 'deplacerCarteColonne', methods: ["PATCH"])]

@@ -68,4 +68,20 @@ class CarteService extends ServiceGenerique
             throw new ServiceException("Erreur de connexion", Response::HTTP_FORBIDDEN);
         }
     }
+
+    /**
+     * @throws ServiceException
+     */
+    public function supprimer(string $idCarte): void {
+        $carte = $this->recupererCarte($idCarte);
+        /** @var Colonne $colonne */
+        $colonne = (new ColonneRepository())->recupererParClePrimaire(["idcolonne" => $carte->getIdColonne()]);
+        if (is_null($colonne)) throw new ServiceException("Erreur sur la colonne", Response::HTTP_BAD_REQUEST);
+        if (!ConnexionUtilisateur::estConnecte()) throw new ServiceException("Erreur de connexion", Response::HTTP_UNAUTHORIZED);
+        if ((new TableauRepository())->estParticipantOuProprietaire($colonne->getIdTableau(), ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
+            if (!(new CarteRepository())->supprimer(["idcarte" => $idCarte])) throw new ServiceException("Suppression échouée", Response::HTTP_NO_CONTENT);
+        } else {
+            throw new ServiceException("Erreur de connexion", Response::HTTP_FORBIDDEN);
+        }
+    }
 }
