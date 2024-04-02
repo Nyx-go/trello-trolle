@@ -3,6 +3,8 @@
 /** @var Colonne[] $colonnes */
 /** @var Carte[][] $data */
 /** @var array $participants */
+/** @var bool $estProprietaire
+ * @var bool $estParticipantOuProprietaire*/
 
 use App\Trellotrolle\Lib\ConnexionUtilisateur;
 use App\Trellotrolle\Modele\DataObject\Colonne;
@@ -15,7 +17,7 @@ use App\Trellotrolle\Modele\DataObject\Tableau;
         <div class="utilisateur icons_menu">
             <span><?= htmlspecialchars($tableau->getUtilisateur()->getPrenom()) ?> <?= htmlspecialchars($tableau->getUtilisateur()->getNom()) ?></span>
             <?php
-                if(ConnexionUtilisateur::estConnecte() && $tableau->estProprietaire(ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
+                if(ConnexionUtilisateur::estConnecte() && $estProprietaire) {
             ?>
             <span><a href="controleurFrontal.php?action=afficherFormulaireMiseAJour&controleur=utilisateur"><img class="icon" src="../ressources/img/editer.png" alt="Modifier l'utilisateur"></span></a>
             <?php } ?>
@@ -33,7 +35,7 @@ use App\Trellotrolle\Modele\DataObject\Tableau;
                             <div class="icons_menu_stick">
                                 <?= $participant->getPrenom() ?> <?= $participant->getNom() ?>
                                 <?php
-                                if(ConnexionUtilisateur::estConnecte() && $tableau->estProprietaire(ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
+                                if(ConnexionUtilisateur::estConnecte() && $estProprietaire) {
                                 ?>
                                 <span class="actions">
                                     <a href="controleurFrontal.php?action=supprimerMembre&controleur=tableau&idTableau=<?=$tableau->getIdTableau()?>&login=<?=rawurlencode($participant->getLogin())?>"><img class="icon" src="../ressources/img/x.png" alt="Retirer le membre"></a>
@@ -43,7 +45,7 @@ use App\Trellotrolle\Modele\DataObject\Tableau;
                         </li>
                     <?php }?>
                     <?php
-                    if(ConnexionUtilisateur::estConnecte() && $tableau->estProprietaire(ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
+                    if(ConnexionUtilisateur::estConnecte() && $estProprietaire) {
                     ?>
                     <li><a href="controleurFrontal.php?action=afficherFormulaireAjoutMembre&controleur=tableau&idTableau=<?=$tableau->getIdTableau()?>">Ajouter un membre</a></li>
                     <?php } ?>
@@ -74,7 +76,7 @@ use App\Trellotrolle\Modele\DataObject\Tableau;
             <div class="titre icons_menu">
                 <?= $tableau->getTitreTableau() ?>
                 <?php
-                if(ConnexionUtilisateur::estConnecte() && $tableau->estParticipantOuProprietaire(ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
+                if(ConnexionUtilisateur::estConnecte() && $estParticipantOuProprietaire) {
                     ?>
                     <span class="actions">
                             <a href="controleurFrontal.php?action=afficherFormulaireMiseAJourTableau&controleur=tableau&idTableau=<?=$tableau->getIdTableau()?>"><img class="icon" src="../ressources/img/editer.png" alt="Éditer le tableau"></a>
@@ -87,7 +89,7 @@ use App\Trellotrolle\Modele\DataObject\Tableau;
                     <div class="titre icons_menu">
                         <span><?= $colonnes[$i]->getTitreColonne() ?></span>
                         <?php
-                            if(ConnexionUtilisateur::estConnecte() && $tableau->estParticipantOuProprietaire(ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
+                            if(ConnexionUtilisateur::estConnecte() && $estParticipantOuProprietaire) {
                         ?>
                         <span class="actions">
                             <a href="controleurFrontal.php?action=afficherFormulaireMiseAJourColonne&controleur=colonne&idColonne=<?=$colonnes[$i]->getIdColonne()?>"><img class="icon" src="../ressources/img/editer.png" alt="Éditer la colonne"></a>
@@ -101,7 +103,7 @@ use App\Trellotrolle\Modele\DataObject\Tableau;
                             <div class="titre icons_menu">
                                 <span><?= htmlspecialchars($carte->getTitreCarte()) ?></span>
                                 <?php
-                                    if(ConnexionUtilisateur::estConnecte() && $tableau->estParticipantOuProprietaire(ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
+                                    if(ConnexionUtilisateur::estConnecte() && $estParticipantOuProprietaire) {
                                 ?>
                                 <span class="actions">
                                     <a href="controleurFrontal.php?action=afficherFormulaireMiseAJourCarte&controleur=carte&idCarte=<?=$carte->getIdCarte()?>"><img class="icon" src="../ressources/img/editer.png" alt="Éditer la carte"></a>
@@ -120,7 +122,7 @@ use App\Trellotrolle\Modele\DataObject\Tableau;
                         </div>
                         <?php }?>
                         <?php
-                            if(ConnexionUtilisateur::estConnecte() && $tableau->estParticipantOuProprietaire(ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
+                            if(ConnexionUtilisateur::estConnecte() && $estParticipantOuProprietaire) {
                         ?>
                         <a class="ajout-tableau" href="controleurFrontal.php?action=afficherFormulaireCreationCarte&controleur=carte&idColonne=<?=$colonnes[$i]->getIdColonne()?>">
                             <div>
@@ -134,7 +136,7 @@ use App\Trellotrolle\Modele\DataObject\Tableau;
                 </div>
                 <?php }?>
                 <?php
-                    if(ConnexionUtilisateur::estConnecte() && $tableau->estParticipantOuProprietaire(ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
+                    if(ConnexionUtilisateur::estConnecte() && $estParticipantOuProprietaire) {
                 ?>
                     <a class="ajout-tableau" href="controleurFrontal.php?action=afficherFormulaireCreationColonne&controleur=colonne&idTableau=<?=$tableau->getIdTableau()?>">
                         <div class="colonne">

@@ -1,0 +1,28 @@
+{% extends "base.html.twig" %}
+
+{% block page_title %}Connexion{% endblock %}
+
+{% block page_content %}
+    <div>
+        <form method="post" action="{{ route("connecter") }}">
+            <fieldset>
+                <h3>Connexion</h3>
+                <p>
+                    <label for="login_id">Login</label>
+                    <input type="text"
+                           placeholder="Ex : rlebreton" name="login" id="login_id" required>
+                </p>
+                <p>
+                    <label for="mdp_id">Mot de passe</label>
+                    <input type="password"
+                           placeholder="" name="mdp" id="mdp_id" required>
+                </p>
+                <a href="{{ route("afficherFormulaireRecuperationCompte") }}">Login
+                    et/ou mot de passe oubliés ?</a>
+                <p>
+                    <input type="submit" value="Se connecter"/>
+                </p>
+            </fieldset>
+        </form>
+    </div>
+{% endblock %}

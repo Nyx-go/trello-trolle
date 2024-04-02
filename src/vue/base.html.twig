@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block page_title %}Trello-Trollé{% endblock %}</title>
+    <link rel="stylesheet" href="{{ asset("../ressources/css/navstyle.css") }}">
+    <link rel="stylesheet" href="{{ asset("../ressources/css/trellostyle.css") }}">
+    {% block scripts %}
+
+    {% endblock %}
+</head>
+<body>
+<header>
+    <nav>
+        <ul>
+            <li>
+                <a href="{{ route("accueil") }}">Accueil</a>
+            </li>
+            {% if estConnecte %}
+                <li>
+                    <a href="{{ route("afficherListeMesTableaux") }}">Mes tableaux</a>
+                </li>
+                <li>
+                    <a href="{{ route("afficherDetail") }}">
+                        Mon compte (<span>{{ loginUser }}</span>) <img alt="logout" src="{{ asset("../ressources/img/user.png") }}">
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route("deconnecter") }}">
+                        Déconnexion <img alt="logout" src="{{ asset("../ressources/img/logout.png") }}">
+                    </a>
+                </li>
+            {% else %}
+                <li>
+                    <a href="{{ route("afficherFormulaireConnexion") }}">
+                        Connexion <img alt="login" src="{{ asset("../ressources/img/enter.png") }}" >
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route("afficherFormulaireCreation") }}">
+                        Inscription <img alt="S'inscrire" title="S'inscrire" src="{{ asset("../ressources/img/add-user.png") }}" >
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    <div>
+        {% for type , messagesType in messagesFlash.lireTousMessages() %}
+            {% for message in messagesType %}
+                <div class="alert alert-{{ type }}">{{ message }}</div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+</header>
+<main>
+    {% block page_content %}{% endblock %}
+</main>
+
+<footer>
+    <p>
+        Copyright Trello-Trollé Company
+    </p>
+</footer>
+</body>
+</html>

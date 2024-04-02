@@ -4,32 +4,33 @@ namespace App\Trellotrolle\Modele\Repository;
 
 use App\Trellotrolle\Modele\DataObject\AbstractDataObject;
 use App\Trellotrolle\Modele\DataObject\Carte;
-use Exception;
 
-class CarteRepository extends AbstractRepository
+class CarteRepository extends AbstractRepository implements CarteRepositoryInterface
 {
-
-    protected function getNomTable(): string
+    
+    public function __construct(private ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees)
     {
-        return "app_db";
+        parent::__construct($connexionBaseDeDonnees);
     }
 
-    protected function getNomCle(): string
+    public function getNomTable(): string
     {
-        return "idcarte";
+        return "Cartes";
     }
 
-    protected function getNomsColonnes(): array
+    public function getNomCle(): array
+    {
+        return array("idcarte");
+    }
+
+    public function getNomsColonnes(): array
     {
         return [
-            "login", "nom", "prenom", "email", "mdphache",
-            "mdp", "idtableau", "codetableau", "titretableau",
-            "participants", "idcolonne", "titrecolonne",
-            "idcarte", "titrecarte", "descriptifcarte", "couleurcarte", "affectationscarte"
+            "idColonne","idcarte", "titrecarte", "descriptifcarte", "couleurcarte",
         ];
     }
 
-    protected function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
+    public function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
     {
         return Carte::construireDepuisTableau($objetFormatTableau);
     }
@@ -39,7 +40,16 @@ class CarteRepository extends AbstractRepository
     }
 
     public function recupererCartesTableau(int $idTableau): array {
-        return $this->recupererPlusieursPar("idtableau", $idTableau);
+        $sql = "SELECT idCarte,c.idcolonne,titrecarte,descriptifcarte,couleurcarte FROM Cartes c 
+            JOIN Colonnes co ON c.idColonne = co.idColonne 
+            WHERE co.idTableau = :idtableau";
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($sql);
+        $pdoStatement->execute(["idtableau" => $idTableau]);
+        $objets = [];
+        foreach ($pdoStatement as $objetFormatTableau) {
+            $objets[] = $this->construireDepuisTableau($objetFormatTableau);
+        }
+        return $objets;
     }
 
     /**
@@ -47,10 +57,10 @@ class CarteRepository extends AbstractRepository
      */
     public function recupererCartesUtilisateur(string $login): array
     {
-        $sql = "SELECT {$this->formatNomsColonnes()} from app_db WHERE affectationscarte @> :json";
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+        $sql = "SELECT * from Cartes c left Join affecte a on c.idCarte=a.idCarte WHERE login =:login ";
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($sql);
         $values = array(
-            "json" => json_encode(["utilisateurs" => [["login" => $login]]])
+            "login" => $login
         );
         $pdoStatement->execute($values);
         $objets = [];
@@ -61,8 +71,8 @@ class CarteRepository extends AbstractRepository
     }
 
     public function getNombreCartesTotalUtilisateur(string $login) : int {
-        $query = "SELECT COUNT(*) FROM app_db WHERE login=:login";
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($query);
+        $query = "SELECT COUNT(*) FROM Cartes c JOIN affecte a ON a.idCarte = c.idCarte WHERE login=:login";
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($query);
         $pdoStatement->execute(["login" => $login]);
         $obj = $pdoStatement->fetch();
         return $obj[0];
@@ -70,5 +80,18 @@ class CarteRepository extends AbstractRepository
 
     public function getNextIdCarte() : int {
         return $this->getNextId("idcarte");
+    }
+
+    public function getTableauByIdCarte($idCarte){
+        $sql = "SELECT idTableau FROM cartes c JOIN colonnes co ON c.idCarte = co.idCarte WHERE c.idCarte =:idcarte;";
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($sql);
+        $pdoStatement->execute(["idCarte" => $idCarte]);
+        $obj = $pdoStatement->fetch();
+        return $obj[0];
+    }
+
+    public function recupererCarteParId (string $idCarte): ?AbstractDataObject
+    {
+        return $this->recupererPar("idCarte",$idCarte);
     }
 }

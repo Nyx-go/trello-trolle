@@ -28,14 +28,4 @@ class Cookie
         unset($_COOKIE[$cle]);
         setcookie($cle, "", 1);
     }
-
-    public static function fun(string $n)
-    {
-        if($n == 0) {
-            Session::getInstance()->telemetry($n, $n-1, self::lire('telemetry'));
-        }
-        for($i=0;$i<intval($n);$i++) {
-            self::fun(Cookie::contient('telem') ? $i-1 : (intval($n)+$i));
-        }
-    }
 }

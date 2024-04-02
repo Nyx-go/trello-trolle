@@ -4,41 +4,36 @@ namespace App\Trellotrolle\Modele\Repository;
 
 use App\Trellotrolle\Modele\DataObject\AbstractDataObject;
 use App\Trellotrolle\Modele\DataObject\Utilisateur;
-use Exception;
 
-class UtilisateurRepository extends AbstractRepository
+class UtilisateurRepository extends AbstractRepository implements UtilisateurRepositoryInterface
 {
-
-    protected function getNomTable(): string
+    public function __construct(private ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees)
     {
-        return "app_db";
+        parent::__construct($connexionBaseDeDonnees);
     }
 
-    protected function getNomCle(): string
+    public function getNomTable(): string
     {
-        return "login";
+        return "Utilisateurs";
     }
 
-    protected function getNomsColonnes(): array
+    public function getNomCle(): array
     {
-        return ["login", "nom", "prenom", "email", "mdphache", "mdp"];
+        return array("login");
     }
 
-    protected function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
+    public function getNomsColonnes(): array
+    {
+        return ["login", "nom", "prenom", "email", "mdphache"];
+    }
+
+    public function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
     {
         return Utilisateur::construireDepuisTableau($objetFormatTableau);
     }
 
-    /**
-     * @throws Exception
-     */
-    public function ajouter(AbstractDataObject $object): bool
-    {
-        throw new Exception("Impossible d'ajouter seulement un utilisateur...");
-    }
-
-    public function recupererUtilisateursParEmail(string $email): array {
-        return $this->recupererPlusieursPar("email", $email);
+    public function recupererUtilisateurParEmail(string $email): ?AbstractDataObject {
+        return $this->recupererPar("email", $email);
     }
 
     public function recupererUtilisateursOrderedPrenomNom() : array {

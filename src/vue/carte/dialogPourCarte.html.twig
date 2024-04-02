@@ -1,0 +1,32 @@
+<dialog>
+        <form method="post" action="javascript:void(0);">
+            <fieldset>
+                <h3>Modification d'une carte :</h3>
+                <p>
+                    <label for="titreCarte">Titre de la carte&#42;</label> :
+                    <input type="text" placeholder="Ma super tâche" name="titreCarte" id="titreCarte" value="" minlength="1" maxlength="50" required>
+                </p>
+                <p>
+                    <label for="descriptifCarte">Description de la carte&#42;</label> :
+                <div>
+                    <textarea placeholder="Description de la tâche..." name="descriptifCarte" id="descriptifCarte" required></textarea>
+                </div>
+                </p>
+                <p>
+                    <label for="couleurCarte">Couleur de la carte&#42;</label> :
+                    <input type="color" value="" name="couleurCarte" id="couleurCarte" required>
+                </p>
+
+                <p>
+                    <label for="affectationsCarte">Membres affectés :</label>
+                </p>
+                <input type='hidden' id="idCarte" name='idCarte' value=''>
+                <p>
+                    <input type="button" value="Mettre à jour la carte">
+                </p>
+                <p>
+                    <input type="button" value="Supprimer la carte" onclick="supprimer()">
+                </p>
+            </fieldset>
+        </form>
+</dialog>

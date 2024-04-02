@@ -1,0 +1,23 @@
+{% extends "base.html.twig" %}
+
+{% block page_title %}Profil de {{ utilisateur.getLogin() }}{% endblock %}
+
+{% block page_content %}
+    <p>
+        <form>
+            <h3>Détail du compte {{ utilisateur.getLogin() }}</h3>
+            <p>
+                <label for="">Nom</label>
+                <input type="text" disabled value="{{ utilisateur.getNom() }}">
+                <label for="">Prénom</label>
+                <input type="text" disabled value="{{ utilisateur.getPrenom() }}">
+                <label for="">Mail</label>
+                <input type="text" disabled value="{{ utilisateur.getEmail() }}">
+            </p>
+            <div class="btn btn_maj"><a href="{{ route("afficherFormulaireMiseAJour") }}">Mettre
+            à jour le compte</a></div>
+            {# TODO: ajout pop up avertissement #}
+            <div class="btn btn_suppr"><a href="{{ route("supprimer")}}">Supprimer le compte</a></div>
+        </form>
+    </p>
+{% endblock %}

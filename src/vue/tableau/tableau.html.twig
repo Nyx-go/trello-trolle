@@ -1,0 +1,152 @@
+{% extends "base.html.twig" %}
+
+{% block page_title %}Tableau {{ tableau.getTitreTableau() }}{% endblock %}
+
+{% block page_content %}
+    <div class="trello-main">
+        <aside>
+            <div class="utilisateur icons_menu">
+                <span> {{ utilisateur.getPrenom() }} {{ utilisateur.getNom() }}</span>
+
+                {% if estProprietaire %}
+                    <span><a href="{{ route("afficherFormulaireMiseAJour") }}"><img class="icon"
+                                                                                    src="{{ asset("../ressources/img/editer.png") }}"
+                                                                                    alt="Modifier l'utilisateur"></a></span>
+                {% endif %}
+            </div>
+            <div class="tableau">
+
+                <div class="icons_menu">
+                    <span>{{ tableau.getTitreTableau() }}</span>
+                </div>
+                <div class="participants">
+                    Membres :
+                    <ul>
+                        <li>{{ utilisateur.getPrenom() }} {{ utilisateur.getNom() }}</li>
+                        {% for participant in participants %}
+                            <li>
+                                <div class="icons_menu_stick">
+                                    {{ participant.getPrenom() }} {{ participant.getNom() }}
+
+                                    {% if estProprietaire %}
+                                        <span class="actions">
+                                    <a href="{{ route("supprimerMembre", {"login" : participant.getLogin(), "idTableau" : tableau.getIdTableau()}) }}"><img
+                                                class="icon" src="{{ asset("../ressources/img/x.png") }}"
+                                                alt="Retirer le membre"></a>
+                                </span>
+                                    {% endif %}
+                                </div>
+                            </li>
+                        {% endfor %}
+                        <?php
+
+                        {% if estProprietaire %}
+                        <li><a
+                            href="{{ route("afficherFormulaireAjoutMembre", {"idTableau" : tableau.getIdTableau()}) }}">Ajouter
+                        un membre</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="participants">
+                    Travail en cours :
+                    <ul>
+                        {% for affecte in affectations %}
+                            <li>
+                            <div>{{ affecte["infos"].getPrenom() }} {{ affecte["infos"].getNom() }}</div>
+                            <ul>
+                            {% for colonne in affecte["colonnes"] %}
+                                <li>{{ colonne[1] }} {{ colonne[0] }} </li>
+                                </ul>
+                                </li>
+                            {% endfor %}
+                        {% else %}
+                            <span><strong>Pas de travail en cours</strong></span>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </aside>
+        <article>
+            <div class="tableau">
+                <div class="titre icons_menu">
+                    {{ tableau.getTitreTableau() }}
+                    {% if estParticipantOuProprietaire %}
+                        <span class="actions">
+                        <a href="{{ route("afficherFormulaireMiseAJourTableau", {"idTableau" : tableau.getIdTableau()}) }}"><img
+                                    class="icon" src="{{ asset("../ressources/img/editer.png") }}"
+                                    alt="Éditer le tableau"></a>
+                </span>
+                    {% endif %}
+                </div>
+                {% include "carte/dialogPourCarte.html.twig" %}
+                <div class="corps">
+                    {% for i in 0..(data|length - 1) %}
+                        <div class="colonne">
+                            <div class="titre icons_menu">
+                                <span>{{ colonnes[i].getTitreColonne() }}</span>
+                                {% if estParticipantOuProprietaire %}
+                                    <span class="actions">
+                        <a href="{{ route("afficherFormulaireMiseAJourColonne", {"idColonne" : colonnes[i].getIdColonne()}) }}"><img
+                                    class="icon" src="{{ asset("../ressources/img/editer.png") }}"
+                                    alt="Éditer la colonne"></a>
+                        <a href="{{ route("supprimerColonne", {"idColonne" : colonnes[i].getIdColonne()}) }}"><img
+                                    class="icon" src="{{ asset("../ressources/img/x.png") }}"
+                                    alt="Supprimer la colonne"></a>
+                    </span>
+                                {% endif %}
+                            </div>
+                            <div class="corps">
+                                {% for carte in data[i] %}
+                                    <div class="carte" style="background-color: {{ carte.getCouleurCarte() }}"
+                                         onclick="openModal(this)">
+                                        <div class="idCarte" hidden="hidden">{{ carte.getIdCarte() }}</div>
+                                        <div class="couleurCarte" hidden="hidden">{{ carte.getCouleurCarte() }}</div>
+                                        <div class="titre icons_menu">
+                                            <span>{{ carte.getTitreCarte() }}</span>
+                                        </div>
+                                        <div class="corps">
+                                            {{ carte.getDescriptifCarte() }}
+                                        </div>
+                                        <div class="pied">
+                                            {% for utilisateur1 in affectationsCartes[carte.getIdCarte()] %}
+                                                <span>{{ utilisateur1.getPrenom() }} {{ utilisateur1.getNom() }} </span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+
+                                {% if estParticipantOuProprietaire %}
+                                    <div class="ajout-carte" data-idColonne="{{ colonnes[i].getIdColonne() }}">
+                                        <div class="titre icons_menu btn-ajout">
+                                            <span>Ajouter une carte</span>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    {% if estParticipantOuProprietaire %}
+                        <a class="ajout-tableau"
+                           href="{{ route("afficherFormulaireCreationColonne", {"idTableau" : tableau.getIdTableau()}) }}">
+                            <div class="colonne">
+                                <div class="titre icons_menu btn-ajout">
+                                    <span>Ajouter une colonne</span>
+                                </div>
+                            </div>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </article>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    {% if estParticipantOuProprietaire %}
+        <script type="text/javascript" src="{{ asset("../ressources/js/dialog.js") }}" defer></script>
+        <script>
+            const apiBase = "{{ asset('.') }}" + "/api/";
+        </script>
+    {% endif %}
+{% endblock %}

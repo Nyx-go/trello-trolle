@@ -1,0 +1,21 @@
+{% extends "base.html.twig" %}
+
+{% block page_title %}Reset Compte{% endblock %}
+
+{# TODO: À modifier quand on aura la récupération de comptes #}
+{% block page_content %}
+    <div>
+        <form method="post" action="{{ route("recupererCompte") }}">
+            <fieldset>
+                <h3>Récupérer mon compte</h3>
+                <p class="InputAddOn">
+                    <label class="InputAddOn-item" for="email_id">Email du compte&#42;</label>
+                    <input class="InputAddOn-field" type="email" value="" placeholder="rlebreton@yopmail.com" name="email" id="email_id" required>
+                </p>
+                <p>
+                    <input class="InputAddOn-field" type="submit" value="Récupérer mon compte"/>
+                </p>
+            </fieldset>
+        </form>
+    </div>
+{% endblock %}

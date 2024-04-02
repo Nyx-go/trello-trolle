@@ -3,28 +3,31 @@
 namespace App\Trellotrolle\Modele\Repository;
 
 use App\Trellotrolle\Modele\DataObject\AbstractDataObject;
-use App\Trellotrolle\Modele\DataObject\Carte;
 use App\Trellotrolle\Modele\DataObject\Tableau;
-use Exception;
 
-class TableauRepository extends AbstractRepository
+class TableauRepository extends AbstractRepository implements TableauRepositoryInterface
 {
-    protected function getNomTable(): string
+    public function __construct(private ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees)
     {
-        return "app_db";
+        parent::__construct($connexionBaseDeDonnees);
     }
 
-    protected function getNomCle(): string
+    public function getNomTable(): string
     {
-        return "idtableau";
+        return "Tableaux";
     }
 
-    protected function getNomsColonnes(): array
+    public function getNomCle(): array
     {
-        return ["login", "nom", "prenom", "email", "mdphache", "mdp", "idtableau", "codetableau", "titretableau", "participants"];
+        return array("idtableau");
     }
 
-    protected function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
+    public function getNomsColonnes(): array
+    {
+        return ["login", "idtableau", "codetableau", "titretableau"];
+    }
+
+    public function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
     {
         return Tableau::construireDepuisTableau($objetFormatTableau);
     }
@@ -38,62 +41,56 @@ class TableauRepository extends AbstractRepository
     }
 
     /**
-     * @throws Exception
-     */
-    public function ajouter(AbstractDataObject $object): bool
-    {
-        throw new Exception("Impossible d'ajouter seulement un tableau...");
-    }
-
-    /**
      * @return Tableau[]
      */
     public function recupererTableauxOuUtilisateurEstMembre(string $login): array
     {
-        $sql = "SELECT DISTINCT {$this->formatNomsColonnes()}
-                from app_db 
-                WHERE login='$login' OR participants @> :json";
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
-        $values = array(
-            "json" => json_encode(["utilisateurs" => [["login" => $login]]])
-        );
-        $pdoStatement->execute($values);
+        $sql = "SELECT t.idtableau, t.login, codetableau, titretableau
+                FROM tableaux t LEFT JOIN participe p ON t.idtableau = p.idtableau 
+                WHERE p.login = :loginTag OR t.login = :loginTag";
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($sql);
+        $pdoStatement->execute(["loginTag" => $login]);
         $objets = [];
         foreach ($pdoStatement as $objetFormatTableau) {
             $objets[] = $this->construireDepuisTableau($objetFormatTableau);
         }
         return $objets;
-    }
-
-    /**
-     * @return Tableau[]
-     */
-    public function recupererTableauxParticipeUtilisateur(string $login): array
-    {
-        $sql = "SELECT DISTINCT {$this->formatNomsColonnes()}
-                from app_db 
-                WHERE participants @> :json";
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
-        $values = array(
-            "json" => json_encode(["utilisateurs" => [["login" => $login]]])
-        );
-        $pdoStatement->execute($values);
-        $objets = [];
-        foreach ($pdoStatement as $objetFormatTableau) {
-            $objets[] = $this->construireDepuisTableau($objetFormatTableau);
-        }
-        return $objets;
-    }
-
-    public function getNextIdTableau() : int {
-        return $this->getNextId("idtableau");
     }
 
     public function getNombreTableauxTotalUtilisateur(string $login) : int {
-        $query = "SELECT COUNT(DISTINCT idtableau) FROM app_db WHERE login=:login";
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($query);
+        $query = "SELECT COUNT(DISTINCT idtableau) FROM tableaux WHERE login=:login";
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($query);
         $pdoStatement->execute(["login" => $login]);
         $obj = $pdoStatement->fetch();
         return $obj[0];
+    }
+
+    public function estParticipant($idTableau, $login) : bool{
+        $sql = "SELECT login FROM participe WHERE idtableau =:idTableau";
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($sql);
+        $pdoStatement->execute(["idTableau" => $idTableau]);
+        $obj = $pdoStatement->fetch();
+        if ($obj) {
+            foreach ($obj as $item) {
+                if ($item === $login) return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function estProprietaire($idTableau, $login) : bool{
+        $sql = "SELECT login FROM tableaux WHERE idtableau =:idTableau";
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($sql);
+        $pdoStatement->execute(["idTableau" => $idTableau]);
+        $obj = $pdoStatement->fetch();
+        foreach ($obj as $item) {
+            if ($item === $login) return true;
+        }
+        return false;
+    }
+
+    public function estParticipantOuProprietaire($idTableau, $login) : bool{
+        return $this->estParticipant($idTableau, $login) || $this->estProprietaire($idTableau, $login);
     }
 }

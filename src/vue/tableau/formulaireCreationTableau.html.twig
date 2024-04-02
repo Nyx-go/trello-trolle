@@ -1,0 +1,20 @@
+{% extends "base.html.twig" %}
+
+{% block page_title %}Créer un tableau{% endblock %}
+
+{% block page_content %}
+<div>
+    <form method="post" action="{{ route("creerTableau") }}">
+        <fieldset>
+            <h3>Création d'un tableau :</h3>
+            <p>
+                <label for="nomTableau">Nom du tableau&#42;</label>
+                <input type="text" placeholder="Mon super tableau" name="nomTableau" id="nomTableau" minlength="3" maxlength="50" required>
+            </p>
+            <p>
+                <input type="submit" value="Créer le tableau">
+            </p>
+        </fieldset>
+    </form>
+</div>
+{% endblock %}

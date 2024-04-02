@@ -4,58 +4,40 @@ namespace App\Trellotrolle\Modele\Repository;
 
 use App\Trellotrolle\Modele\DataObject\AbstractDataObject;
 use App\Trellotrolle\Modele\DataObject\Colonne;
-use Exception;
 
-class ColonneRepository extends AbstractRepository
+class ColonneRepository extends AbstractRepository implements ColonneRepositoryInterface
 {
 
-    protected function getNomTable(): string
+    public function __construct(private ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees)
     {
-        return "app_db";
+        parent::__construct($connexionBaseDeDonnees);
     }
 
-    protected function getNomCle(): string
+    public function getNomTable(): string
     {
-        return "idcolonne";
+        return "colonnes";
     }
 
-    protected function getNomsColonnes(): array
+    public function getNomCle(): array
     {
-        return [
-            "login", "nom", "prenom", "email", "mdphache",
-            "mdp", "idtableau", "codetableau", "titretableau",
-            "participants", "idcolonne", "titrecolonne"
-        ];
+        return array("idcolonne");
     }
 
-    protected function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
+    public function getNomsColonnes(): array
+    {
+        return ["idtableau", "idcolonne", "titrecolonne"];
+    }
+
+    public function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
     {
         return Colonne::construireDepuisTableau($objetFormatTableau);
     }
 
     public function recupererColonnesTableau(int $idTableau): array {
-        return $this->recupererPlusieursParOrdonne("idtableau", $idTableau, ["idcolonne"]);
+        return $this->recupererPlusieursParOrdonne("idtableau", $idTableau, array("idcolonne"));
     }
 
     public function getNextIdColonne() : int {
         return $this->getNextId("idcolonne");
     }
-
-    public function getNombreColonnesTotalTableau(int $idTableau) : int {
-        $query = "SELECT COUNT(DISTINCT idcolonne) FROM app_db WHERE idtableau=:idTableau";
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($query);
-        $pdoStatement->execute(["idTableau" => $idTableau]);
-        $obj = $pdoStatement->fetch();
-        return $obj[0];
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function ajouter(AbstractDataObject $object): bool
-    {
-        throw new Exception("Impossible d'ajouter seulement une colonne...");
-    }
-
-
 }
