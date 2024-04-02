@@ -89,7 +89,7 @@ class TableauRepository extends AbstractRepository
         return false;
     }
 
-    public function estParticipantOuProprietaire($idTableau, $login){
+    public function estParticipantOuProprietaire($idTableau, $login) : bool{
         return $this->estParticipant($idTableau, $login) || $this->estProprietaire($idTableau, $login);
     }
 }

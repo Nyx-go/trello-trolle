@@ -136,7 +136,9 @@ abstract class AbstractRepository
         foreach ($clePrimaires as $cle){
             $sql.= "$cle = :$cle"."Tag";
             $values[$cle.'Tag']= $valeurClePrimaire[$cle];
+            $sql.= " AND ";
         }
+        $sql = rtrim($sql, " AND ");
         $pdoStatement = ConnexionBaseDeDonnees::getPDO()->prepare($sql);
         $pdoStatement->execute($values);
         $deleteCount = $pdoStatement->rowCount();
