@@ -19,6 +19,7 @@ use App\Trellotrolle\Service\TableauService;
 use App\Trellotrolle\Service\UtilisateurService;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -40,45 +41,52 @@ class RouteurURL
 {
     public static function traiterRequete(): void
     {
+
+
         $conteneur = new ContainerBuilder();
 
-        $conteneur->register('configuration_bdd_my_sql', ConfigurationBaseDeDonnees::class);
-
-        $connexionBaseService = $conteneur->register('connexion_base_de_donnees', ConnexionBaseDeDonnees::class);
-        $connexionBaseService->setArguments([new Reference('configuration_bdd_my_sql')]);
-
-        $publicationsRepositoryService = $conteneur->register('tableau_repository',TableauRepository::class);
-        $publicationsRepositoryService->setArguments([new Reference('connexion_base_de_donnees')]);
-
-        $utilisateurRepositoryService = $conteneur->register('utilisateur_repository',UtilisateurRepository::class);
-        $utilisateurRepositoryService->setArguments([new Reference('connexion_base_de_donnees')]);
-
-        $colonneRepositoryService = $conteneur->register('colonne_repository',ColonneRepository::class);
-        $colonneRepositoryService->setArguments([new Reference('connexion_base_de_donnees')]);
-
-        $carteRepositoryService = $conteneur->register('carte_repository',CarteRepository::class);
-        $carteRepositoryService->setArguments([new Reference('connexion_base_de_donnees')]);
-
-        $affecteRepositoryService = $conteneur->register('affecte_repository',AffecteRepository::class);
-        $affecteRepositoryService->setArguments([new Reference('connexion_base_de_donnees')]);
-
-        $participeRepositoryService = $conteneur->register('participe_repository',ParticipeRepository::class);
-        $participeRepositoryService->setArguments([new Reference('connexion_base_de_donnees')]);
-
-        $utilisateurService = $conteneur->register('utilisateur_service',UtilisateurService::class);
-        $utilisateurService->setArguments([new Reference('utilisateur_repository')]);
-
-        $tableauService = $conteneur->register('tableau_service', TableauService::class);
-        $tableauService->setArguments([new Reference('tableau_repository'), new Reference('utilisateur_repository'),
-            new Reference("colonne_repository"), new Reference("carte_repository"), new Reference("affecte_repository"),new Reference("participe_repository")]);
-
-        $publicationControleurService = $conteneur->register('controleur_tableau',ControleurTableau::class);
-        $publicationControleurService->setArguments([new Reference('tableau_service'), new Reference("utilisateur_service")]);
-
-        $utilisateurControleurService = $conteneur->register('controleur_utilisateur',ControleurUtilisateur::class);
-        $utilisateurControleurService->setArguments([new Reference('utilisateur_service')]);
-
-        $conteneur->register('controleur_base', ControleurBase::class);
+        //On indique au FileLocator de chercher à partir du dossier de configuration
+        $loader = new YamlFileLoader($conteneur, new FileLocator(__DIR__."/../Configuration"));
+        //On remplit le conteneur avec les données fournies dans le fichier de configuration
+        $loader->load("conteneur.yml");
+//
+//        $conteneur->register('configuration_bdd_my_sql', ConfigurationBaseDeDonnees::class);
+//
+//        $connexionBaseService = $conteneur->register('connexion_base_de_donnees', ConnexionBaseDeDonnees::class);
+//        $connexionBaseService->setArguments([new Reference('configuration_bdd_my_sql')]);
+//
+//        $publicationsRepositoryService = $conteneur->register('tableau_repository',TableauRepository::class);
+//        $publicationsRepositoryService->setArguments([new Reference('connexion_base_de_donnees')]);
+//
+//        $utilisateurRepositoryService = $conteneur->register('utilisateur_repository',UtilisateurRepository::class);
+//        $utilisateurRepositoryService->setArguments([new Reference('connexion_base_de_donnees')]);
+//
+//        $colonneRepositoryService = $conteneur->register('colonne_repository',ColonneRepository::class);
+//        $colonneRepositoryService->setArguments([new Reference('connexion_base_de_donnees')]);
+//
+//        $carteRepositoryService = $conteneur->register('carte_repository',CarteRepository::class);
+//        $carteRepositoryService->setArguments([new Reference('connexion_base_de_donnees')]);
+//
+//        $affecteRepositoryService = $conteneur->register('affecte_repository',AffecteRepository::class);
+//        $affecteRepositoryService->setArguments([new Reference('connexion_base_de_donnees')]);
+//
+//        $participeRepositoryService = $conteneur->register('participe_repository',ParticipeRepository::class);
+//        $participeRepositoryService->setArguments([new Reference('connexion_base_de_donnees')]);
+//
+//        $utilisateurService = $conteneur->register('utilisateur_service',UtilisateurService::class);
+//        $utilisateurService->setArguments([new Reference('utilisateur_repository')]);
+//
+//        $tableauService = $conteneur->register('tableau_service', TableauService::class);
+//        $tableauService->setArguments([new Reference('tableau_repository'), new Reference('utilisateur_repository'),
+//            new Reference("colonne_repository"), new Reference("carte_repository"), new Reference("affecte_repository"),new Reference("participe_repository")]);
+//
+//        $publicationControleurService = $conteneur->register('controleur_tableau',ControleurTableau::class);
+//        $publicationControleurService->setArguments([new Reference('tableau_service'), new Reference("utilisateur_service")]);
+//
+//        $utilisateurControleurService = $conteneur->register('controleur_utilisateur',ControleurUtilisateur::class);
+//        $utilisateurControleurService->setArguments([new Reference('utilisateur_service')]);
+//
+//        $conteneur->register('controleur_base', ControleurBase::class);
 
 
 

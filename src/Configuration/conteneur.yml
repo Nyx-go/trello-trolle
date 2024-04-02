@@ -1,0 +1,57 @@
+parameters:
+
+services:
+
+  configuration_bdd:
+    class: Trellotrolle\Configuration\ConfigurationBaseDeDonnees;
+
+  connexion_base_de_donnees:
+    class: Trellotrolle\Modele\Repository\ConnexionBaseDeDonnees
+    arguments: ['@configuration_bdd']
+
+  #Repositories
+  tableau_repository:
+    class: Trellotrolle\Modele\Repository\TableauRepository
+    arguments: ['@connexion_base_de_donnees']
+
+  utilisateur_repository:
+    class: Trellotrolle\Modele\Repository\UtilisateurRepository
+    arguments: ['@connexion_base_de_donnees']
+
+  colonne_repository:
+    class: Trellotrolle\Modele\Repository\ColonneRepository
+    arguments: ['@connexion_base_de_donnees']
+
+  carte_repository:
+    class: Trellotrolle\Modele\Repository\CarteRepository
+    arguments: ['@connexion_base_de_donnees']
+
+  affecte_repository:
+    class: Trellotrolle\Modele\Repository\AffecteRepository
+    arguments: ['@connexion_base_de_donnees']
+
+  participe_repository:
+    class: Trellotrolle\Modele\Repository\ParticipeRepository
+    arguments: ['@connexion_base_de_donnees']
+
+  #Services
+  utilisateur_service:
+    class: Trellotrolle\Service\UtilisateurService
+    arguments: ['@utilisateur_repository']
+
+  tableau_service:
+    class: Trellotrolle\Service\TableauService
+    arguments: ['@tableau_repository', '@utilisateur_repository', '@colonne_repository', '@carte_repository','@affecte_repository','@participe_repository']
+
+  #Controleur
+
+  controleur_tableau:
+    class: Trellotrolle\Controleur\ControleurTableau
+    arguments: ['@tableau_service','@utilisateur_service']
+
+  controleur_utilisateur:
+    class: Trellotrolle\Controleur\ControleurUtilisateur
+    arguments: ['@utilisateur_service']
+
+  controleur_base:
+    class: Trellotrolle\Controleur\ControleurBase
