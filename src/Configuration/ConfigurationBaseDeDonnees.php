@@ -8,7 +8,7 @@ class ConfigurationBaseDeDonnees {
     static private array $configurationBaseDeDonnees = array(
         'nomHote' => 'bd',
         'nomBaseDeDonnees' => 'bd',
-        'port' => '5673',
+        'port' => '5432',
         'login' => 'admin',
         'motDePasse' => 'admin'
     );
