@@ -2,7 +2,12 @@
 
 namespace App\Trellotrolle\Test;
 
+use App\Trellotrolle\Modele\Repository\AffecteRepository;
+use App\Trellotrolle\Modele\Repository\CarteRepository;
+use App\Trellotrolle\Modele\Repository\ColonneRepository;
+use App\Trellotrolle\Modele\Repository\ParticipeRepository;
 use App\Trellotrolle\Modele\Repository\TableauRepository;
+use App\Trellotrolle\Modele\Repository\UtilisateurRepository;
 use App\Trellotrolle\Service\Exception\ServiceException;
 use PHPUnit\Framework\TestCase;
 use App\Trellotrolle\Service\TableauService;
@@ -16,13 +21,28 @@ class TableauServiceTest extends TestCase {
     {
         parent::setUp();
         $this->tableauRepositoryMock = $this->createMock(TableauRepository::class);
-        $this->tableauService = new TableauService($this->tableauRepositoryMock);
+        $this->utilisateurRepositoryMock = $this->createMock(UtilisateurRepository::class);
+        $this->colonneRepositoryMock = $this->createMock(ColonneRepository::class);
+        $this->carteRepositoryMock = $this->createMock(CarteRepository::class);
+        $this->affecteRepositoryMock = $this->createMock(AffecteRepository::class);
+        $this->participeRepositoryMock = $this->createMock(ParticipeRepository::class);
+
+        $this->tableauService = new TableauService(
+            $this->tableauRepositoryMock,
+            $this->utilisateurRepositoryMock,
+            $this->colonneRepositoryMock,
+            $this->carteRepositoryMock,
+            $this->affecteRepositoryMock,
+            $this->participeRepositoryMock
+        );
     }
 
     public function testSupprimerTableauInexistant() {
-        $this->tableauRepositoryMock->method("recupererParClePrimaire")->willReturn(null);
+        $this->tableauRepositoryMock->method("recupererParCodeTableau")->willReturn(null);
 
-        $this->tableauService->supprimerTableau(1);
+        $this->expectException(ServiceException::class);
+
+        $this->tableauService->supprimerTableau("codeTableauInexistant");
     }
 
     /*
