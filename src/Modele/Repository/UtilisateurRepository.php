@@ -4,7 +4,6 @@ namespace App\Trellotrolle\Modele\Repository;
 
 use App\Trellotrolle\Modele\DataObject\AbstractDataObject;
 use App\Trellotrolle\Modele\DataObject\Utilisateur;
-use Exception;
 
 class UtilisateurRepository extends AbstractRepository implements UtilisateurRepositoryInterface
 {

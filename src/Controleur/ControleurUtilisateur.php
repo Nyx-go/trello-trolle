@@ -2,14 +2,9 @@
 
 namespace App\Trellotrolle\Controleur;
 
-use App\Trellotrolle\Lib\ConnexionUtilisateur;
 use App\Trellotrolle\Lib\MessageFlash;
-use App\Trellotrolle\Lib\MotDePasse;
-use App\Trellotrolle\Modele\DataObject\Utilisateur;
-use App\Trellotrolle\Modele\Repository\UtilisateurRepository;
 use App\Trellotrolle\Service\Exception\ServiceConnexionException;
 use App\Trellotrolle\Service\Exception\ServiceException;
-use App\Trellotrolle\Service\UtilisateurService;
 use App\Trellotrolle\Service\UtilisateurServiceInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;

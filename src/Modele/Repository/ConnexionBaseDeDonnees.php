@@ -2,7 +2,6 @@
 
 namespace App\Trellotrolle\Modele\Repository;
 
-use App\Trellotrolle\Configuration\ConfigurationBaseDeDonnees;
 use App\Trellotrolle\Configuration\ConfigurationBaseDeDonneesInterface;
 use PDO;
 

@@ -3,11 +3,7 @@
 namespace App\Trellotrolle\Modele\Repository;
 
 use App\Trellotrolle\Modele\DataObject\AbstractDataObject;
-use App\Trellotrolle\Modele\DataObject\Carte;
 use App\Trellotrolle\Modele\DataObject\Tableau;
-use Exception;
-use PDO;
-use PDOException;
 
 class TableauRepository extends AbstractRepository implements TableauRepositoryInterface
 {

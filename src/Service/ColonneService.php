@@ -2,7 +2,6 @@
 
 namespace App\Trellotrolle\Service;
 
-use App\Trellotrolle\Modele\Repository\ColonneRepository;
 use App\Trellotrolle\Modele\Repository\ColonneRepositoryInterface;
 use App\Trellotrolle\Modele\Repository\TableauRepositoryInterface;
 

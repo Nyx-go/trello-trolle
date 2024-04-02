@@ -1,32 +1,19 @@
 <?php
 namespace App\Trellotrolle\Controleur;
 
-use App\Trellotrolle\Configuration\ConfigurationBaseDeDonnees;
-use App\Trellotrolle\Configuration\ConfigurationBaseDeDonneesInterface;
 use App\Trellotrolle\Lib\AttributeRouteControllerLoader;
 use App\Trellotrolle\Lib\ConnexionUtilisateur;
 use App\Trellotrolle\Lib\Conteneur;
 use App\Trellotrolle\Lib\MessageFlash;
-use App\Trellotrolle\Modele\Repository\AffecteRepository;
-use App\Trellotrolle\Modele\Repository\CarteRepository;
-use App\Trellotrolle\Modele\Repository\ColonneRepository;
-use App\Trellotrolle\Modele\Repository\ConnexionBaseDeDonnees;
-use App\Trellotrolle\Modele\Repository\ParticipeRepository;
-use App\Trellotrolle\Modele\Repository\ParticipeRepositoryInterface;
-use App\Trellotrolle\Modele\Repository\TableauRepository;
-use App\Trellotrolle\Modele\Repository\UtilisateurRepository;
-use App\Trellotrolle\Service\TableauService;
-use App\Trellotrolle\Service\UtilisateurService;
+use Exception;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\UrlHelper;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
 use Symfony\Component\HttpKernel\Controller\ContainerControllerResolver;
-use Symfony\Component\HttpKernel\Controller\ControllerResolver;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGenerator;

@@ -3,29 +3,18 @@
 namespace App\Trellotrolle\Service;
 
 use App\Trellotrolle\Lib\ConnexionUtilisateur;
-use App\Trellotrolle\Lib\MailerBase;
-use App\Trellotrolle\Lib\MotDePasse;
 use App\Trellotrolle\Modele\DataObject\Carte;
 use App\Trellotrolle\Modele\DataObject\Colonne;
 use App\Trellotrolle\Modele\DataObject\Participe;
 use App\Trellotrolle\Modele\DataObject\Tableau;
-use App\Trellotrolle\Modele\DataObject\Utilisateur;
-use App\Trellotrolle\Modele\HTTP\Session;
-use App\Trellotrolle\Modele\Repository\AffecteRepository;
 use App\Trellotrolle\Modele\Repository\AffecteRepositoryInterface;
-use App\Trellotrolle\Modele\Repository\CarteRepository;
 use App\Trellotrolle\Modele\Repository\CarteRepositoryInterface;
-use App\Trellotrolle\Modele\Repository\ColonneRepository;
 use App\Trellotrolle\Modele\Repository\ColonneRepositoryInterface;
-use App\Trellotrolle\Modele\Repository\ParticipeRepository;
 use App\Trellotrolle\Modele\Repository\ParticipeRepositoryInterface;
-use App\Trellotrolle\Modele\Repository\TableauRepository;
 use App\Trellotrolle\Modele\Repository\TableauRepositoryInterface;
-use App\Trellotrolle\Modele\Repository\UtilisateurRepository;
 use App\Trellotrolle\Modele\Repository\UtilisateurRepositoryInterface;
 use App\Trellotrolle\Service\Exception\ServiceConnexionException;
 use App\Trellotrolle\Service\Exception\ServiceException;
-use Exception;
 
 class TableauService extends ServiceGenerique implements TableauServiceInterface
 {
