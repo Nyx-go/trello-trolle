@@ -12,46 +12,59 @@ use App\Trellotrolle\Modele\DataObject\Tableau;
 use App\Trellotrolle\Modele\DataObject\Utilisateur;
 use App\Trellotrolle\Modele\HTTP\Session;
 use App\Trellotrolle\Modele\Repository\AffecteRepository;
+use App\Trellotrolle\Modele\Repository\AffecteRepositoryInterface;
 use App\Trellotrolle\Modele\Repository\CarteRepository;
+use App\Trellotrolle\Modele\Repository\CarteRepositoryInterface;
 use App\Trellotrolle\Modele\Repository\ColonneRepository;
+use App\Trellotrolle\Modele\Repository\ColonneRepositoryInterface;
 use App\Trellotrolle\Modele\Repository\ParticipeRepository;
+use App\Trellotrolle\Modele\Repository\ParticipeRepositoryInterface;
 use App\Trellotrolle\Modele\Repository\TableauRepository;
+use App\Trellotrolle\Modele\Repository\TableauRepositoryInterface;
 use App\Trellotrolle\Modele\Repository\UtilisateurRepository;
+use App\Trellotrolle\Modele\Repository\UtilisateurRepositoryInterface;
 use App\Trellotrolle\Service\Exception\ServiceConnexionException;
 use App\Trellotrolle\Service\Exception\ServiceException;
 use Exception;
 
-class TableauService extends ServiceGenerique
+class TableauService extends ServiceGenerique implements TableauServiceInterface
 {
+    
+    public function __construct(
+        private TableauRepositoryInterface $tableauRepository,
+        private UtilisateurRepositoryInterface $utilisateurRepository,
+        private ColonneRepositoryInterface $colonneRepository,
+        private CarteRepositoryInterface $carteRepository,
+        private AffecteRepositoryInterface $affecteRepository,
+        private ParticipeRepositoryInterface $participeRepository,
+    )
+    {
+    }
 
     /**
      * @throws ServiceException
      */
     public function afficherTableau($codeTableau) : array {
         if (is_null($codeTableau)) throw new ServiceException("Code de tableau manquant.");
+        
 
-        $tableauRepository = new TableauRepository();
-
-        $tableau = $tableauRepository->recupererParCodeTableau($codeTableau);
+        $tableau = $this->tableauRepository->recupererParCodeTableau($codeTableau);
         if(!$tableau) {
             throw new ServiceException("Tableau inexistant.");
         }
 
-        $colonneRepository = new ColonneRepository();
-
-        $colonnes = $colonneRepository->recupererColonnesTableau($tableau->getIdTableau());
+        $colonnes = $this->colonneRepository->recupererColonnesTableau($tableau->getIdTableau());
         $data = [];
         $affectations = [];
         $affectationsCartes = [];
-
-        $carteRepository = new CarteRepository();
+        
         foreach ($colonnes as $colonne) {
-            $cartes = $carteRepository->recupererCartesColonne($colonne->getIdColonne());
+            $cartes = $this->carteRepository->recupererCartesColonne($colonne->getIdColonne());
             foreach ($cartes as $carte) {
                 $affectationsCartes[$carte->getIdCarte()] = [];
-                $affectationsCarte = (new AffecteRepository())->recupererParIdCarte($carte->getIdCarte());
+                $affectationsCarte = $this->affecteRepository->recupererParIdCarte($carte->getIdCarte());
                 foreach ($affectationsCarte as $affectation) {
-                    $utilisateur = (new UtilisateurRepository())->recupererParClePrimaire(array("login"=>$affectation->getLogin()));
+                    $utilisateur = $this->utilisateurRepository->recupererParClePrimaire(array("login"=>$affectation->getLogin()));
                     if(!isset($affectations[$utilisateur->getLogin()])) {
                         $affectations[$utilisateur->getLogin()] = ["infos" => $utilisateur, "colonnes" => []];
                     }
@@ -66,21 +79,21 @@ class TableauService extends ServiceGenerique
         }
 
         if(ConnexionUtilisateur::estConnecte()) {
-            $estProprietaire = $tableauRepository->estProprietaire($tableau->getIdTableau(), ConnexionUtilisateur::getLoginUtilisateurConnecte());
-            $estParticipantOuProprietaire = $tableauRepository->estParticipantOuProprietaire($tableau->getIdTableau(), ConnexionUtilisateur::getLoginUtilisateurConnecte());
+            $estProprietaire = $this->tableauRepository->estProprietaire($tableau->getIdTableau(), ConnexionUtilisateur::getLoginUtilisateurConnecte());
+            $estParticipantOuProprietaire = $this->tableauRepository->estParticipantOuProprietaire($tableau->getIdTableau(), ConnexionUtilisateur::getLoginUtilisateurConnecte());
         }
         else {
             $estProprietaire =false;
             $estParticipantOuProprietaire = false;
         }
 
-        $utilisateur = (new UtilisateurRepository())->recupererParClePrimaire(array("login"=>$tableau->getLogin()));
-        $participes = (new ParticipeRepository())->recupererParIdTableau($tableau->getIdTableau());
+        $utilisateur = $this->utilisateurRepository->recupererParClePrimaire(array("login"=>$tableau->getLogin()));
+        $participes = $this->participeRepository->recupererParIdTableau($tableau->getIdTableau());
 
         $participants = [];
 
         foreach ($participes as $participe) {
-            $participants[] = (new UtilisateurRepository())->recupererParClePrimaire(["login" => $participe->getLogin()]);
+            $participants[] = $this->utilisateurRepository->recupererParClePrimaire(["login" => $participe->getLogin()]);
         }
 
         return array(
@@ -114,18 +127,18 @@ class TableauService extends ServiceGenerique
             $nomTableau
         );
 
-        $idTableau = (new TableauRepository())->ajouter($tableau);
+        $idTableau = $this->tableauRepository->ajouter($tableau);
         $codeTableau = hash("sha256", $idUtilisateur.$idTableau);
         $tableau->setIdTableau($idTableau);
         $tableau->setCodeTableau($codeTableau);
-        $succesMiseAJour = (new TableauRepository())->mettreAJour($tableau);
+        $succesMiseAJour = $this->tableauRepository->mettreAJour($tableau);
 
         $colonne = new Colonne(
             $idTableau,
             null,
             "Colonne 1"
         );
-        $idColonne = (new ColonneRepository())->ajouter($colonne);
+        $idColonne = $this->colonneRepository->ajouter($colonne);
 
         $carte = new Carte(
             $idColonne,
@@ -135,7 +148,7 @@ class TableauService extends ServiceGenerique
             "#FFFFFF"
         );
 
-        $idCarte = (new CarteRepository())->ajouter($carte);
+        $idCarte = $this->carteRepository->ajouter($carte);
 
         if (!$idTableau || !$idColonne || !$idCarte || !$succesMiseAJour) {
             throw new ServiceException("Une erreur est survenue lors de la création du tableau.");
@@ -151,18 +164,17 @@ class TableauService extends ServiceGenerique
         self::doitEtreConnecte();
         if (is_null($idTableau) || is_null($nomTableau)) throw new ServiceException("Identifiant ou nom de tableau manquant.");
 
-        $tableauRepository = new TableauRepository();
 
-        $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$idTableau));
+        $tableau = $this->tableauRepository->recupererParClePrimaire(array("idtableau"=>$idTableau));
         if(!$tableau) {
             throw new ServiceException("Tableau inexistant.");
         }
-        if(!$tableauRepository->estProprietaire($tableau->getIdTableau(), ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
+        if(!$this->tableauRepository->estProprietaire($tableau->getIdTableau(), ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
             throw new ServiceException("Vous n'avez pas de droits d'édition sur ce tableau");
         }
         else {
             $tableau->setTitreTableau($nomTableau);
-            $succesMiseAJour = $tableauRepository->mettreAJour($tableau);
+            $succesMiseAJour = $this->tableauRepository->mettreAJour($tableau);
 
             if (!$succesMiseAJour) {
                 throw new ServiceException("Une erreur est survenue lors de la modification du tableau.");
@@ -179,17 +191,16 @@ class TableauService extends ServiceGenerique
         self::doitEtreConnecte();
         if (is_null($idTableau)) throw new ServiceException("Identifiant de tableau manquant.");
 
-        $tableauRepository = new TableauRepository();
 
-        $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$idTableau));
+        $tableau = $this->tableauRepository->recupererParClePrimaire(array("idtableau"=>$idTableau));
         if(!$tableau) {
             throw new ServiceException("Tableau inexistant");
         }
-        if(!$tableauRepository->estProprietaire($tableau->getIdTableau(),ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
+        if(!$this->tableauRepository->estProprietaire($tableau->getIdTableau(),ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
             throw new ServiceException("Vous n'êtes pas propriétaire de ce tableau");
         }
 
-        $succesSuppression =  $tableauRepository->supprimer(array("idtableau"=>$idTableau));
+        $succesSuppression =  $this->tableauRepository->supprimer(array("idtableau"=>$idTableau));
 
         if (!$succesSuppression) {
             throw new ServiceException("Une erreur est survenue lors de la suppression du tableau.");
@@ -205,13 +216,11 @@ class TableauService extends ServiceGenerique
 
         if (is_null($idTableau)) throw new ServiceException("Identifiant de tableau manquant.");
 
-        $tableauRepository = new TableauRepository();
-
-        $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$idTableau));
+        $tableau = $this->tableauRepository->recupererParClePrimaire(array("idtableau"=>$idTableau));
         if(!$tableau) {
             throw new ServiceException("Tableau inexistant");
         }
-        if(!$tableauRepository->estProprietaire($tableau->getIdTableau(), ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
+        if(!$this->tableauRepository->estProprietaire($tableau->getIdTableau(), ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
             throw new ServiceException("Vous n'êtes pas propriétaire de ce tableau");
         }
         return $tableau->getTitreTableau();
@@ -227,22 +236,19 @@ class TableauService extends ServiceGenerique
 
         if (is_null($idTableau)) throw new ServiceException("Identifiant de tableau manquant.");
 
-        $tableauRepository = new TableauRepository();
-
-        $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau" => $idTableau));
+        $tableau = $this->tableauRepository->recupererParClePrimaire(array("idtableau" => $idTableau));
         if (!$tableau) {
             throw new ServiceException("Tableau inexistant");
         }
-        if (!$tableauRepository->estProprietaire($tableau->getIdTableau(), ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
+        if (!$this->tableauRepository->estProprietaire($tableau->getIdTableau(), ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
             throw new ServiceException("Vous n'êtes pas propriétaire de ce tableau");
         }
 
-        $utilisateurRepository = new UtilisateurRepository();
 
 
-        $utilisateurs = $utilisateurRepository->recupererUtilisateursOrderedPrenomNom();
-        $filtredUtilisateurs = array_filter($utilisateurs, function ($u) use ($tableau, $tableauRepository) {
-            return !$tableauRepository->estParticipantOuProprietaire($tableau->getIdTableau(), $u->getLogin());
+        $utilisateurs = $this->utilisateurRepository->recupererUtilisateursOrderedPrenomNom();
+        $filtredUtilisateurs = array_filter($utilisateurs, function ($u) use ($tableau) {
+            return !$this->tableauRepository->estParticipantOuProprietaire($tableau->getIdTableau(), $u->getLogin());
         });
 
         if (empty($filtredUtilisateurs)) {
@@ -260,23 +266,20 @@ class TableauService extends ServiceGenerique
 
         if (is_null($idTableau) || is_null($login)) throw new ServiceException("Login ou identifiant de tableau manquant.");
 
-        $tableauRepository = new TableauRepository();
-
-        $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$idTableau));
+        $tableau = $this->tableauRepository->recupererParClePrimaire(array("idtableau"=>$idTableau));
         if (!$tableau) {
             throw new ServiceException("Tableau inexistant");
         }
-        if (!$tableauRepository->estProprietaire($tableau->getIdTableau(), ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
+        if (!$this->tableauRepository->estProprietaire($tableau->getIdTableau(), ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
             throw new ServiceException("Vous n'êtes pas propriétaire de ce tableau");
         }
 
-        $utilisateurRepository = new UtilisateurRepository();
 
-        $utilisateur = $utilisateurRepository->recupererParClePrimaire(array("login"=>$login));
+        $utilisateur = $this->utilisateurRepository->recupererParClePrimaire(array("login"=>$login));
         if(!$utilisateur) {
             throw new ServiceException("Utlisateur inexistant");
         }
-        if($tableauRepository->estParticipantOuProprietaire($tableau->getIdTableau(), $utilisateur->getLogin())) {
+        if($this->tableauRepository->estParticipantOuProprietaire($tableau->getIdTableau(), $utilisateur->getLogin())) {
             throw new ServiceException("Ce membre est déjà membre du tableau.");
         }
 
@@ -284,7 +287,7 @@ class TableauService extends ServiceGenerique
             $_REQUEST["idTableau"],
             $utilisateur->getLogin()
         );
-        $succesSauvegarde = (new ParticipeRepository())->ajouter($participe);
+        $succesSauvegarde = $this->participeRepository->ajouter($participe);
 
         if (!$succesSauvegarde) {
             throw new ServiceException("Une erreur est survenue lors de l'ajout du membre'.");
@@ -301,38 +304,35 @@ class TableauService extends ServiceGenerique
 
         if (is_null($idTableau) || is_null($login)) throw new ServiceException("Login ou identifiant de tableau manquant.");
 
-        $tableauRepository = new TableauRepository();
-        $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$idTableau));
+        $tableau = $this->tableauRepository->recupererParClePrimaire(array("idtableau"=>$idTableau));
         if (!$tableau) {
             throw new ServiceException("Tableau inexistant");
         }
-        if (!$tableauRepository->estProprietaire($tableau->getIdTableau(), ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
+        if (!$this->tableauRepository->estProprietaire($tableau->getIdTableau(), ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
             throw new ServiceException("Vous n'êtes pas propriétaire de ce tableau");
         }
 
-        $utilisateurRepository = new UtilisateurRepository();
 
-        $utilisateur = $utilisateurRepository->recupererParClePrimaire(array("login"=>$login));
+        $utilisateur = $this->utilisateurRepository->recupererParClePrimaire(array("login"=>$login));
         if(!$utilisateur) {
             throw new ServiceException("Utlisateur inexistant");
         }
-        if($tableauRepository->estProprietaire($tableau->getIdTableau(),$utilisateur->getLogin())) {
+        if($this->tableauRepository->estProprietaire($tableau->getIdTableau(),$utilisateur->getLogin())) {
             throw new ServiceException("danger", "Vous ne pouvez pas vous supprimer du tableau.");
         }
-        if(!$tableauRepository->estParticipant($tableau->getIdTableau(),$utilisateur->getLogin())) {
+        if(!$this->tableauRepository->estParticipant($tableau->getIdTableau(),$utilisateur->getLogin())) {
             throw new ServiceException("Cet utilisateur n'est pas membre du tableau");
         }
 
-        $succesSuppression = (new ParticipeRepository())->supprimer(array("idtableau"=>$tableau->getIdTableau(), "login"=>$utilisateur->getLogin()));
+        $succesSuppression = $this->participeRepository->supprimer(array("idtableau"=>$tableau->getIdTableau(), "login"=>$utilisateur->getLogin()));
 
-        $cartesRepository = new CarteRepository();
-        $cartes = $cartesRepository->recupererCartesTableau($tableau->getIdTableau());
+        $cartes = $this->carteRepository->recupererCartesTableau($tableau->getIdTableau());
 
         foreach ($cartes as $carte) {
-            $affectations = (new AffecteRepository())->recupererParIdCarte($carte->getIdCarte());
+            $affectations = $this->affecteRepository->recupererParIdCarte($carte->getIdCarte());
             foreach ($affectations as $affectation) {
                 if ($affectation->getLogin() == $utilisateur->getLogin()) {
-                    $succesSuppressionCarte = (new AffecteRepository())->supprimer(array("idCarte"=>$carte->getIdCarte(), "login"=>$utilisateur->getLogin()));
+                    $succesSuppressionCarte = $this->affecteRepository->supprimer(array("idCarte"=>$carte->getIdCarte(), "login"=>$utilisateur->getLogin()));
                     if (!$succesSuppressionCarte) {
                         throw new ServiceException( "Une erreur est survenue lors de la suppression du membre.");
                     }
@@ -352,12 +352,11 @@ class TableauService extends ServiceGenerique
     public function afficherListeMesTableaux() : array {
         self::doitEtreConnecte();
 
-        $tableauRepository = new TableauRepository();
         $login = ConnexionUtilisateur::getLoginUtilisateurConnecte();
-        $tableaux = $tableauRepository->recupererTableauxOuUtilisateurEstMembre($login);
+        $tableaux = $this->tableauRepository->recupererTableauxOuUtilisateurEstMembre($login);
         $estProprietaire = [];
         foreach ($tableaux as $tableau){
-            $estProprietaire[$tableau->getIdTableau()] = $tableauRepository->estProprietaire($tableau->getIdTableau(), $login);
+            $estProprietaire[$tableau->getIdTableau()] = $this->tableauRepository->estProprietaire($tableau->getIdTableau(), $login);
         }
         return array("tableaux" => $tableaux,
             "estProprietaire"=>$estProprietaire,
@@ -373,33 +372,29 @@ class TableauService extends ServiceGenerique
 
         if (is_null($idTableau)) throw new ServiceException("Identifiant de tableau manquant.");
 
-        $tableauRepository = new TableauRepository();
-        $utilisateurRepository = new UtilisateurRepository();
-        $participeRepository = new ParticipeRepository();
-        $carteRepository = new CarteRepository();
 
-        $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$idTableau));
+        $tableau = $this->tableauRepository->recupererParClePrimaire(array("idtableau"=>$idTableau));
         if (!$tableau) {
             throw new ServiceException("Tableau inexistant");
         }
 
-        $utilisateur = $utilisateurRepository->recupererParClePrimaire(array("login"=>ConnexionUtilisateur::getLoginUtilisateurConnecte()));
+        $utilisateur = $this->utilisateurRepository->recupererParClePrimaire(array("login"=>ConnexionUtilisateur::getLoginUtilisateurConnecte()));
 
-        if($tableauRepository->estProprietaire($tableau->getIdTableau(),$utilisateur->getLogin())) {
+        if($this->tableauRepository->estProprietaire($tableau->getIdTableau(),$utilisateur->getLogin())) {
             throw new ServiceException("Vous ne pouvez pas quitter votre propre tableau");
         }
-        if(!$tableauRepository->estParticipant($tableau->getIdTableau(),ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
+        if(!$this->tableauRepository->estParticipant($tableau->getIdTableau(),ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
             throw new ServiceException("Vous n'appartenez pas à ce tableau");
         }
 
-        $succesSuppression = $participeRepository->supprimer(array("idtableau"=>$tableau->getIdTableau(), "login"=>$utilisateur->getLogin()));
+        $succesSuppression = $this->participeRepository->supprimer(array("idtableau"=>$tableau->getIdTableau(), "login"=>$utilisateur->getLogin()));
 
-        $cartes = $carteRepository->recupererCartesTableau($tableau->getIdTableau());
+        $cartes = $this->carteRepository->recupererCartesTableau($tableau->getIdTableau());
 
         foreach ($cartes as $carte) {
-            $affectations = (new AffecteRepository())->recupererParIdCarte($carte->getIdCarte());
+            $affectations = $this->affecteRepository->recupererParIdCarte($carte->getIdCarte());
             foreach ($affectations as $affectation) {
-                $succesSuppressionCarte = (new AffecteRepository())->supprimer(array("idCarte"=>$carte->getIdCarte(), "login"=>$utilisateur->getLogin()));
+                $succesSuppressionCarte = $this->affecteRepository->supprimer(array("idCarte"=>$carte->getIdCarte(), "login"=>$utilisateur->getLogin()));
                 if (!$succesSuppressionCarte) {
                     throw new ServiceException( "Une erreur est survenue lorsque vous avez essayé de quitter le tableau.");
                 }

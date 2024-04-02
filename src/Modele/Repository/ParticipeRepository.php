@@ -5,24 +5,30 @@ namespace App\Trellotrolle\Modele\Repository;
 use App\Trellotrolle\Modele\DataObject\AbstractDataObject;
 use App\Trellotrolle\Modele\DataObject\Participe;
 
-class ParticipeRepository extends AbstractRepository{
+class ParticipeRepository extends AbstractRepository implements ParticipeRepositoryInterface
+{
 
-    protected function getNomTable(): string
+    public function __construct(private ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees)
+    {
+        parent::__construct($connexionBaseDeDonnees);
+    }
+
+    public function getNomTable(): string
     {
         return "Participe";
     }
 
-    protected function getNomCle(): array
+    public function getNomCle(): array
     {
         return array("idtableau", "login");
     }
 
-    protected function getNomsColonnes(): array
+    public function getNomsColonnes(): array
     {
         return array("idtableau", "login");
     }
 
-    protected function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
+    public function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
     {
         return new Participe($objetFormatTableau["idtableau"], $objetFormatTableau["login"]);
     }

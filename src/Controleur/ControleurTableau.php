@@ -18,27 +18,37 @@ use App\Trellotrolle\Modele\Repository\UtilisateurRepository;
 use App\Trellotrolle\Service\Exception\ServiceConnexionException;
 use App\Trellotrolle\Service\Exception\ServiceException;
 use App\Trellotrolle\Service\TableauService;
+use App\Trellotrolle\Service\TableauServiceInterface;
 use App\Trellotrolle\Service\UtilisateurService;
+use App\Trellotrolle\Service\UtilisateurServiceInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 class ControleurTableau extends ControleurGenerique
 {
-    public static function afficherErreur($messageErreur = "", $statusCode = "tableau"): Response
+
+    public function __construct(
+        private TableauServiceInterface $tableauService,
+        private UtilisateurServiceInterface $utilisateurService
+    )
+    {
+    }
+
+    public  function afficherErreur($messageErreur = "", $statusCode = "tableau"): Response
     {
         return parent::afficherErreur($messageErreur, $statusCode);
     }
 
     #[Route(path: '/tableau/{codeTableau}', name:'afficherTableau', methods:["GET"])]
-    public static function afficherTableau($codeTableau) : Response {
+    public  function afficherTableau($codeTableau) : Response {
         try {
-            $value = (new TableauService())->afficherTableau($codeTableau);
+            $value = $this->tableauService->afficherTableau($codeTableau);
         } catch (ServiceException $e) {
             MessageFlash::ajouter("warning", $e->getMessage());
-            return self::redirection("accueil");
+            return $this->redirection("accueil");
         }
 
-        return ControleurTableau::afficherTwig("tableau/tableau.html.twig",[
+        return $this->afficherTwig("tableau/tableau.html.twig",[
             "estProprietaire"=> $value["estProprietaire"],
             "estParticipantOuProprietaire" => $value["estParticipantOuProprietaire"],
             "tableau" => $value["tableau"],
@@ -52,131 +62,131 @@ class ControleurTableau extends ControleurGenerique
     }
 
     #[Route(path: '/tableau/{idTableau}/modification', name:'afficherFormulaireMiseAJourTableau', methods:["GET"])]
-    public static function afficherFormulaireMiseAJourTableau($idTableau): Response {
+    public  function afficherFormulaireMiseAJourTableau($idTableau): Response {
         try {
-            $titreTableau = (new TableauService())->afficherFormulaireMiseAJourTableau($idTableau);
+            $titreTableau = $this->tableauService->afficherFormulaireMiseAJourTableau($idTableau);
         } catch (ServiceConnexionException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
-            return ControleurGenerique::redirection("accueil");
+            return $this->redirection("accueil");
         } catch (ServiceException $e) {
             MessageFlash::ajouter("warning", $e->getMessage());
-            return self::redirection("afficherListeMesTableaux");
+            return $this->redirection("afficherListeMesTableaux");
         }
 
-        return ControleurTableau::afficherTwig("tableau/formulaireMiseAJourTableau.html.twig",[
+        return $this->afficherTwig("tableau/formulaireMiseAJourTableau.html.twig",[
             "idTableau" => $idTableau,
             "nomTableau" => $titreTableau
         ]);
     }
 
     #[Route(path: '/tableaux/nouveau', name:'afficherFormulaireCreationTableau', methods:["GET"])]
-    public static function afficherFormulaireCreationTableau(): Response {
+    public  function afficherFormulaireCreationTableau(): Response {
         try {
-            (new UtilisateurService())->doitEtreConnecte();
+            $this->utilisateurService->doitEtreConnecte();
         } catch (ServiceConnexionException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
-            return ControleurTableau::redirection("afficherFormulaireConnexion");
+            return $this->redirection("afficherFormulaireConnexion");
         }
-        return ControleurTableau::afficherTwig(
+        return $this->afficherTwig(
             "tableau/formulaireCreationTableau.html.twig"
         );
     }
 
     #[Route(path: '/tableaux/nouveau', name:'creerTableau', methods:["POST"])]
-    public static function creerTableau(): Response {
+    public  function creerTableau(): Response {
         $nomTableau = $_REQUEST["nomTableau"] ?? null;
         try {
-            $codeTableau = (new TableauService())->creerDepuisFormulaire($nomTableau);
+            $codeTableau = $this->tableauService->creerDepuisFormulaire($nomTableau);
         } catch (ServiceConnexionException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
-            return ControleurGenerique::redirection("accueil");
+            return $this->redirection("accueil");
         } catch (ServiceException $e) {
             MessageFlash::ajouter("warning", $e->getMessage());
-            return ControleurUtilisateur::afficherTwig("tableau/afficherFormulaireCreationTableau.html.twig");
+            return $this->afficherTwig("tableau/afficherFormulaireCreationTableau.html.twig");
         }
         MessageFlash::ajouter("success", "Le tableau a bien été créé !");
-        return self::redirection("afficherTableau", ["codeTableau" => $codeTableau]);
+        return $this->redirection("afficherTableau", ["codeTableau" => $codeTableau]);
     }
 
     #[Route(path: '/tableau/modification', name:'mettreAJourTableau', methods:["POST"])]
-    public static function mettreAJourTableau(): Response {
+    public  function mettreAJourTableau(): Response {
         $idTableau = $_REQUEST["idTableau"] ?? null;
         $nomTableau = $_REQUEST["nomTableau"] ?? null;
 
         try {
-            $codeTableau = (new TableauService())->mettreAJourTableau($idTableau,$nomTableau);
+            $codeTableau = $this->tableauService->mettreAJourTableau($idTableau,$nomTableau);
         } catch (ServiceConnexionException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
-            return ControleurGenerique::redirection("accueil");
+            return $this->redirection("accueil");
         } catch (ServiceException $e) {
             MessageFlash::ajouter("warning", $e->getMessage());
-            return self::redirection("afficherListeMesTableaux");
+            return $this->redirection("afficherListeMesTableaux");
         }
 
         MessageFlash::ajouter("success", "Le tableau a bien été modifié !");
-        return ControleurTableau::redirection("afficherTableau", ["codeTableau" => $codeTableau]);
+        return $this->redirection("afficherTableau", ["codeTableau" => $codeTableau]);
 
     }
 
     #[Route(path: '/tableau/{idTableau}/membres/ajout', name:'afficherFormulaireAjoutMembre', methods:["GET"])]
-    public static function afficherFormulaireAjoutMembre($idTableau): Response {
+    public  function afficherFormulaireAjoutMembre($idTableau): Response {
         try {
-            $value = (new TableauService())->afficherFormulaireAjoutMembre($idTableau);
+            $value = $this->tableauService->afficherFormulaireAjoutMembre($idTableau);
         } catch (ServiceConnexionException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
-            return ControleurGenerique::redirection("accueil");
+            return $this->redirection("accueil");
         } catch (ServiceException $e) {
             MessageFlash::ajouter("warning", $e->getMessage());
-            return self::redirection("afficherListeMesTableaux");
+            return $this->redirection("afficherListeMesTableaux");
         }
 
-        return ControleurTableau::afficherTwig("tableau/formulaireAjoutMembreTableau.html.twig", [
+        return $this->afficherTwig("tableau/formulaireAjoutMembreTableau.html.twig", [
             "tableau" => $value["tableau"],
             "utilisateurs" => $value["filtredUtilisateurs"]
         ]);
     }
 
     #[Route(path: '/tableau/membres/ajout', name:'ajouterMembre', methods:["POST"])]
-    public static function ajouterMembre(): Response {
+    public  function ajouterMembre(): Response {
         $idTableau = $_REQUEST["idTableau"] ?? null;
         $login = $_REQUEST["login"] ?? null;
         try {
-            $codeTableau = (new TableauService())->ajouterMembre($idTableau,$login);
+            $codeTableau = $this->tableauService->ajouterMembre($idTableau,$login);
         } catch (ServiceConnexionException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
-            return ControleurGenerique::redirection("accueil");
+            return $this->redirection("accueil");
         } catch (ServiceException $e) {
             MessageFlash::ajouter("warning", $e->getMessage());
-            return ControleurUtilisateur::afficherTwig("tableau/afficherFormulaireCreationTableau.html.twig");
+            return $this->afficherTwig("tableau/afficherFormulaireCreationTableau.html.twig");
         }
         MessageFlash::ajouter("success", "Le membre a bien été ajouté !");
-        return ControleurTableau::redirection("afficherTableau", ["codeTableau" => $codeTableau]);
+        return $this->redirection("afficherTableau", ["codeTableau" => $codeTableau]);
     }
 
     #[Route(path: '/tableau/{idTableau}/membres/{login}/suppression', name:'supprimerMembre', methods:["GET"])]
-    public static function supprimerMembre($login, $idTableau): Response {
+    public  function supprimerMembre($login, $idTableau): Response {
         try {
-            $codeTableau = (new TableauService())->supprimerMembre($idTableau,$login);
+            $codeTableau = $this->tableauService->supprimerMembre($idTableau,$login);
         } catch (ServiceConnexionException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
-            return ControleurGenerique::redirection("accueil");
+            return $this->redirection("accueil");
         } catch (ServiceException $e) {
             MessageFlash::ajouter("warning", $e->getMessage());
-            return ControleurUtilisateur::afficherTwig("tableau/afficherFormulaireCreationTableau.html.twig");
+            return $this->afficherTwig("tableau/afficherFormulaireCreationTableau.html.twig");
         }
         MessageFlash::ajouter("success", "Le membre a bien été supprimé !");
-        return ControleurTableau::redirection("afficherTableau", ["codeTableau" => $codeTableau]);
+        return $this->redirection("afficherTableau", ["codeTableau" => $codeTableau]);
     }
 
     #[Route(path: '/tableaux', name:'afficherListeMesTableaux', methods:["GET"])]
-    public static function afficherListeMesTableaux() : Response {
+    public  function afficherListeMesTableaux() : Response {
         try {
-            $value = (new TableauService())->afficherListeMesTableaux();
+            $value = $this->tableauService->afficherListeMesTableaux();
         } catch (ServiceConnexionException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
-            return ControleurGenerique::redirection("accueil");
+            return $this->redirection("accueil");
         }
-        return ControleurTableau::afficherTwig("tableau/listeTableauxUtilisateur.html.twig", [
+        return $this->afficherTwig("tableau/listeTableauxUtilisateur.html.twig", [
             "tableaux" => $value["tableaux"],
             "estProprietaire"=> $value["estProprietaire"],
             "login"=> $value["login"]
@@ -184,33 +194,33 @@ class ControleurTableau extends ControleurGenerique
     }
 
     #[Route(path: '/tableau/{idTableau}/quitter', name:'quitterTableau', methods:["GET"])]
-    public static function quitterTableau($idTableau): Response {
+    public  function quitterTableau($idTableau): Response {
         try {
-            (new TableauService())->quitterTableau($idTableau);
+            $this->tableauService->quitterTableau($idTableau);
         } catch (ServiceConnexionException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
-            return ControleurGenerique::redirection("accueil");
+            return $this->redirection("accueil");
         } catch (ServiceException $e) {
             MessageFlash::ajouter("warning", $e->getMessage());
-            return self::redirection("afficherListeMesTableaux");
+            return $this->redirection("afficherListeMesTableaux");
         }
         MessageFlash::ajouter("success", "Vous avez bien quitté le tableau !");
-        return ControleurTableau::redirection("afficherListeMesTableaux");
+        return $this->redirection("afficherListeMesTableaux");
     }
 
     #[Route(path: '/tableau/{idTableau}/suppression', name:'supprimerTableau', methods:["GET"])]
-    public static function supprimerTableau($idTableau): Response {
+    public  function supprimerTableau($idTableau): Response {
         try {
-            (new TableauService())->supprimerTableau($idTableau);
+            $this->tableauService->supprimerTableau($idTableau);
         } catch (ServiceConnexionException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
-            return ControleurGenerique::redirection("accueil");
+            return $this->redirection("accueil");
         } catch (ServiceException $e) {
             MessageFlash::ajouter("warning", $e->getMessage());
-            return self::redirection("afficherListeMesTableaux");
+            return $this->redirection("afficherListeMesTableaux");
         }
 
         MessageFlash::ajouter("success", "Le tableau a bien été supprimé !");
-        return ControleurTableau::redirection("afficherListeMesTableaux");
+        return $this->redirection("afficherListeMesTableaux");
     }
 }

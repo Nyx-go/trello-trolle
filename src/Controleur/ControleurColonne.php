@@ -14,15 +14,15 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class ControleurColonne extends ControleurGenerique
 {
-    public static function afficherErreur($messageErreur = "", $statusCode = "colonne"): Response
+    public function afficherErreur($messageErreur = "", $statusCode = "colonne"): Response
     {
-        return parent::afficherErreur($messageErreur, $statusCode);
+        return $this->afficherErreur($messageErreur, $statusCode);
     }
 
     #[Route(path: '/colonne/{idColonne}/suppression', name:'supprimerColonne', methods:["GET"])]
-    public static function supprimerColonne($idColonne): Response {
+    public function supprimerColonne($idColonne): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
-            return ControleurColonne::redirection("afficherFormulaireConnexion");
+            return $this->redirection("afficherFormulaireConnexion");
         }
         $colonneRepository = new ColonneRepository();
         /**
@@ -31,14 +31,14 @@ class ControleurColonne extends ControleurGenerique
         $colonne = $colonneRepository->recupererParClePrimaire(array("idcolonne"=>$idColonne));
         if(!$colonne) {
             MessageFlash::ajouter("danger", "Colonne inexistante");
-            return ControleurColonne::redirection("accueil");
+            return $this->redirection("accueil");
         }
         $tableauRepository = new TableauRepository();
         $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$colonne->getIdTableau()));
 
         if(!$tableauRepository->estParticipantOuProprietaire($tableau->getIdTableau(), ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
             MessageFlash::ajouter("danger", "Vous n'avez pas de droits d'éditions sur ce tableau");
-            return ControleurColonne::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
+            return $this->redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
         }
 
         $succesSuppression =  $colonneRepository->supprimer($idColonne);
@@ -49,13 +49,13 @@ class ControleurColonne extends ControleurGenerique
         else {
             MessageFlash::ajouter("warning", "Une erreur est survenue lors de la suppression de la colonne.");
         }
-        return ControleurColonne::redirection("afficherTableau", ["codetableau" => $tableau->getCodeTableau()]);
+        return $this->redirection("afficherTableau", ["codetableau" => $tableau->getCodeTableau()]);
     }
 
     #[Route(path: '/tableau/{idTableau}/colonne/nouvelle', name:'afficherFormulaireCreationColonne', methods:["GET"])]
-    public static function afficherFormulaireCreationColonne($idTableau): Response {
+    public function afficherFormulaireCreationColonne($idTableau): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
-            return ControleurColonne::redirection("afficherFormulaireConnexion");
+            return $this->redirection("afficherFormulaireConnexion");
         }
         $tableauRepository = new TableauRepository();
         /**
@@ -64,25 +64,25 @@ class ControleurColonne extends ControleurGenerique
         $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$idTableau));
         if(!$tableau) {
             MessageFlash::ajouter("warning", "Tableau inexistant");
-            return ControleurColonne::redirection("accueil");
+            return $this->redirection("accueil");
         }
         if(!$tableauRepository->estParticipantOuProprietaire($tableau->getIdTableau(), ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
             MessageFlash::ajouter("danger", "Vous n'avez pas de droits d'éditions sur ce tableau");
-            return ControleurColonne::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
+            return $this->redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
         }
-        return ControleurTableau::afficherTwig("colonne/formulaireCreationColonne.html.twig",[
+        return $this->afficherTwig("colonne/formulaireCreationColonne.html.twig",[
             "idTableau" => $idTableau
         ]);
     }
 
     #[Route(path: '/colonne/nouvelle', name:'creerColonne', methods:["POST"])]
-    public static function creerColonne(): Response {
+    public function creerColonne(): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
-            return ControleurColonne::redirection("afficherFormulaireConnexion");
+            return $this->redirection("afficherFormulaireConnexion");
         }
-        if(!ControleurCarte::issetAndNotNull(["idTableau"])) {
+        if(!$this->issetAndNotNull(["idTableau"])) {
             MessageFlash::ajouter("danger", "Identifiant du tableau manquant");
-            return ControleurColonne::redirection("accueil");
+            return $this->redirection("accueil");
         }
         $tableauRepository = new TableauRepository();
         /**
@@ -91,15 +91,15 @@ class ControleurColonne extends ControleurGenerique
         $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$_REQUEST["idTableau"]));
         if(!$tableau) {
             MessageFlash::ajouter("danger", "Tableau inexistant");
-            return ControleurColonne::redirection("accueil");
+            return $this->redirection("accueil");
         }
-        if(!ControleurCarte::issetAndNotNull(["nomColonne"])) {
+        if(!$this->issetAndNotNull(["nomColonne"])) {
             MessageFlash::ajouter("danger", "Nom de colonne manquant");
-            return ControleurColonne::redirection("afficherFormulaireCreationColonne", ["idTableau" => $_REQUEST["idTableau"]]);
+            return $this->redirection("afficherFormulaireCreationColonne", ["idTableau" => $_REQUEST["idTableau"]]);
         }
         if(!$tableauRepository->estParticipantOuProprietaire($tableau->getIdTableau(), ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
             MessageFlash::ajouter("danger", "Vous n'avez pas de droits d'éditions sur ce tableau");
-            return ControleurColonne::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
+            return $this->redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
         }
         $colonneRepository = new ColonneRepository();
         $colonne = new Colonne(
@@ -116,13 +116,13 @@ class ControleurColonne extends ControleurGenerique
         else {
             MessageFlash::ajouter("warning", "Une erreur est survenue lors de la création de la colonne.");
         }
-        return ControleurColonne::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
+        return $this->redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
 
     #[Route(path: '/colonne/{idColonne}/modification', name:'afficherFormulaireMiseAJourColonne', methods:["GET"])]
-    public static function afficherFormulaireMiseAJourColonne($idColonne): Response {
+    public function afficherFormulaireMiseAJourColonne($idColonne): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
-            return ControleurColonne::redirection("afficherFormulaireConnexion");
+            return $this->redirection("afficherFormulaireConnexion");
         }
         $colonneRepository = new ColonneRepository();
         /**
@@ -131,28 +131,28 @@ class ControleurColonne extends ControleurGenerique
         $colonne = $colonneRepository->recupererParClePrimaire(array("idcolonne"=>$idColonne));
         if(!$colonne) {
             MessageFlash::ajouter("danger", "Colonne inexistante");
-            return ControleurColonne::redirection("accueil");
+            return $this->redirection("accueil");
         }
         $tableauRepository = new TableauRepository();
         $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$colonne->getIdTableau()));
         if(!$tableauRepository->estParticipantOuProprietaire($tableau->getIdTableau(), ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
             MessageFlash::ajouter("danger", "Vous n'avez pas de droits d'éditions sur ce tableau");
-            return ControleurColonne::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
+            return $this->redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
         }
-        return ControleurTableau::afficherTwig("colonne/formulaireMiseAJourColonne.html.twig",[
+        return $this->afficherTwig("colonne/formulaireMiseAJourColonne.html.twig",[
             "idColonne" => $idColonne,
             "nomColonne" => $colonne->getTitreColonne()
         ]);
     }
 
     #[Route(path: '/colonne/modification', name:'mettreAJourColonne', methods:["POST"])]
-    public static function mettreAJourColonne(): Response {
+    public function mettreAJourColonne(): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
-            return ControleurColonne::redirection("afficherFormulaireConnexion");
+            return $this->redirection("afficherFormulaireConnexion");
         }
-        if(!ControleurCarte::issetAndNotNull(["idColonne"])) {
+        if(!$this->issetAndNotNull(["idColonne"])) {
             MessageFlash::ajouter("danger", "Identifiant du colonne manquant");
-            return ControleurColonne::redirection("accueil");
+            return $this->redirection("accueil");
         }
         $colonneRepository = new ColonneRepository();
         /**
@@ -161,17 +161,17 @@ class ControleurColonne extends ControleurGenerique
         $colonne = $colonneRepository->recupererParClePrimaire(array("idColonne"=> $_REQUEST["idColonne"]));
         if(!$colonne) {
             MessageFlash::ajouter("danger", "Colonne inexistante");
-            return ControleurColonne::redirection("accueil");
+            return $this->redirection("accueil");
         }
-        if(!ControleurCarte::issetAndNotNull(["nomColonne"])) {
+        if(!$this->issetAndNotNull(["nomColonne"])) {
             MessageFlash::ajouter("danger", "Nom de colonne manquant");
-            return ControleurColonne::redirection("afficherFormulaireMiseAJourColonne", ["idColonne" => $_REQUEST["idColonne"]]);
+            return $this->redirection("afficherFormulaireMiseAJourColonne", ["idColonne" => $_REQUEST["idColonne"]]);
         }
         $tableauRepository = new TableauRepository();
         $tableau = $tableauRepository->recupererParClePrimaire(array("idTableau"=>$colonne->getIdTableau()));
         if(!$tableauRepository->estParticipantOuProprietaire($tableau->getIdTableau(), ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
             MessageFlash::ajouter("danger", "Vous n'avez pas de droits d'éditions sur ce tableau");
-            return ControleurColonne::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
+            return $this->redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
         }
         $colonne->setTitreColonne($_REQUEST["nomColonne"]);
 
@@ -183,6 +183,6 @@ class ControleurColonne extends ControleurGenerique
         else {
             MessageFlash::ajouter("warning", "Une erreur est survenue lors de la modification de la colonne.");
         }
-        return ControleurColonne::redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
+        return $this->redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
 }

@@ -11,6 +11,7 @@
     "symfony/config": "^6.4",
     "ext-pdo": "*",
     "twig/twig": "^3.8",
-    "symfony/mailer": "^6.4"
+    "symfony/mailer": "^6.4",
+    "symfony/dependency-injection": "^7.0"
   }
 }

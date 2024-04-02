@@ -1,15 +1,30 @@
 <?php
 namespace App\Trellotrolle\Controleur;
 
+use App\Trellotrolle\Configuration\ConfigurationBaseDeDonnees;
+use App\Trellotrolle\Configuration\ConfigurationBaseDeDonneesInterface;
 use App\Trellotrolle\Lib\AttributeRouteControllerLoader;
 use App\Trellotrolle\Lib\ConnexionUtilisateur;
 use App\Trellotrolle\Lib\Conteneur;
 use App\Trellotrolle\Lib\MessageFlash;
+use App\Trellotrolle\Modele\Repository\AffecteRepository;
+use App\Trellotrolle\Modele\Repository\CarteRepository;
+use App\Trellotrolle\Modele\Repository\ColonneRepository;
+use App\Trellotrolle\Modele\Repository\ConnexionBaseDeDonnees;
+use App\Trellotrolle\Modele\Repository\ParticipeRepository;
+use App\Trellotrolle\Modele\Repository\ParticipeRepositoryInterface;
+use App\Trellotrolle\Modele\Repository\TableauRepository;
+use App\Trellotrolle\Modele\Repository\UtilisateurRepository;
+use App\Trellotrolle\Service\TableauService;
+use App\Trellotrolle\Service\UtilisateurService;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\UrlHelper;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
+use Symfony\Component\HttpKernel\Controller\ContainerControllerResolver;
 use Symfony\Component\HttpKernel\Controller\ControllerResolver;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
@@ -25,6 +40,46 @@ class RouteurURL
 {
     public static function traiterRequete(): void
     {
+        $conteneur = new ContainerBuilder();
+
+        $conteneur->register('configuration_bdd_my_sql', ConfigurationBaseDeDonnees::class);
+
+        $connexionBaseService = $conteneur->register('connexion_base_de_donnees', ConnexionBaseDeDonnees::class);
+        $connexionBaseService->setArguments([new Reference('configuration_bdd_my_sql')]);
+
+        $publicationsRepositoryService = $conteneur->register('tableau_repository',TableauRepository::class);
+        $publicationsRepositoryService->setArguments([new Reference('connexion_base_de_donnees')]);
+
+        $utilisateurRepositoryService = $conteneur->register('utilisateur_repository',UtilisateurRepository::class);
+        $utilisateurRepositoryService->setArguments([new Reference('connexion_base_de_donnees')]);
+
+        $colonneRepositoryService = $conteneur->register('colonne_repository',ColonneRepository::class);
+        $colonneRepositoryService->setArguments([new Reference('connexion_base_de_donnees')]);
+
+        $carteRepositoryService = $conteneur->register('carte_repository',CarteRepository::class);
+        $carteRepositoryService->setArguments([new Reference('connexion_base_de_donnees')]);
+
+        $affecteRepositoryService = $conteneur->register('affecte_repository',AffecteRepository::class);
+        $affecteRepositoryService->setArguments([new Reference('connexion_base_de_donnees')]);
+
+        $participeRepositoryService = $conteneur->register('participe_repository',ParticipeRepository::class);
+        $participeRepositoryService->setArguments([new Reference('connexion_base_de_donnees')]);
+
+        $utilisateurService = $conteneur->register('utilisateur_service',UtilisateurService::class);
+        $utilisateurService->setArguments([new Reference('utilisateur_repository')]);
+
+        $tableauService = $conteneur->register('tableau_service', TableauService::class);
+        $tableauService->setArguments([new Reference('tableau_repository'), new Reference('utilisateur_repository'),
+            new Reference("colonne_repository"), new Reference("carte_repository"), new Reference("affecte_repository"),new Reference("participe_repository")]);
+
+        $publicationControleurService = $conteneur->register('controleur_tableau',ControleurTableau::class);
+        $publicationControleurService->setArguments([new Reference('tableau_service'), new Reference("utilisateur_service")]);
+
+        $utilisateurControleurService = $conteneur->register('controleur_utilisateur',ControleurUtilisateur::class);
+        $utilisateurControleurService->setArguments([new Reference('utilisateur_service')]);
+
+
+
         $requete = Request::createFromGlobals();
 
         $fileLocator = new FileLocator(__DIR__);
@@ -67,7 +122,7 @@ class RouteurURL
              * MethodNotAllowedException If the resource was found but the request method is not allowed
              */
 
-            $resolveurDeControleur = new ControllerResolver();
+            $resolveurDeControleur = new ContainerControllerResolver($conteneur);
             $controleur = $resolveurDeControleur->getController($requete);
             /** Throws:
              * LogicException If a controller was found based on the request, but it is not callable
@@ -81,11 +136,11 @@ class RouteurURL
 
             $reponse = call_user_func_array($controleur, $arguments);
         } catch (ResourceNotFoundException $exception) {
-            $reponse = ControleurGenerique::afficherErreur($exception->getMessage(), 404);
+            $reponse = (new ControleurGenerique)->afficherErreur($exception->getMessage(), 404);
         } catch (MethodNotAllowedException $exception) {
-            $reponse = ControleurGenerique::afficherErreur($exception->getMessage(), 405);
+            $reponse = (new ControleurGenerique)->afficherErreur($exception->getMessage(), 405);
         } catch (\Exception $exception) {
-            $reponse = ControleurGenerique::afficherErreur($exception->getMessage()) ;
+            $reponse = (new ControleurGenerique)->afficherErreur($exception->getMessage()) ;
         }
         $reponse->send();
     }

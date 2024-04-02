@@ -6,27 +6,32 @@ use App\Trellotrolle\Modele\DataObject\AbstractDataObject;
 use App\Trellotrolle\Modele\DataObject\Carte;
 use Exception;
 
-class CarteRepository extends AbstractRepository
+class CarteRepository extends AbstractRepository implements CarteRepositoryInterface
 {
+    
+    public function __construct(private ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees)
+    {
+        parent::__construct($connexionBaseDeDonnees);
+    }
 
-    protected function getNomTable(): string
+    public function getNomTable(): string
     {
         return "Cartes";
     }
 
-    protected function getNomCle(): array
+    public function getNomCle(): array
     {
         return array("idcarte");
     }
 
-    protected function getNomsColonnes(): array
+    public function getNomsColonnes(): array
     {
         return [
             "idColonne","idcarte", "titrecarte", "descriptifcarte", "couleurcarte",
         ];
     }
 
-    protected function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
+    public function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
     {
         return Carte::construireDepuisTableau($objetFormatTableau);
     }
@@ -39,7 +44,7 @@ class CarteRepository extends AbstractRepository
         $sql = "SELECT idCarte,c.idcolonne,titrecarte,descriptifcarte,couleurcarte FROM Cartes c 
             JOIN Colonnes co ON c.idColonne = co.idColonne 
             WHERE co.idTableau = :idtableau";
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($sql);
         $pdoStatement->execute(["idtableau" => $idTableau]);
         $objets = [];
         foreach ($pdoStatement as $objetFormatTableau) {
@@ -54,7 +59,7 @@ class CarteRepository extends AbstractRepository
     public function recupererCartesUtilisateur(string $login): array
     {
         $sql = "SELECT * from Cartes c left Join affecte a on c.idCarte=a.idCarte WHERE login =:login ";
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($sql);
         $values = array(
             "login" => $login
         );
@@ -68,7 +73,7 @@ class CarteRepository extends AbstractRepository
 
     public function getNombreCartesTotalUtilisateur(string $login) : int {
         $query = "SELECT COUNT(*) FROM Cartes c JOIN affecte a ON a.idCarte = c.idCarte WHERE login=:login";
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($query);
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($query);
         $pdoStatement->execute(["login" => $login]);
         $obj = $pdoStatement->fetch();
         return $obj[0];
@@ -80,7 +85,7 @@ class CarteRepository extends AbstractRepository
 
     public function getTableauByIdCarte($idCarte){
         $sql = "SELECT idTableau FROM cartes c JOIN colonnes co ON c.idCarte = co.idCarte WHERE c.idCarte =:idcarte;";
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($sql);
         $pdoStatement->execute(["idCarte" => $idCarte]);
         $obj = $pdoStatement->fetch();
         return $obj[0];
