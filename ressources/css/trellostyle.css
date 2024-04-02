@@ -329,3 +329,20 @@ form .btn_suppr {
 
 }
 
+/*Extension*/
+dialog {
+    position: fixed;
+    border: none;
+    background-color: transparent;
+    padding: 0;
+}
+
+dialog::backdrop {
+    background: grey;
+    opacity: 0.75;
+}
+
+dialog * {
+    width: 100%;
+    height: 100%;
+}

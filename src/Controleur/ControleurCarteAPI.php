@@ -2,7 +2,6 @@
 
 namespace App\Trellotrolle\Controleur;
 
-use App\Trellotrolle\Service\CarteService;
 use App\Trellotrolle\Service\CarteServiceInterface;
 use App\Trellotrolle\Service\Exception\ServiceException;
 use JsonException;
@@ -71,12 +70,5 @@ class ControleurCarteAPI extends ControleurGenerique
             return new JsonResponse(["error" => $e->getMessage()], $e->getCode());
         }
         return new JsonResponse("", Response::HTTP_OK);
-    }
-
-    #[Route(path: 'api/carte/deplacerCarte', name: 'deplacerCarteColonne', methods: ["PATCH"])]
-    public  function deplacerCarteColonne(Request $request): Response
-    {
-        //TODO: à faire après avoir réussi à rendre les cartes draggable
-        return new Response();
     }
 }

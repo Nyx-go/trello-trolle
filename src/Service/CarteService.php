@@ -9,6 +9,7 @@ use App\Trellotrolle\Modele\Repository\CarteRepositoryInterface;
 use App\Trellotrolle\Modele\Repository\ColonneRepositoryInterface;
 use App\Trellotrolle\Modele\Repository\TableauRepositoryInterface;
 use App\Trellotrolle\Service\Exception\ServiceException;
+use MongoDB\Driver\Exception\ServerException;
 use Symfony\Component\HttpFoundation\Response;
 
 

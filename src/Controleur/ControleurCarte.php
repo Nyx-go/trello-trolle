@@ -21,7 +21,7 @@ class ControleurCarte extends ControleurGenerique
         return $this->afficherErreur($messageErreur, $statusCode);
     }
 
-    #[Route(path: '/carte/{idCarte}/suppression', name:'supprimerCarte', methods:["GET"])]
+    #[Route(path: '/carte/{idCarte}/suppression', name:'NONAPIsupprimerCarte', methods:["GET"])]
     public  function supprimerCarte($idCarte): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return $this->redirection("afficherFormulaireConnexion");
@@ -53,7 +53,7 @@ class ControleurCarte extends ControleurGenerique
         return $this->redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
 
-    #[Route(path: '/colonne/{idColonne}/carte/nouvelle', name:'afficherFormulaireCreationCarte', methods:["GET"])]
+    #[Route(path: '/colonne/{idColonne}/carte/nouvelle', name:'NONAPIafficherFormulaireCreationCarte', methods:["GET"])]
     public  function afficherFormulaireCreationCarte($idColonne): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return $this->redirection("afficherFormulaireConnexion");
@@ -80,7 +80,7 @@ class ControleurCarte extends ControleurGenerique
         ]);
     }
 
-    #[Route(path: '/carte/nouvelle', name:'creerCarte', methods:["POST"])]
+    #[Route(path: '/carte/nouvelle', name:'NONAPIcreerCarte', methods:["POST"])]
     public  function creerCarte(): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return $this->redirection("afficherFormulaireConnexion");
@@ -145,7 +145,7 @@ class ControleurCarte extends ControleurGenerique
         return $this->redirection("afficherTableau", ["codeTableau" => $tableau->getCodeTableau()]);
     }
 
-    #[Route(path: '/carte/{idCarte}/modification', name:'afficherFormulaireMiseAJourCarte', methods:["GET"])]
+    #[Route(path: '/carte/{idCarte}/modification', name:'NONAPIafficherFormulaireMiseAJourCarte', methods:["GET"])]
      public  function afficherFormulaireMiseAJourCarte($idCarte): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return $this->redirection("afficherFormulaireConnexion");
@@ -178,7 +178,7 @@ class ControleurCarte extends ControleurGenerique
         ]);
     }
 
-    #[Route(path: '/carte/modification', name:'mettreAJourCarte', methods:["POST"])]
+    #[Route(path: '/carte/modification', name:'NONAPImettreAJourCarte', methods:["POST"])]
     public  function mettreAJourCarte(): Response {
         if(!ConnexionUtilisateur::estConnecte()) {
             return $this->redirection("afficherFormulaireConnexion");
