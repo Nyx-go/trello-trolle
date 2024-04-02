@@ -9,28 +9,28 @@ class AffecteRepository extends AbstractRepository{
 
     protected function getNomTable(): string
     {
-        return "Affecte";
+        return "affecte";
     }
 
 
     protected function getNomCle(): array
     {
-        return array("idCarte", "login");
+        return array("idcarte", "login");
     }
 
     protected function getNomsColonnes(): array
     {
-        return array("idCarte","login");
+        return array("idcarte","login");
     }
 
     protected function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
     {
-        return new Affecte($objetFormatTableau["idCarte"], $objetFormatTableau["login"]);
+        return new Affecte($objetFormatTableau["idcarte"], $objetFormatTableau["login"]);
     }
 
     public function recupererParIdCarte(int $idCarte): array
     {
-        return $this->recupererPlusieursPar("idCarte", $idCarte);
+        return $this->recupererPlusieursPar("idcarte", $idCarte);
     }
 
     public function recupererParLogin(string $login): array
