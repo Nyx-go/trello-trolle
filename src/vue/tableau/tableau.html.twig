@@ -132,3 +132,8 @@
     </div>
 
 {% endblock %}
+
+{% block scripts %}
+    <script type="module" src="{{ asset("../ressources/js/cuboid.js") }}" defer> </script>
+    <script type="text/javascript" src="{{ asset("../ressources/js/scripts.js") }}" defer></script>
+{% endblock %}
