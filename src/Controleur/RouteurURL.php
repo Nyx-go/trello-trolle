@@ -78,6 +78,8 @@ class RouteurURL
         $utilisateurControleurService = $conteneur->register('controleur_utilisateur',ControleurUtilisateur::class);
         $utilisateurControleurService->setArguments([new Reference('utilisateur_service')]);
 
+        $conteneur->register('controleur_base', ControleurBase::class);
+
 
 
         $requete = Request::createFromGlobals();
