@@ -3,7 +3,7 @@ parameters:
 services:
 
   configuration_bdd:
-    class: App\Trellotrolle\Configuration\ConfigurationBaseDeDonnees;
+    class: App\Trellotrolle\Configuration\ConfigurationBaseDeDonnees
 
   connexion_base_de_donnees:
     class: App\Trellotrolle\Modele\Repository\ConnexionBaseDeDonnees
