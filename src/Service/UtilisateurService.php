@@ -7,13 +7,17 @@ use App\Trellotrolle\Lib\MailerBase;
 use App\Trellotrolle\Lib\MotDePasse;
 use App\Trellotrolle\Modele\DataObject\Utilisateur;
 use App\Trellotrolle\Modele\HTTP\Session;
-use App\Trellotrolle\Modele\Repository\UtilisateurRepository;
+use App\Trellotrolle\Modele\Repository\UtilisateurRepositoryInterface;
 use App\Trellotrolle\Service\Exception\ServiceConnexionException;
 use App\Trellotrolle\Service\Exception\ServiceException;
 use Exception;
 
-class UtilisateurService extends ServiceGenerique
+class UtilisateurService extends ServiceGenerique implements UtilisateurServiceInterface
 {
+    public function __construct(private UtilisateurRepositoryInterface $utilisateurRepository,)
+    {
+    }
+
     /**
      * @throws ServiceConnexionException
      * @throws ServiceException
@@ -26,7 +30,7 @@ class UtilisateurService extends ServiceGenerique
         /**
          * @var Utilisateur $utilisateur
          */
-        $utilisateur = (new UtilisateurRepository())->recupererUtilisateurParEmail($mail);
+        $utilisateur = $this->utilisateurRepository->recupererUtilisateurParEmail($mail);
         if (is_null($utilisateur)) throw new ServiceException("L'email n'existe pas");
         try {
             $tab = array(
@@ -69,10 +73,10 @@ class UtilisateurService extends ServiceGenerique
         $this->verifyDoublePasswordValidity($mdp, $mdp2);
         Session::getInstance()->supprimer("recupMdp");
         /** @var Utilisateur $utilisateur */
-        $utilisateur = (new UtilisateurRepository())->recupererUtilisateurParEmail($tab["mail"]);
+        $utilisateur = $this->utilisateurRepository->recupererUtilisateurParEmail($tab["mail"]);
         if (is_null($utilisateur)) throw new ServiceConnexionException("L'utilisateur n'existe plus");
         $utilisateur->setMdpHache(MotDePasse::hacher($mdp));
-        (new UtilisateurRepository())->mettreAJour($utilisateur);
+        $this->utilisateurRepository->mettreAJour($utilisateur);
     }
 
     /**
@@ -90,19 +94,17 @@ class UtilisateurService extends ServiceGenerique
             throw new ServiceException("Email non valide.");
         }
 
-        $utilisateurRepository = new UtilisateurRepository();
 
-        $checkUtilisateur = $utilisateurRepository->recupererParClePrimaire(array("login" => $login));
+        $checkUtilisateur = $this->utilisateurRepository->recupererParClePrimaire(array("login" => $login));
         if ($checkUtilisateur) {
             throw new ServiceException("Le login est déjà pris.");
         }
 
         $mdpHache = MotDePasse::hacher($mdp);
 
-        $utilisateurRepository = new UtilisateurRepository();
 
         $utilisateur = new Utilisateur($login, $nom, $prenom, $email, $mdpHache);
-        $succesSauvegarde = $utilisateurRepository->ajouter($utilisateur);
+        $succesSauvegarde = $this->utilisateurRepository->ajouter($utilisateur);
 
         if (!$succesSauvegarde) {
             throw new ServiceException("Une erreur est survenue lors de la création de l'utilisateur.");
@@ -125,9 +127,8 @@ class UtilisateurService extends ServiceGenerique
     {
         self::doitEtreDeconnecte();
         if (is_null($login) || is_null($mdp)) throw new ServiceException("Login ou mot de passe manquant");
-        $utilisateurRepository = new UtilisateurRepository();
         /** @var Utilisateur $utilisateur */
-        $utilisateur = $utilisateurRepository->recupererParClePrimaire(array("login" => $login));
+        $utilisateur = $this->utilisateurRepository->recupererParClePrimaire(array("login" => $login));
         if (is_null($utilisateur) || !MotDePasse::verifier($mdp, $utilisateur->getMdpHache())) throw new ServiceException("Login ou mot de passe incorrect");
         ConnexionUtilisateur::connecter($utilisateur->getLogin());
     }
@@ -140,8 +141,7 @@ class UtilisateurService extends ServiceGenerique
     {
         self::doitEtreConnecte();
         $login = ConnexionUtilisateur::getLoginUtilisateurConnecte();
-        $repository = new UtilisateurRepository();
-        $succesSuppression = $repository->supprimer(array("login" => $login));
+        $succesSuppression = $this->utilisateurRepository->supprimer(array("login" => $login));
         if (!$succesSuppression) throw new ServiceException("Une erreur est survenue lors de la suppression de l'utilisateur.");
         ConnexionUtilisateur::deconnecter();
     }
@@ -149,7 +149,7 @@ class UtilisateurService extends ServiceGenerique
     /**
      * @throws ServiceException
      */
-    private function verifyDoublePasswordValidity(?string $mdp, ?string $mdp2): void
+    public function verifyDoublePasswordValidity(?string $mdp, ?string $mdp2): void
     {
         if (is_null($mdp) || is_null($mdp2)) throw new ServiceException("Veuillez saisir 2 mots de passe");
         if ($mdp2 !== $mdp) throw new ServiceException("Veuillez saisir 2 fois le même mot de passe");
@@ -166,9 +166,8 @@ class UtilisateurService extends ServiceGenerique
     {
         self::doitEtreConnecte();
         $login = ConnexionUtilisateur::getLoginUtilisateurConnecte();
-        $repository = new UtilisateurRepository();
         /** @var Utilisateur $utilisateur */
-        $utilisateur = $repository->recupererParClePrimaire(array("login" => $login));
+        $utilisateur = $this->utilisateurRepository->recupererParClePrimaire(array("login" => $login));
         //uniquement là comme fail safe au cas où il y a un problème de deconnexion à un moment donné
         if (is_null($utilisateur)) {
             $this->deconnexion();
@@ -178,7 +177,7 @@ class UtilisateurService extends ServiceGenerique
         if (!(MotDePasse::verifier($mdpAncien, $utilisateur->getMdpHache()))) throw  new ServiceException("Ancien mot de passe erroné");
         $this->verifyDoublePasswordValidity($mdp, $mdp2);
         $utilisateur->setMdpHache(MotDePasse::hacher($mdp));
-        $succesMiseAJour = $repository->mettreAJour($utilisateur);
+        $succesMiseAJour = $this->utilisateurRepository->mettreAJour($utilisateur);
         if (!$succesMiseAJour) throw new ServiceException("Une erreur est survenue lors de la modification des informations.");
     }
 
@@ -191,9 +190,8 @@ class UtilisateurService extends ServiceGenerique
         self::doitEtreConnecte();
         $login = ConnexionUtilisateur::getLoginUtilisateurConnecte();
         if (is_null($nom) || is_null($prenom) || is_null($email) || is_null($mdp)) throw new ServiceException("Information manquante");
-        $repository = new UtilisateurRepository();
         /** @var Utilisateur $utilisateur */
-        $utilisateur = $repository->recupererParClePrimaire(array("login" => $login));
+        $utilisateur = $this->utilisateurRepository->recupererParClePrimaire(array("login" => $login));
         //uniquement là comme fail safe au cas où il y a un problème de deconnexion à un moment donné
         if (is_null($utilisateur)) {
             $this->deconnexion();
@@ -204,7 +202,7 @@ class UtilisateurService extends ServiceGenerique
         $utilisateur->setNom($nom);
         $utilisateur->setPrenom($prenom);
         $utilisateur->setEmail($email);
-        $succesMiseAJour = $repository->mettreAJour($utilisateur);
+        $succesMiseAJour = $this->utilisateurRepository->mettreAJour($utilisateur);
         if (!$succesMiseAJour) throw new ServiceException("Une erreur est survenue lors de la modification des informations.");
     }
 
@@ -215,8 +213,7 @@ class UtilisateurService extends ServiceGenerique
     {
         self::doitEtreConnecte();
         $login = ConnexionUtilisateur::getLoginUtilisateurConnecte();
-        $repository = new UtilisateurRepository();
-        $utilisateur = $repository->recupererParClePrimaire(array("login" => $login));
+        $utilisateur = $this->utilisateurRepository->recupererParClePrimaire(array("login" => $login));
         //uniquement là comme fail safe au cas où il y a un problème de deconnexion à un moment donné ou quelqu'un supprime le compte sur un autre navigateur
         if (is_null($utilisateur)) {
             $this->deconnexion();

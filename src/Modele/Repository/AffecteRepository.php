@@ -5,32 +5,38 @@ namespace App\Trellotrolle\Modele\Repository;
 use App\Trellotrolle\Modele\DataObject\AbstractDataObject;
 use App\Trellotrolle\Modele\DataObject\Affecte;
 
-class AffecteRepository extends AbstractRepository{
+class AffecteRepository extends AbstractRepository implements AffecteRepositoryInterface
+{
 
-    protected function getNomTable(): string
+    public function __construct(private ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees)
     {
-        return "Affecte";
+        parent::__construct($connexionBaseDeDonnees);
+    }
+
+    public function getNomTable(): string
+    {
+        return "affecte";
     }
 
 
-    protected function getNomCle(): array
+    public function getNomCle(): array
     {
-        return array("idCarte", "login");
+        return array("idcarte", "login");
     }
 
-    protected function getNomsColonnes(): array
+    public function getNomsColonnes(): array
     {
-        return array("idCarte","login");
+        return array("idcarte","login");
     }
 
-    protected function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
+    public function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
     {
-        return new Affecte($objetFormatTableau["idCarte"], $objetFormatTableau["login"]);
+        return new Affecte($objetFormatTableau["idcarte"], $objetFormatTableau["login"]);
     }
 
     public function recupererParIdCarte(int $idCarte): array
     {
-        return $this->recupererPlusieursPar("idCarte", $idCarte);
+        return $this->recupererPlusieursPar("idcarte", $idCarte);
     }
 
     public function recupererParLogin(string $login): array

@@ -2,7 +2,10 @@
 
 namespace App\Trellotrolle\Configuration;
 
-class ConfigurationBaseDeDonnees {
+use PDO;
+
+class ConfigurationBaseDeDonnees implements ConfigurationBaseDeDonneesInterface
+{
 
 	//Informations de connexion pour le serveur PostgreSQL SAE de l'IUT
     static private array $configurationBaseDeDonnees = array(
@@ -31,6 +34,18 @@ class ConfigurationBaseDeDonnees {
 
     static public function getMotDePasse() : string {
         return ConfigurationBaseDeDonnees::$configurationBaseDeDonnees['motDePasse'];
+    }
+
+    public static function getDSN() : string{
+        $nomHote = ConfigurationBaseDeDonnees::getNomHote();
+        $port = ConfigurationBaseDeDonnees::getPort();
+        $nomBaseDeDonnees = ConfigurationBaseDeDonnees::getNomBaseDeDonnees();
+        return "pgsql:host=$nomHote;port=$port;dbname=$nomBaseDeDonnees";
+    }
+
+    public static function getOptions(): array
+    {
+        return array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8");
     }
 
 }

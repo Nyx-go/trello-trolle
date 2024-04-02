@@ -90,13 +90,12 @@ class Carte extends AbstractDataObject implements JsonSerializable
 
     public function jsonSerialize(): array
     {
-        // TODO: Implement jsonSerialize() method.
         return [
-            "idColonneTag" =>$this->getIdColonne(),
-            "idcarteTag" => $this->getIdCarte(),
-            "titrecarteTag" => $this->getTitreCarte(),
-            "descriptifcarteTag" => $this->getDescriptifCarte(),
-            "couleurcarteTag" => $this->getCouleurCarte(),
+            "idColonne" =>$this->getIdColonne(),
+            "idcarte" => $this->getIdCarte(),
+            "titrecarte" => $this->getTitreCarte(),
+            "descriptifcarte" => $this->getDescriptifCarte(),
+            "couleurcarte" => $this->getCouleurCarte(),
         ];
     }
 }

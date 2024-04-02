@@ -8,8 +8,8 @@ use Symfony\Component\Routing\Attribute\Route;
 class ControleurBase extends ControleurGenerique
 {
     #[Route(path: '/', name:'accueil', methods:["GET"])]
-    public static function accueil(): Response
+    public function accueil(): Response
     {
-        return self::afficherTwig("base/accueil.html.twig",);
+        return $this->afficherTwig("base/accueil.html.twig",);
     }
 }

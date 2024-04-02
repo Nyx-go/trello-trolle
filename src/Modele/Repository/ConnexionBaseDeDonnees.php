@@ -2,46 +2,30 @@
 
 namespace App\Trellotrolle\Modele\Repository;
 
-use App\Trellotrolle\Configuration\ConfigurationBaseDeDonnees;
+use App\Trellotrolle\Configuration\ConfigurationBaseDeDonneesInterface;
 use PDO;
 
 
-class ConnexionBaseDeDonnees
+class ConnexionBaseDeDonnees implements ConnexionBaseDeDonneesInterface
 {
-    private static ?ConnexionBaseDeDonnees $instance = null;
-
     private PDO $pdo;
 
-    public static function getPdo(): PDO
+    public function getPdo(): PDO
     {
-        return ConnexionBaseDeDonnees::getInstance()->pdo;
+        return $this->pdo;
     }
 
-    private function __construct()
+    public function __construct(ConfigurationBaseDeDonneesInterface $configurationBDD)
     {
-        $nomHote = ConfigurationBaseDeDonnees::getNomHote();
-        $port = ConfigurationBaseDeDonnees::getPort();
-        $login = ConfigurationBaseDeDonnees::getLogin();
-        $motDePasse = ConfigurationBaseDeDonnees::getMotDePasse();
-        $nomBaseDeDonnees = ConfigurationBaseDeDonnees::getNomBaseDeDonnees();
+        // Connexion à la base de données
+        $this->pdo = new PDO(
+            $configurationBDD->getDSN(),
+            $configurationBDD->getLogin(),
+            $configurationBDD->getMotDePasse(),
+            $configurationBDD->getOptions()
+        );
 
-        try {
-            $this->pdo = new PDO(
-                "pgsql:host=$nomHote;port=$port;dbname=$nomBaseDeDonnees",
-                $login,
-                $motDePasse,
-            );
-            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        }catch (\PDOException $e){
-            echo "la connexion à échoué : ".$e->getMessage();
-        }
-
-    }
-
-    private static function getInstance(): ConnexionBaseDeDonnees
-    {
-        if (is_null(ConnexionBaseDeDonnees::$instance))
-            ConnexionBaseDeDonnees::$instance = new ConnexionBaseDeDonnees();
-        return ConnexionBaseDeDonnees::$instance;
+        // On active le mode d'affichage des erreurs, et le lancement d'exception en cas d'erreur
+        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 }

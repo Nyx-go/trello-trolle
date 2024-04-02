@@ -3,30 +3,31 @@
 namespace App\Trellotrolle\Modele\Repository;
 
 use App\Trellotrolle\Modele\DataObject\AbstractDataObject;
-use App\Trellotrolle\Modele\DataObject\Carte;
 use App\Trellotrolle\Modele\DataObject\Tableau;
-use Exception;
-use PDO;
-use PDOException;
 
-class TableauRepository extends AbstractRepository
+class TableauRepository extends AbstractRepository implements TableauRepositoryInterface
 {
-    protected function getNomTable(): string
+    public function __construct(private ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees)
+    {
+        parent::__construct($connexionBaseDeDonnees);
+    }
+
+    public function getNomTable(): string
     {
         return "Tableaux";
     }
 
-    protected function getNomCle(): array
+    public function getNomCle(): array
     {
         return array("idtableau");
     }
 
-    protected function getNomsColonnes(): array
+    public function getNomsColonnes(): array
     {
         return ["login", "idtableau", "codetableau", "titretableau"];
     }
 
-    protected function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
+    public function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject
     {
         return Tableau::construireDepuisTableau($objetFormatTableau);
     }
@@ -47,7 +48,7 @@ class TableauRepository extends AbstractRepository
         $sql = "SELECT t.idtableau, t.login, codetableau, titretableau
                 FROM tableaux t LEFT JOIN participe p ON t.idtableau = p.idtableau 
                 WHERE p.login = :loginTag OR t.login = :loginTag";
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($sql);
         $pdoStatement->execute(["loginTag" => $login]);
         $objets = [];
         foreach ($pdoStatement as $objetFormatTableau) {
@@ -58,7 +59,7 @@ class TableauRepository extends AbstractRepository
 
     public function getNombreTableauxTotalUtilisateur(string $login) : int {
         $query = "SELECT COUNT(DISTINCT idtableau) FROM tableaux WHERE login=:login";
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($query);
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($query);
         $pdoStatement->execute(["login" => $login]);
         $obj = $pdoStatement->fetch();
         return $obj[0];
@@ -66,7 +67,7 @@ class TableauRepository extends AbstractRepository
 
     public function estParticipant($idTableau, $login) : bool{
         $sql = "SELECT login FROM participe WHERE idtableau =:idTableau";
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($sql);
         $pdoStatement->execute(["idTableau" => $idTableau]);
         $obj = $pdoStatement->fetch();
         if ($obj) {
@@ -80,7 +81,7 @@ class TableauRepository extends AbstractRepository
 
     public function estProprietaire($idTableau, $login) : bool{
         $sql = "SELECT login FROM tableaux WHERE idtableau =:idTableau";
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($sql);
         $pdoStatement->execute(["idTableau" => $idTableau]);
         $obj = $pdoStatement->fetch();
         foreach ($obj as $item) {

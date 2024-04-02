@@ -2,6 +2,7 @@
 
 namespace App\Trellotrolle\Modele\Repository;
 
+use App\Trellotrolle\Configuration\ConfigurationBaseDeDonnees;
 use App\Trellotrolle\Modele\DataObject\AbstractDataObject;
 use PDO;
 use PDOException;
@@ -13,11 +14,15 @@ abstract class AbstractRepository
     protected abstract function getNomsColonnes(): array;
     protected abstract function construireDepuisTableau(array $objetFormatTableau) : AbstractDataObject;
 
-    private function myDbInt() {
+    public function myDbInt() {
         //TO-DO ! Important !
     }
 
-    protected function formatNomsColonnes() : string {
+    public function __construct(private ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees)
+    {
+    }
+
+    public function formatNomsColonnes() : string {
         return join(",",$this->getNomsColonnes());
     }
 
@@ -27,7 +32,7 @@ abstract class AbstractRepository
     public function recuperer(): array
     {
         $nomTable = $this->getNomTable();
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->query("SELECT DISTINCT {$this->formatNomsColonnes()} FROM $nomTable");
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->query("SELECT DISTINCT {$this->formatNomsColonnes()} FROM $nomTable");
 
         $objets = [];
         foreach ($pdoStatement as $objetFormatTableau) {
@@ -40,11 +45,11 @@ abstract class AbstractRepository
     /**
      * @return AbstractDataObject[]
      */
-    protected function recupererOrdonne($attributs, $sens = "ASC"): array
+    public function recupererOrdonne($attributs, $sens = "ASC"): array
     {
         $nomTable = $this->getNomTable();
         $attributsTexte = join(",", $attributs);
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->query("SELECT DISTINCT {$this->formatNomsColonnes()} FROM $nomTable ORDER BY $attributsTexte $sens");
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->query("SELECT DISTINCT {$this->formatNomsColonnes()} FROM $nomTable ORDER BY $attributsTexte $sens");
         $objets = [];
         foreach ($pdoStatement as $objetFormatTableau) {
             $objets[] = $this->construireDepuisTableau($objetFormatTableau);
@@ -56,10 +61,10 @@ abstract class AbstractRepository
     /**
      * @return AbstractDataObject[]
      */
-    protected function recupererPlusieursPar(string $nomAttribut, $valeur): array
+    public function recupererPlusieursPar(string $nomAttribut, $valeur): array
     {
         $nomTable = $this->getNomTable();
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare("SELECT DISTINCT {$this->formatNomsColonnes()} FROM $nomTable WHERE $nomAttribut=:valeur");
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare("SELECT DISTINCT {$this->formatNomsColonnes()} FROM $nomTable WHERE $nomAttribut=:valeur");
         $pdoStatement->execute(["valeur"=>$valeur]);
         $objets = [];
         foreach ($pdoStatement as $objetFormatTableau) {
@@ -72,11 +77,11 @@ abstract class AbstractRepository
     /**
      * @return AbstractDataObject[]
      */
-    protected function recupererPlusieursParOrdonne(string $nomAttribut, $valeur, $attributs, $sens = "ASC"): array
+    public function recupererPlusieursParOrdonne(string $nomAttribut, $valeur, $attributs, $sens = "ASC"): array
     {
         $nomTable = $this->getNomTable();
         $attributsTexte = join(",", $attributs);
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare("SELECT DISTINCT {$this->formatNomsColonnes()} FROM $nomTable WHERE $nomAttribut=:valeur ORDER BY $attributsTexte $sens");
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare("SELECT DISTINCT {$this->formatNomsColonnes()} FROM $nomTable WHERE $nomAttribut=:valeur ORDER BY $attributsTexte $sens");
         $values = array(
             "valeur" => $valeur,
         );
@@ -89,11 +94,11 @@ abstract class AbstractRepository
         return $objets;
     }
 
-    protected function recupererPar(string $nomAttribut, $valeur): ?AbstractDataObject
+    public function recupererPar(string $nomAttribut, $valeur): ?AbstractDataObject
     {
         $nomTable = $this->getNomTable();
         $sql = "SELECT DISTINCT {$this->formatNomsColonnes()} from $nomTable WHERE $nomAttribut=:valeur";
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($sql);
         $pdoStatement->execute(["valeur"=>$valeur]);
         $objetFormatTableau = $pdoStatement->fetch();
 
@@ -116,7 +121,7 @@ abstract class AbstractRepository
             $values[$cle.'Tag']= $valeurClePrimaire[$cle];
         }
 
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($sql);
         $pdoStatement->execute($values);
         $objetFormatTableau = $pdoStatement->fetch();
 
@@ -139,7 +144,7 @@ abstract class AbstractRepository
             $sql.= " AND ";
         }
         $sql = rtrim($sql, " AND ");
-        $pdoStatement = ConnexionBaseDeDonnees::getPDO()->prepare($sql);
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($sql);
         $pdoStatement->execute($values);
         $deleteCount = $pdoStatement->rowCount();
 
@@ -161,7 +166,7 @@ abstract class AbstractRepository
         foreach ($clePrimaires as $cle){
             $sql.= "$cle = :$cle"."Tag";
         }
-        $req_prep = ConnexionBaseDeDonnees::getPDO()->prepare($sql);
+        $req_prep = $this->connexionBaseDeDonnees->getPdo()->prepare($sql);
 
         $objetFormatTableau = $object->formatTableau();
         $req_prep->execute($objetFormatTableau);
@@ -176,9 +181,9 @@ abstract class AbstractRepository
         $nomsColonnes = $this->getNomsColonnes();
         $nomCle = $this->getNomCle()[0];
         $objetFormatTableau = $object->formatTableau();
-        if (get_class($this) == get_class(new TableauRepository()) ||
-            get_class($this) == get_class(new CarteRepository()) ||
-            get_class($this) == get_class(new ColonneRepository())) {
+        if (get_class($this) == get_class(new TableauRepository(new ConnexionBaseDeDonnees(new ConfigurationBaseDeDonnees()))) ||
+            get_class($this) == get_class(new CarteRepository(new ConnexionBaseDeDonnees(new ConfigurationBaseDeDonnees()))) ||
+            get_class($this) == get_class(new ColonneRepository(new ConnexionBaseDeDonnees(new ConfigurationBaseDeDonnees())))) {
             $key = array_search($nomCle, $nomsColonnes);
             unset($nomsColonnes[$key]); // enlève la clé primaire de la liste des noms de colonnes de la table afin qu'il n'y ait pas de problème lors de l'insertion à cause du SERIAL
             unset($objetFormatTableau[$nomCle."Tag"]);
@@ -192,7 +197,7 @@ abstract class AbstractRepository
         $valueString = '(' . join(', ', $partiesValues) . ')';
 
         $sql = "INSERT INTO $nomTable $insertString VALUES $valueString RETURNING $nomCle";
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($sql);
 
 
         try {
@@ -208,8 +213,8 @@ abstract class AbstractRepository
         }
     }
 
-    protected function getNextId(string $type) : int {
-        $query = ConnexionBaseDeDonnees::getPdo()->query("SELECT MAX($type) FROM app_db");
+    public function getNextId(string $type) : int {
+        $query = $this->connexionBaseDeDonnees->getPdo()->query("SELECT MAX($type) FROM app_db");
         $query->execute();
         $obj = $query->fetch();
         return $obj[0] === null ? 0 : $obj[0] + 1;

@@ -12,7 +12,11 @@ class AttributeRouteControllerLoader extends AttributeClassLoader
      */
     protected function configureRoute(Route $route, \ReflectionClass $class, \ReflectionMethod $method, object $annot): void
     {
-        $route->setDefault('_controller', $class->getName().'::'.$method->getName());
+        $route->setDefault('_controller', $this->toSnakeCase($class->getShortName()).'::'.$method->getName());
+    }
+
+    private function toSnakeCase($controllerName) : string {
+        return ltrim(strtolower(preg_replace('/[A-Z]([A-Z](?![a-z]))*/', '_$0', $controllerName)), '_');
     }
 
 }
