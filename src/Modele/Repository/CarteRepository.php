@@ -85,4 +85,9 @@ class CarteRepository extends AbstractRepository
         $obj = $pdoStatement->fetch();
         return $obj[0];
     }
+
+    public function recupererCarteParId (string $idCarte): ?AbstractDataObject
+    {
+        return $this->recupererPar("idCarte",$idCarte);
+    }
 }
