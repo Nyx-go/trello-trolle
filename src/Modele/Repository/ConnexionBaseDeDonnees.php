@@ -22,7 +22,6 @@ class ConnexionBaseDeDonnees implements ConnexionBaseDeDonneesInterface
             $configurationBDD->getDSN(),
             $configurationBDD->getLogin(),
             $configurationBDD->getMotDePasse(),
-            $configurationBDD->getOptions()
         );
 
         // On active le mode d'affichage des erreurs, et le lancement d'exception en cas d'erreur

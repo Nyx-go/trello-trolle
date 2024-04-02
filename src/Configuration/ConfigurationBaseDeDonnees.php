@@ -43,9 +43,6 @@ class ConfigurationBaseDeDonnees implements ConfigurationBaseDeDonneesInterface
         return "pgsql:host=$nomHote;port=$port;dbname=$nomBaseDeDonnees";
     }
 
-    public static function getOptions(): array
-    {
-        return array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8");
-    }
+
 
 }

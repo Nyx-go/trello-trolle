@@ -16,5 +16,4 @@ interface ConfigurationBaseDeDonneesInterface
 
     public static function getDSN(): string;
 
-    public static function getOptions(): array;
 }
