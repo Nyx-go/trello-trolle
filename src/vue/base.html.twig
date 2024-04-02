@@ -6,8 +6,9 @@
     <title>{% block page_title %}Trello-Trollé{% endblock %}</title>
     <link rel="stylesheet" href="{{ asset("../ressources/css/navstyle.css") }}">
     <link rel="stylesheet" href="{{ asset("../ressources/css/trellostyle.css") }}">
-    <script type="module" src="{{ asset("../ressources/js/cuboid.js") }}" defer> </script>
-    <script type="text/javascript" src="{{ asset("../ressources/js/scripts.js") }}" defer></script>
+    {% block scripts %}
+
+    {% endblock %}
 </head>
 <body>
 <header>

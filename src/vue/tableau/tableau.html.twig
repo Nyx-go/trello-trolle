@@ -46,7 +46,7 @@
                     <ul>
                         {% for affecte in affectations %}
                         <li>
-                            <div>{{ affecte["info"].getPrenom() }} {{ affecte["info"].getNom() }}</div>
+                            <div>{{ affecte["infos"].getPrenom() }} {{ affecte["infos"].getNom() }}</div>
                             <ul>
                                 {% for colonne in affecte["colonnes"] %}
                                 <li>{{ colonne[1] }} {{ colonne[0]}} </li>
@@ -131,4 +131,9 @@
         </article>
     </div>
 
+{% endblock %}
+
+{% block scripts %}
+    <script type="module" src="{{ asset("../ressources/js/cuboid.js") }}" defer> </script>
+    <script type="text/javascript" src="{{ asset("../ressources/js/scripts.js") }}" defer></script>
 {% endblock %}
