@@ -2,6 +2,7 @@
 
 namespace App\Trellotrolle\Modele\Repository;
 
+use App\Trellotrolle\Configuration\ConfigurationBaseDeDonnees;
 use App\Trellotrolle\Modele\DataObject\AbstractDataObject;
 use PDO;
 use PDOException;
@@ -180,9 +181,9 @@ abstract class AbstractRepository
         $nomsColonnes = $this->getNomsColonnes();
         $nomCle = $this->getNomCle()[0];
         $objetFormatTableau = $object->formatTableau();
-        if (get_class($this) == get_class(new TableauRepository()) ||
-            get_class($this) == get_class(new CarteRepository()) ||
-            get_class($this) == get_class(new ColonneRepository())) {
+        if (get_class($this) == get_class(new TableauRepository(new ConnexionBaseDeDonnees(new ConfigurationBaseDeDonnees()))) ||
+            get_class($this) == get_class(new CarteRepository(new ConnexionBaseDeDonnees(new ConfigurationBaseDeDonnees()))) ||
+            get_class($this) == get_class(new ColonneRepository(new ConnexionBaseDeDonnees(new ConfigurationBaseDeDonnees())))) {
             $key = array_search($nomCle, $nomsColonnes);
             unset($nomsColonnes[$key]); // enlève la clé primaire de la liste des noms de colonnes de la table afin qu'il n'y ait pas de problème lors de l'insertion à cause du SERIAL
             unset($objetFormatTableau[$nomCle."Tag"]);
