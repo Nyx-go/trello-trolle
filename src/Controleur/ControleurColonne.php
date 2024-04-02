@@ -88,7 +88,7 @@ class ControleurColonne extends ControleurGenerique
         /**
          * @var Tableau $tableau
          */
-        $tableau = $tableauRepository->recupererParClePrimaire(array("idTableau"=>$_REQUEST["idTableau"]));
+        $tableau = $tableauRepository->recupererParClePrimaire(array("idtableau"=>$_REQUEST["idTableau"]));
         if(!$tableau) {
             MessageFlash::ajouter("danger", "Tableau inexistant");
             return ControleurColonne::redirection("accueil");

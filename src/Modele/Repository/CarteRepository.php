@@ -36,7 +36,16 @@ class CarteRepository extends AbstractRepository
     }
 
     public function recupererCartesTableau(int $idTableau): array {
-        return $this->recupererPlusieursPar("idtableau", $idTableau);
+        $sql = "SELECT idCarte,c.idcolonne,titrecarte,descriptifcarte,couleurcarte FROM Cartes c 
+            JOIN Colonnes co ON c.idColonne = co.idColonne 
+            WHERE co.idTableau = :idtableau";
+        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+        $pdoStatement->execute(["idtableau" => $idTableau]);
+        $objets = [];
+        foreach ($pdoStatement as $objetFormatTableau) {
+            $objets[] = $this->construireDepuisTableau($objetFormatTableau);
+        }
+        return $objets;
     }
 
     /**
@@ -75,5 +84,10 @@ class CarteRepository extends AbstractRepository
         $pdoStatement->execute(["idCarte" => $idCarte]);
         $obj = $pdoStatement->fetch();
         return $obj[0];
+    }
+
+    public function recupererCarteParId (string $idCarte): ?AbstractDataObject
+    {
+        return $this->recupererPar("idCarte",$idCarte);
     }
 }

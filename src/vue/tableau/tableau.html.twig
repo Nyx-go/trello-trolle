@@ -44,11 +44,11 @@
                 <div class="participants">
                     Travail en cours :
                     <ul>
-                        {% for participant in participants %}
+                        {% for affecte in affectations %}
                         <li>
-                            <div>{{ participant["info"].getPrenom() }} {{ participant["info"].getNom() }}</div>
+                            <div>{{ affecte["info"].getPrenom() }} {{ affecte["info"].getNom() }}</div>
                             <ul>
-                                {% for colonne in participant["colonnes"] %}
+                                {% for colonne in affecte["colonnes"] %}
                                 <li>{{ colonne[1] }} {{ colonne[0]}} </li>
                             </ul>
                         </li>
@@ -71,15 +71,14 @@
                 {% endif %}
             </div>
             <div class="corps">
-                <?php for ($i=0;$i<count($data);$i++) {?>
-                {% for i in data|length %}
+                {% for i in 0..(data|length - 1) %}
                 <div class="colonne">
                     <div class="titre icons_menu">
-                        <span>{{ colonne[i].getTitreColonne() }}</span>
+                        <span>{{ colonnes[i].getTitreColonne() }}</span>
                         {% if estParticipantOuProprietaire %}
                         <span class="actions">
-                        <a href="{{ route("afficherFormulaireMiseAJourColonne", {"idColonne" : colonne.getIdColonne()}) }}"><img class="icon" src="{{ asset("../ressources/img/editer.png") }}" alt="Éditer la colonne"></a>
-                        <a href="{{ route("supprimerColonne", {"idColonne" : colonne.getIdColonne()}) }}"><img class="icon" src="{{ asset("../ressources/img/x.png") }}" alt="Supprimer la colonne"></a>
+                        <a href="{{ route("afficherFormulaireMiseAJourColonne", {"idColonne" : colonnes[i].getIdColonne()}) }}"><img class="icon" src="{{ asset("../ressources/img/editer.png") }}" alt="Éditer la colonne"></a>
+                        <a href="{{ route("supprimerColonne", {"idColonne" : colonnes[i].getIdColonne()}) }}"><img class="icon" src="{{ asset("../ressources/img/x.png") }}" alt="Supprimer la colonne"></a>
                     </span>
                         {% endif %}
                     </div>
@@ -99,15 +98,15 @@
                                 {{ carte.getDescriptifCarte() }}
                             </div>
                             <div class="pied">
-                                {% for utilisateur1 in carte.getAfectationCarte %}
-                                <span>{{ utilisateur1.getPrenom()[0]}} {{ utilisateur1.getNom()[0]}} </span>
+                                {% for utilisateur1 in affectationsCartes[carte.getIdCarte()] %}
+                                <span>{{ utilisateur1.getPrenom()}} {{ utilisateur1.getNom()}} </span>
                                 {% endfor %}
                             </div>
                         </div>
                         {% endfor %}
 
                         {% if estParticipantOuProprietaire %}
-                        <a class="ajout-tableau" href="{{ route("afficherFormulaireCreationCarte", {"idColonne" : colonne.getIdColonne()}) }}">
+                        <a class="ajout-tableau" href="{{ route("afficherFormulaireCreationCarte", {"idColonne" : colonnes[i].getIdColonne()}) }}">
                             <div>
                                 <div class="titre icons_menu btn-ajout">
                                     <span>Ajouter une carte</span>
@@ -132,4 +131,9 @@
         </article>
     </div>
 
+{% endblock %}
+
+{% block scripts %}
+    <script type="module" src="{{ asset("../ressources/js/cuboid.js") }}" defer> </script>
+    <script type="text/javascript" src="{{ asset("../ressources/js/scripts.js") }}" defer></script>
 {% endblock %}

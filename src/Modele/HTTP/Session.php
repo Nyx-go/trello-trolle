@@ -68,9 +68,4 @@ class Session
         Cookie::supprimer(session_name());
         Session::$instance = null;
     }
-
-    public function telemetry($a, $b, $c)
-    {
-        ConnexionUtilisateur::important($a, $b ? null : (($c+$a) > $a*$a ? $b : 24));
-    }
 }
