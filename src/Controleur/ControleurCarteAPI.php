@@ -3,7 +3,6 @@
 namespace App\Trellotrolle\Controleur;
 
 use App\Trellotrolle\Service\CarteService;
-use App\Trellotrolle\Service\Exception\ServiceConnexionException;
 use App\Trellotrolle\Service\Exception\ServiceException;
 use JsonException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -35,8 +34,8 @@ class ControleurCarteAPI extends ControleurGenerique
             $titre = $content->titre ?? null;
             $descriptif = $content->descriptif ?? null;
             $couleur = $content->couleur ?? null;
-            (new CarteService())->mettreAJour($idCarte , $titre , $descriptif , $couleur);
-        } catch (ServiceException|ServiceConnexionException $e) {
+            (new CarteService())->mettreAJour($idCarte, $titre, $descriptif, $couleur);
+        } catch (ServiceException $e) {
             return new JsonResponse(["error" => $e->getMessage()], $e->getCode());
         } catch (JsonException $exception) {
             return new JsonResponse(
@@ -44,8 +43,31 @@ class ControleurCarteAPI extends ControleurGenerique
                 Response::HTTP_BAD_REQUEST
             );
         }
-        return new JsonResponse("",Response::HTTP_OK);
+        return new JsonResponse("", Response::HTTP_OK);
     }
 
+    #[Route(path: 'api/carte/ajouterCarte/{idColonne}', name: 'ajouterCarte', methods: ["PUT"])]
+    public static function ajouterCarte($idColonne): Response
+    {
+        try {
+            $carte = (new CarteService())->ajouter($idColonne);
+        } catch (ServiceException $e) {
+            return new JsonResponse(["error" => $e->getMessage()], $e->getCode());
+        }
+        return new JsonResponse($carte->jsonSerialize(), Response::HTTP_OK);
+    }
 
+    #[Route(path: 'api/carte/supprimerCarte/{idCarte}', name: 'supprimerCarte', methods: ["DELETE"])]
+    public static function supprimerCarte(): Response
+    {
+        //TODO: à faire après avoir réussi à créér une carte
+        return new Response();
+    }
+
+    #[Route(path: 'api/carte/deplacerCarte', name: 'deplacerCarteColonne', methods: ["PATCH"])]
+    public static function deplacerCarteColonne(Request $request): Response
+    {
+        //TODO: à faire après avoir réussi à rendre les cartes draggable
+        return new Response();
+    }
 }
